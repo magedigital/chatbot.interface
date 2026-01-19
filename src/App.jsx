@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  addEdge,
-} from "reactflow";
-import { setNodes, setEdges, addNode, updateNode, addNodeToGroup } from "./store/nodesSlice";
+import ReactFlow, { MiniMap, Controls, Background, addEdge } from "reactflow";
+import {
+  setNodes,
+  setEdges,
+  addNode,
+  updateNode,
+  addNodeToGroup,
+} from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
-import ScreenGroupNodeWrapper from "./components/ScreenGroupNodeWrapper";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   innerNode: InnerNode,
-  screenGroupNode: (props) => <ScreenGroupNodeWrapper {...props} />,
+  screenGroupNode: ScreenGroupNode,
 };
 
 const initialNodes = [
@@ -74,7 +74,7 @@ const initialEdges = [];
 
 function App() {
   const dispatch = useDispatch();
-  const { nodes, edges } = useSelector(state => state.nodes);
+  const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
   useEffect(() => {
@@ -89,26 +89,6 @@ function App() {
     [dispatch],
   );
 
-  // Функция для добавления новой ноды в группу
-  const addNodeToScreenGroup = useCallback(
-    (groupId, nodeCount) => {
-      const newNodeId = `${groupId}-node-${nodeCount + 1}`;
-      const newNode = {
-        id: newNodeId,
-        type: "innerNode",
-        position: { x: 20, y: 40 + nodeCount * 50 }, // Вертикальное расположение
-        data: {
-          label: `Node ${nodeCount + 1}`,
-          color: getRandomColor(),
-        },
-        parentNode: groupId,
-      };
-
-      // Используем Redux действие для добавления ноды в группу
-      dispatch(addNodeToGroup({ groupId, nodeData: newNode }));
-    },
-    [dispatch],
-  );
 
   // Функция для генерации случайного цвета
   const getRandomColor = () => {
@@ -200,36 +180,33 @@ function App() {
   );
 
   // Функция для обновления нод
-  const onNodesChange = useCallback((changes) => {
-    changes.forEach(change => {
-      if (change.type === 'position' && change.position) {
-        const node = nodes.find(n => n.id === change.id);
-        if (node) {
-          const updatedNode = {
-            ...node,
-            position: change.position,
-          };
-          dispatch(updateNode(updatedNode));
+  const onNodesChange = useCallback(
+    (changes) => {
+      changes.forEach((change) => {
+        if (change.type === "position" && change.position) {
+          const node = nodes.find((n) => n.id === change.id);
+          if (node) {
+            const updatedNode = {
+              ...node,
+              position: change.position,
+            };
+            dispatch(updateNode(updatedNode));
+          }
         }
-      }
-    });
-  }, [nodes, dispatch]);
+      });
+    },
+    [nodes, dispatch],
+  );
 
   // Функция для обновления связей
-  const onEdgesChange = useCallback((changes) => {
-    // В данном случае, изменения связей обрабатываются через onConnect
-  }, [dispatch]);
+  const onEdgesChange = useCallback(
+    (changes) => {
+      // В данном случае, изменения связей обрабатываются через onConnect
+    },
+    [dispatch],
+  );
 
-  // Обновляем window объект для доступа к функции из компонента
-  useEffect(() => {
-    window.addScreenNode = (groupId, nodeCount, setNodeCount) => {
-      // Подсчитываем актуальное количество нод в группе
-      const currentGroupNodes = nodes.filter((n) => n.parentNode === groupId);
-      const currentCount = currentGroupNodes.length;
-      addNodeToScreenGroup(groupId, currentCount);
-      // setNodeCount не используется, так как состояние управляется внутри Redux
-    };
-  }, [addNodeToScreenGroup, nodes]);
+  // Удаляем глобальную функцию, так как теперь используем Redux напрямую в компоненте
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>

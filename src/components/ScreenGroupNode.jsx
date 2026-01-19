@@ -1,13 +1,41 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addNodeToGroup } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
-const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
+const ScreenGroupNode = ({ data, id, children }) => {
+  const dispatch = useDispatch();
+  const nodes = useSelector(state => state.nodes.nodes);
+
   const handleClick = (e) => {
     e.stopPropagation();
-    if (onAddInnerNode) {
-      onAddInnerNode(id);
-    }
+
+    // Подсчитываем количество нод в группе
+    const groupNodes = nodes.filter(n => n.parentNode === id);
+    const nodeCount = groupNodes.length;
+
+    // Генерируем случайный цвет
+    const colors = [
+      "#ffebee", "#f3e5f5", "#e8eaf6", "#e0f2f1",
+      "#e8f5e8", "#fff3e0", "#fbe9e7", "#efebe9"
+    ];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    const newNodeId = `${id}-node-${nodeCount + 1}`;
+    const newNode = {
+      id: newNodeId,
+      type: "innerNode",
+      position: { x: 20, y: 40 + nodeCount * 50 }, // Вертикальное расположение
+      data: {
+        label: `Node ${nodeCount + 1}`,
+        color: randomColor,
+      },
+      parentNode: id,
+    };
+
+    // Используем Redux действие для добавления ноды в группу
+    dispatch(addNodeToGroup({ groupId: id, nodeData: newNode }));
   };
 
   return (
