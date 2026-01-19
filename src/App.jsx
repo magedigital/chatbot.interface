@@ -12,12 +12,13 @@ import "reactflow/dist/style.css";
 import CustomNode from "./components/CustomNode";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
+import ScreenGroupNodeWrapper from "./components/ScreenGroupNodeWrapper";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   customNode: CustomNode,
   innerNode: InnerNode,
-  screenGroupNode: ScreenGroupNode,
+  screenGroupNode: (props) => <ScreenGroupNodeWrapper {...props} />,
 };
 
 const initialNodes = [
@@ -217,7 +218,7 @@ function App() {
       const currentGroupNodes = nodes.filter(n => n.parentNode === groupId);
       const currentCount = currentGroupNodes.length;
       addNodeToScreenGroup(groupId, currentCount);
-      setNodeCount(prev => prev + 1);
+      // setNodeCount не используется, так как состояние управляется внутри ReactFlow
     };
   }, [addNodeToScreenGroup, nodes]);
 
