@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, {
   MiniMap,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
   addEdge,
 } from "reactflow";
+import { setNodes, setEdges, addNode, updateNode } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 
 import InnerNode from "./components/InnerNode";
@@ -73,12 +73,20 @@ const initialNodes = [
 const initialEdges = [];
 
 function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const dispatch = useDispatch();
+  const { nodes, edges } = useSelector(state => state.nodes);
+
+  // Инициализация начальных данных
+  useEffect(() => {
+    dispatch(setNodes(initialNodes));
+    dispatch(setEdges(initialEdges));
+  }, [dispatch]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    (params) => {
+      dispatch(addEdge(params));
+    },
+    [dispatch],
   );
 
   // Функция для добавления новой ноды в группу
@@ -97,31 +105,27 @@ function App() {
       };
 
       // Обновляем размер группы в зависимости от количества нод
-      setNodes((prevNodes) => {
-        const updatedNodes = [...prevNodes, newNode];
+      dispatch(addNode(newNode));
 
-        // Находим группу и увеличиваем её размер
-        const groupNodeIndex = updatedNodes.findIndex((n) => n.id === groupId);
-        if (groupNodeIndex !== -1) {
-          const groupNode = updatedNodes[groupNodeIndex];
-          const newHeight = Math.max(100, 60 + (nodeCount + 1) * 50); // увеличиваем высоту на 50 пикселей на каждую ноду
-
-          updatedNodes[groupNodeIndex] = {
-            ...groupNode,
-            data: {
-              ...groupNode.data,
-              style: {
-                ...groupNode.data.style,
-                height: newHeight,
-              },
+      // Находим группу и увеличиваем её размер
+      const currentNodes = nodes;
+      const groupNode = currentNodes.find(n => n.id === groupId);
+      if (groupNode) {
+        const newHeight = Math.max(100, 60 + (nodeCount + 1) * 50); // увеличиваем высоту на 50 пикселей на каждую ноду
+        const updatedGroupNode = {
+          ...groupNode,
+          data: {
+            ...groupNode.data,
+            style: {
+              ...groupNode.data.style,
+              height: newHeight,
             },
-          };
-        }
-
-        return updatedNodes;
-      });
+          },
+        };
+        dispatch(updateNode(updatedGroupNode));
+      }
     },
-    [nodes, setNodes],
+    [nodes, dispatch],
   );
 
   // Функция для генерации случайного цвета
@@ -212,6 +216,27 @@ function App() {
     },
     [nodes, setNodes],
   );
+
+  // Функция для обновления нод
+  const onNodesChange = useCallback((changes) => {
+    changes.forEach(change => {
+      if (change.type === 'position' && change.position) {
+        const node = nodes.find(n => n.id === change.id);
+        if (node) {
+          const updatedNode = {
+            ...node,
+            position: change.position,
+          };
+          dispatch(updateNode(updatedNode));
+        }
+      }
+    });
+  }, [nodes, dispatch]);
+
+  // Функция для обновления связей
+  const onEdgesChange = useCallback((changes) => {
+    // В данном случае, изменения связей обрабатываются через onConnect
+  }, [dispatch]);
 
   // Обновляем window объект для доступа к функции из компонента
   useEffect(() => {

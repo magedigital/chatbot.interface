@@ -10,9 +10,6 @@ const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
     }
   };
 
-  // Используем высоту из данных ноды
-  const height = data.style?.height || 100;
-
   return (
     <div
       style={{
@@ -20,7 +17,7 @@ const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
         border: data.style?.border || "2px solid #555",
         borderRadius: data.style?.borderRadius || "8px",
         width: data.style?.width || 220,
-        height: height,
+        height: data.style?.height || 100,
         position: "relative",
       }}
     >
@@ -52,16 +49,14 @@ const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
           zIndex: 10,
           padding: "4px 8px",
           fontSize: "12px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Добавить ноду
       </button>
 
       {/* Контейнер для дочерних нод */}
-      <div style={{ marginTop: 30 }}>
-        {children}
-      </div>
+      <div style={{ marginTop: 30 }}>{children}</div>
     </div>
   );
 };
