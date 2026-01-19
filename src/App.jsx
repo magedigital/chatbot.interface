@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -44,7 +44,7 @@ const initialNodes = [
     position: { x: 100, y: 200 },
     data: { label: "Custom Node 1", color: "#f0f0f0" },
   },
-  // Группа для Screen Node 1
+  // Группа для Screen Node 1 (без начальных нод)
   {
     id: "screen1-group",
     type: "screenGroupNode",
@@ -60,29 +60,7 @@ const initialNodes = [
       },
     },
   },
-  // Ноды для Screen Node 1
-  {
-    id: "s1-n1",
-    type: "innerNode",
-    position: { x: 20, y: 40 },
-    data: { label: "Node A", color: "#ffebee" },
-    parentNode: "screen1-group",
-  },
-  {
-    id: "s1-n2",
-    type: "innerNode",
-    position: { x: 20, y: 90 },
-    data: { label: "Node B", color: "#e8f5e8" },
-    parentNode: "screen1-group",
-  },
-  {
-    id: "s1-n3",
-    type: "innerNode",
-    position: { x: 20, y: 140 },
-    data: { label: "Node C", color: "#fff3e0" },
-    parentNode: "screen1-group",
-  },
-  // Группа для Screen Node 2
+  // Группа для Screen Node 2 (без начальных нод)
   {
     id: "screen2-group",
     type: "screenGroupNode",
@@ -98,29 +76,7 @@ const initialNodes = [
       },
     },
   },
-  // Ноды для Screen Node 2
-  {
-    id: "s2-n1",
-    type: "innerNode",
-    position: { x: 20, y: 40 },
-    data: { label: "Node D", color: "#e3f2fd" },
-    parentNode: "screen2-group",
-  },
-  {
-    id: "s2-n2",
-    type: "innerNode",
-    position: { x: 20, y: 90 },
-    data: { label: "Node E", color: "#fff9c4" },
-    parentNode: "screen2-group",
-  },
-  {
-    id: "s2-n3",
-    type: "innerNode",
-    position: { x: 20, y: 140 },
-    data: { label: "Node F", color: "#f8bbd9" },
-    parentNode: "screen2-group",
-  },
-  // Группа для Screen Node 3
+  // Группа для Screen Node 3 (без начальных нод)
   {
     id: "screen3-group",
     type: "screenGroupNode",
@@ -136,38 +92,13 @@ const initialNodes = [
       },
     },
   },
-  // Ноды для Screen Node 3
-  {
-    id: "s3-n1",
-    type: "innerNode",
-    position: { x: 20, y: 40 },
-    data: { label: "Node G", color: "#dcedc8" },
-    parentNode: "screen3-group",
-  },
-  {
-    id: "s3-n2",
-    type: "innerNode",
-    position: { x: 20, y: 90 },
-    data: { label: "Node H", color: "#ffccbc" },
-    parentNode: "screen3-group",
-  },
-  {
-    id: "s3-n3",
-    type: "innerNode",
-    position: { x: 20, y: 140 },
-    data: { label: "Node I", color: "#e1bee7" },
-    parentNode: "screen3-group",
-  },
 ];
 
 const initialEdges = [
   { id: "e1-2", source: "1", target: "2" },
   { id: "e2-3", source: "2", target: "3" },
   { id: "e2-4", source: "2", target: "4" },
-  { id: "e4-s1n1", source: "4", target: "screen2-group" },
-  { id: "s1n1-s2n1", source: "s1-n1", target: "s2-n1" }, // Соединение от ноды s1-n1 к Screen Node 2 (s2-n1)
-  { id: "s1n2-s3n2", source: "s1-n2", target: "s3-n2" },
-  { id: "s1n3-s2n3", source: "s1-n3", target: "s2-n3" },
+  { id: "e4-s2g", source: "4", target: "screen2-group" },
 ];
 
 function App() {
@@ -178,6 +109,40 @@ function App() {
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
+
+  // Функция для добавления новой ноды в группу
+  const addNodeToScreenGroup = useCallback((groupId, nodeCount) => {
+    const newNodeId = `${groupId}-node-${nodeCount + 1}`;
+    const parentNode = nodes.find(n => n.id === groupId);
+
+    if (parentNode) {
+      const parentHeight = parentNode.data?.style?.height || 220;
+      const newNode = {
+        id: newNodeId,
+        type: 'innerNode',
+        position: { x: 20, y: 40 + (nodeCount * 50) }, // Вертикальное расположение
+        data: {
+          label: `Node ${nodeCount + 1}`,
+          color: getRandomColor()
+        },
+        parentNode: groupId,
+      };
+
+      // Проверяем, не выходит ли новая нода за границы группы
+      if (newNode.position.y + 50 <= parentHeight) {
+        setNodes(prevNodes => [...prevNodes, newNode]);
+      }
+    }
+  }, [nodes, setNodes]);
+
+  // Функция для генерации случайного цвета
+  const getRandomColor = () => {
+    const colors = [
+      "#ffebee", "#f3e5f5", "#e8eaf6", "#e0f2f1",
+      "#e8f5e8", "#fff3e0", "#fbe9e7", "#efebe9"
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback((event, node) => {
@@ -229,6 +194,14 @@ function App() {
       }
     }
   }, [nodes, setNodes]);
+
+  // Обновляем window объект для доступа к функции из компонента
+  useEffect(() => {
+    window.addScreenNode = (groupId, nodeCount, setNodeCount) => {
+      addNodeToScreenGroup(groupId, nodeCount);
+      setNodeCount(prev => prev + 1);
+    };
+  }, [addNodeToScreenGroup]);
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
