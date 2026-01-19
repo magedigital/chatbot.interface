@@ -16,18 +16,18 @@ const ScreenGroupNode = ({ data, id }) => {
     >
       <Handle
         type="target"
-        position={Position.Top}
-        style={{ top: -8, left: "50%" }}
+        position={Position.Left}
+        style={{ top: "50%", left: -8 }}
       />
       <div
-        style={{ 
-          fontWeight: "bold", 
-          marginBottom: 10, 
+        style={{
+          fontWeight: "bold",
+          marginBottom: 10,
           textAlign: "center",
           position: "absolute",
           top: -25,
           left: 0,
-          right: 0
+          right: 0,
         }}
       >
         {data.label}

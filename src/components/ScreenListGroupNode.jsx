@@ -5,16 +5,20 @@ import { Handle, Position, useStore, useUpdateNodeInternals } from "reactflow";
 const ScreenListGroupNode = ({ data, id, children, parentNode }) => {
   const [draggedNodeId, setDraggedNodeId] = useState(null);
   const updateNodeInternals = useUpdateNodeInternals();
-  
+
   // Получаем ноды, которые принадлежат этой группе
   const selector = useCallback((s) => s.nodeInternals, []);
   const nodes = useStore(selector);
-  
+
   // Фильтруем ноды, принадлежащие этой группе
-  const childNodes = Array.from(nodes.values()).filter(node => node.parentNode === id);
-  
+  const childNodes = Array.from(nodes.values()).filter(
+    (node) => node.parentNode === id,
+  );
+
   // Сортируем ноды по позиции Y для вертикального расположения
-  const sortedChildNodes = [...childNodes].sort((a, b) => a.position.y - b.position.y);
+  const sortedChildNodes = [...childNodes].sort(
+    (a, b) => a.position.y - b.position.y,
+  );
 
   // Обработка начала перетаскивания
   const handleDragStart = (e, nodeId) => {
@@ -54,19 +58,19 @@ const ScreenListGroupNode = ({ data, id, children, parentNode }) => {
         style={{ top: -8, left: "50%" }}
       />
       <div
-        style={{ 
-          fontWeight: "bold", 
-          marginBottom: 10, 
+        style={{
+          fontWeight: "bold",
+          marginBottom: 10,
           textAlign: "center",
           position: "absolute",
           top: -25,
           left: 0,
-          right: 0
+          right: 0,
         }}
       >
         {data.label}
       </div>
-      
+
       {/* Контейнер для дочерних нод */}
       <div style={{ marginTop: 20 }}>
         {sortedChildNodes.map((node, index) => (
@@ -78,10 +82,10 @@ const ScreenListGroupNode = ({ data, id, children, parentNode }) => {
             style={{
               position: "absolute",
               left: 10,
-              top: 30 + (index * 50), // Вертикальное расположение с отступами
+              top: 30 + index * 50, // Вертикальное расположение с отступами
               zIndex: draggedNodeId === node.id ? 100 : 1,
               cursor: "move",
-              transition: draggedNodeId === node.id ? "none" : "top 0.3s ease"
+              transition: draggedNodeId === node.id ? "none" : "top 0.3s ease",
             }}
           >
             {/* Здесь будет отображаться дочерняя нода */}
