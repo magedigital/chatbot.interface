@@ -73,8 +73,8 @@ const initialNodes = [
     data: {
       label: "Screen Node 1",
       style: {
-        width: 150,
-        height: 150,
+        width: 220,
+        height: 220,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -85,21 +85,21 @@ const initialNodes = [
   {
     id: "s1-n1",
     type: "innerNode",
-    position: { x: 10, y: 30 },
+    position: { x: 20, y: 40 },
     data: { label: "Node A", color: "#ffebee" },
     parentNode: "screen1-group",
   },
   {
     id: "s1-n2",
     type: "innerNode",
-    position: { x: 10, y: 70 },
+    position: { x: 20, y: 90 },
     data: { label: "Node B", color: "#e8f5e8" },
     parentNode: "screen1-group",
   },
   {
     id: "s1-n3",
     type: "innerNode",
-    position: { x: 10, y: 110 },
+    position: { x: 20, y: 140 },
     data: { label: "Node C", color: "#fff3e0" },
     parentNode: "screen1-group",
   },
@@ -111,8 +111,8 @@ const initialNodes = [
     data: {
       label: "Screen Node 2",
       style: {
-        width: 150,
-        height: 150,
+        width: 220,
+        height: 220,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -123,21 +123,21 @@ const initialNodes = [
   {
     id: "s2-n1",
     type: "innerNode",
-    position: { x: 10, y: 30 },
+    position: { x: 20, y: 40 },
     data: { label: "Node D", color: "#e3f2fd" },
     parentNode: "screen2-group",
   },
   {
     id: "s2-n2",
     type: "innerNode",
-    position: { x: 10, y: 70 },
+    position: { x: 20, y: 90 },
     data: { label: "Node E", color: "#fff9c4" },
     parentNode: "screen2-group",
   },
   {
     id: "s2-n3",
     type: "innerNode",
-    position: { x: 10, y: 110 },
+    position: { x: 20, y: 140 },
     data: { label: "Node F", color: "#f8bbd9" },
     parentNode: "screen2-group",
   },
@@ -149,8 +149,8 @@ const initialNodes = [
     data: {
       label: "Screen Node 3",
       style: {
-        width: 150,
-        height: 150,
+        width: 220,
+        height: 220,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -161,21 +161,21 @@ const initialNodes = [
   {
     id: "s3-n1",
     type: "innerNode",
-    position: { x: 10, y: 30 },
+    position: { x: 20, y: 40 },
     data: { label: "Node G", color: "#dcedc8" },
     parentNode: "screen3-group",
   },
   {
     id: "s3-n2",
     type: "innerNode",
-    position: { x: 10, y: 70 },
+    position: { x: 20, y: 90 },
     data: { label: "Node H", color: "#ffccbc" },
     parentNode: "screen3-group",
   },
   {
     id: "s3-n3",
     type: "innerNode",
-    position: { x: 10, y: 110 },
+    position: { x: 20, y: 140 },
     data: { label: "Node I", color: "#e1bee7" },
     parentNode: "screen3-group",
   },
@@ -206,9 +206,9 @@ function App() {
     if (node.parentNode) {
       const parentNode = nodes.find(n => n.id === node.parentNode);
       if (parentNode) {
-        // Получаем размеры родительской группы
-        const parentWidth = parentNode.width || 150;
-        const parentHeight = parentNode.height || 150;
+        // Получаем размеры родительской группы из данных
+        const parentWidth = parentNode.data?.style?.width || 220;
+        const parentHeight = parentNode.data?.style?.height || 220;
 
         // Получаем размеры самой ноды
         const nodeWidth = 180; // ширина ноды
