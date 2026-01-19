@@ -9,42 +9,17 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-import CustomNode from "./components/CustomNode";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import ScreenGroupNodeWrapper from "./components/ScreenGroupNodeWrapper";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
-  customNode: CustomNode,
   innerNode: InnerNode,
   screenGroupNode: (props) => <ScreenGroupNodeWrapper {...props} />,
 };
 
 const initialNodes = [
-  {
-    id: "1",
-    type: "input",
-    position: { x: 0, y: 0 },
-    data: { label: "Input Node" },
-  },
-  {
-    id: "2",
-    position: { x: 0, y: 100 },
-    data: { label: "Default Node" },
-  },
-  {
-    id: "3",
-    position: { x: 200, y: 100 },
-    data: { label: "Output Node" },
-    type: "output",
-  },
-  {
-    id: "4",
-    type: "customNode",
-    position: { x: 100, y: 200 },
-    data: { label: "Custom Node 1", color: "#f0f0f0" },
-  },
   // Группа для Screen Node 1 (без начальных нод)
   {
     id: "screen1-group",
@@ -54,7 +29,7 @@ const initialNodes = [
       label: "Screen Node 1",
       style: {
         width: 220,
-        height: 220,
+        height: 100,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -70,7 +45,7 @@ const initialNodes = [
       label: "Screen Node 2",
       style: {
         width: 220,
-        height: 220,
+        height: 100,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -86,7 +61,7 @@ const initialNodes = [
       label: "Screen Node 3",
       style: {
         width: 220,
-        height: 220,
+        height: 100,
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -95,12 +70,7 @@ const initialNodes = [
   },
 ];
 
-const initialEdges = [
-  { id: "e1-2", source: "1", target: "2" },
-  { id: "e2-3", source: "2", target: "3" },
-  { id: "e2-4", source: "2", target: "4" },
-  { id: "e4-s2g", source: "4", target: "screen2-group" },
-];
+const initialEdges = [];
 
 function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
