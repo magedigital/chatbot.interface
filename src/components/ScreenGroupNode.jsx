@@ -1,8 +1,10 @@
-import React from "react";
-import { Handle, Position } from "reactflow";
+import React, { useEffect } from "react";
+import { Handle, Position, useUpdateNodeInternals } from "reactflow";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
+  const updateNodeInternals = useUpdateNodeInternals();
+
   const handleClick = (e) => {
     e.stopPropagation();
     if (onAddInnerNode) {
@@ -12,7 +14,12 @@ const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
 
   // Вычисляем высоту на основе количества дочерних элементов
   const childNodes = React.Children.count(children);
-  const dynamicHeight = Math.max(100, 60 + (childNodes * 50)); // минимальная высота 100, +50 на каждую ноду
+  const dynamicHeight = Math.max(100, 60 + childNodes * 50); // минимальная высота 100, +50 на каждую ноду
+
+  // Обновляем внутренние параметры ноды при изменении высоты
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [dynamicHeight, id, updateNodeInternals]);
 
   return (
     <div
@@ -53,16 +60,14 @@ const ScreenGroupNode = ({ data, id, onAddInnerNode, children }) => {
           zIndex: 10,
           padding: "4px 8px",
           fontSize: "12px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Добавить ноду
       </button>
 
       {/* Контейнер для дочерних нод */}
-      <div style={{ marginTop: 30 }}>
-        {children}
-      </div>
+      <div style={{ marginTop: 30 }}>{children}</div>
     </div>
   );
 };
