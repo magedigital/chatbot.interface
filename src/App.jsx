@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -6,42 +6,19 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
-  Handle,
-  Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
 import CustomNode from "./components/CustomNode";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
-import ScreenListGroupNode from "./components/ScreenListGroupNode";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   customNode: CustomNode,
   innerNode: InnerNode,
   screenGroupNode: ScreenGroupNode,
-  screenListGroupNode: ScreenListGroupNode,
 };
-
-// Определим вложенные ноды с уникальными ID
-const screen1Nodes = [
-  { id: "s1-n1", label: "Node A", color: "#ffebee" },
-  { id: "s1-n2", label: "Node B", color: "#e8f5e8" },
-  { id: "s1-n3", label: "Node C", color: "#fff3e0" },
-];
-
-const screen2Nodes = [
-  { id: "s2-n1", label: "Node D", color: "#e3f2fd" },
-  { id: "s2-n2", label: "Node E", color: "#fff9c4" },
-  { id: "s2-n3", label: "Node F", color: "#f8bbd9" },
-];
-
-const screen3Nodes = [
-  { id: "s3-n1", label: "Node G", color: "#dcedc8" },
-  { id: "s3-n2", label: "Node H", color: "#ffccbc" },
-  { id: "s3-n3", label: "Node I", color: "#e1bee7" },
-];
 
 const initialNodes = [
   {
