@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -14,12 +14,14 @@ import "reactflow/dist/style.css";
 import CustomNode from "./components/CustomNode";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
+import ScreenListGroupNode from "./components/ScreenListGroupNode";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   customNode: CustomNode,
   innerNode: InnerNode,
   screenGroupNode: ScreenGroupNode,
+  screenListGroupNode: ScreenListGroupNode,
 };
 
 // Определим вложенные ноды с уникальными ID
@@ -200,7 +202,7 @@ function App() {
     [setEdges],
   );
 
-  // Ограничение перемещения нод внутри их групп
+  // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback((event, node) => {
     // Проверяем, есть ли у ноды родительская группа
     if (node.parentNode) {
@@ -218,14 +220,35 @@ function App() {
         const newX = Math.max(0, Math.min(node.position.x, parentWidth - nodeWidth));
         const newY = Math.max(0, Math.min(node.position.y, parentHeight - nodeHeight));
 
-        // Если координаты выходят за пределы, возвращаем ноду в допустимые границы
-        if (newX !== node.position.x || newY !== node.position.y) {
-          setNodes(prevNodes =>
-            prevNodes.map(n =>
-              n.id === node.id ? { ...n, position: { x: newX, y: newY } } : n
-            )
+        // Обновляем позицию ноды
+        let updatedNodes = nodes.map(n =>
+          n.id === node.id ? { ...n, position: { x: newX, y: newY } } : n
+        );
+
+        // Находим все ноды, принадлежащие этой же группе
+        const siblingNodes = updatedNodes.filter(n => n.parentNode === node.parentNode && n.id !== node.id);
+
+        // Добавляем текущую ноду в список для сортировки
+        const allGroupNodes = [...siblingNodes, {...node, position: { x: newX, y: newY }}];
+
+        // Сортируем ноды по Y-координате
+        allGroupNodes.sort((a, b) => a.position.y - b.position.y);
+
+        // Распределяем ноды равномерно по вертикали
+        const spacing = parentHeight / (allGroupNodes.length + 1); // равномерное распределение
+
+        // Обновляем позиции всех нод в группе для вертикального упорядочивания
+        allGroupNodes.forEach((n, index) => {
+          const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
+
+          updatedNodes = updatedNodes.map(nodeToUpdate =>
+            nodeToUpdate.id === n.id
+              ? { ...nodeToUpdate, position: { x: 20, y: Math.max(10, Math.min(parentHeight - nodeHeight - 10, newPositionY)) } }
+              : nodeToUpdate
           );
-        }
+        });
+
+        setNodes(updatedNodes);
       }
     }
   }, [nodes, setNodes]);
