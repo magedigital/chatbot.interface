@@ -37,6 +37,27 @@ const nodesSlice = createSlice({
     removeEdge: (state, action) => {
       state.edges = state.edges.filter(edge => edge.id !== action.payload);
     },
+    addNodeToGroup: (state, action) => {
+      const { groupId, nodeData } = action.payload;
+
+      // Добавляем новую ноду
+      state.nodes.push(nodeData);
+
+      // Обновляем размер группы
+      const groupNode = state.nodes.find(n => n.id === groupId);
+      if (groupNode) {
+        const groupChildren = state.nodes.filter(n => n.parentNode === groupId);
+        const newHeight = Math.max(100, 60 + groupChildren.length * 50);
+
+        groupNode.data = {
+          ...groupNode.data,
+          style: {
+            ...groupNode.data.style,
+            height: newHeight
+          }
+        };
+      }
+    },
   },
 });
 
@@ -49,6 +70,7 @@ export const {
   setSelectedNode,
   addEdge,
   removeEdge,
+  addNodeToGroup,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;

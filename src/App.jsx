@@ -6,7 +6,7 @@ import ReactFlow, {
   Background,
   addEdge,
 } from "reactflow";
-import { setNodes, setEdges, addNode, updateNode } from "./store/nodesSlice";
+import { setNodes, setEdges, addNode, updateNode, addNodeToGroup } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 
 import InnerNode from "./components/InnerNode";
@@ -104,28 +104,10 @@ function App() {
         parentNode: groupId,
       };
 
-      // Обновляем размер группы в зависимости от количества нод
-      dispatch(addNode(newNode));
-
-      // Находим группу и увеличиваем её размер
-      const currentNodes = nodes;
-      const groupNode = currentNodes.find(n => n.id === groupId);
-      if (groupNode) {
-        const newHeight = Math.max(100, 60 + (nodeCount + 1) * 50); // увеличиваем высоту на 50 пикселей на каждую ноду
-        const updatedGroupNode = {
-          ...groupNode,
-          data: {
-            ...groupNode.data,
-            style: {
-              ...groupNode.data.style,
-              height: newHeight,
-            },
-          },
-        };
-        dispatch(updateNode(updatedGroupNode));
-      }
+      // Используем Redux действие для добавления ноды в группу
+      dispatch(addNodeToGroup({ groupId, nodeData: newNode }));
     },
-    [nodes, dispatch],
+    [dispatch],
   );
 
   // Функция для генерации случайного цвета
@@ -245,7 +227,7 @@ function App() {
       const currentGroupNodes = nodes.filter((n) => n.parentNode === groupId);
       const currentCount = currentGroupNodes.length;
       addNodeToScreenGroup(groupId, currentCount);
-      // setNodeCount не используется, так как состояние управляется внутри ReactFlow
+      // setNodeCount не используется, так как состояние управляется внутри Redux
     };
   }, [addNodeToScreenGroup, nodes]);
 
