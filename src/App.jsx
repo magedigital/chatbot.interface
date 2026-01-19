@@ -172,11 +172,14 @@ function App() {
             );
           });
 
-          setNodes(updatedNodes);
+          // Обновляем все ноды через Redux
+          updatedNodes.forEach(updatedNode => {
+            dispatch(updateNode(updatedNode));
+          });
         }
       }
     },
-    [nodes, setNodes],
+    [nodes, dispatch],
   );
 
   // Функция для обновления нод
