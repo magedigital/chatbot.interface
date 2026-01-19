@@ -90,7 +90,6 @@ function App() {
     [dispatch],
   );
 
-
   // Функция для генерации случайного цвета
   const getRandomColor = () => {
     const colors = [
@@ -109,85 +108,11 @@ function App() {
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
-      // Проверяем, есть ли у ноды родительская группа
-      if (node.parentNode) {
-        const parentNode = nodes.find((n) => n.id === node.parentNode);
-        if (parentNode) {
-          // Получаем размеры родительской группы из данных
-          const parentWidth = parentNode.data?.style?.width || 220;
-          const parentHeight = parentNode.data?.style?.height || 220;
-
-          // Получаем размеры самой ноды
-          const nodeWidth = 180; // ширина ноды
-          const nodeHeight = 50; // примерная высота ноды
-
-          // Ограничиваем координаты ноды в пределах родительской группы
-          const newX = Math.max(
-            0,
-            Math.min(node.position.x, parentWidth - nodeWidth),
-          );
-          const newY = Math.max(
-            0,
-            Math.min(node.position.y, parentHeight - nodeHeight),
-          );
-
-          // Обновляем позицию ноды
-          let updatedNodes = nodes.map((n) =>
-            n.id === node.id ? { ...n, position: { x: newX, y: newY } } : n,
-          );
-
-          // Находим все ноды, принадлежащие этой же группе
-          const siblingNodes = updatedNodes.filter(
-            (n) => n.parentNode === node.parentNode && n.id !== node.id,
-          );
-
-          // Добавляем текущую ноду в список для сортировки
-          const allGroupNodes = [
-            ...siblingNodes,
-            { ...node, position: { x: newX, y: newY } },
-          ];
-
-          // Сортируем ноды по Y-координате
-          allGroupNodes.sort((a, b) => a.position.y - b.position.y);
-
-          // Распределяем ноды равномерно по вертикали
-          const spacing = parentHeight / (allGroupNodes.length + 1); // равномерное распределение
-
-          // Обновляем позиции всех нод в группе для вертикального упорядочивания
-          allGroupNodes.forEach((n, index) => {
-            const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
-
-            updatedNodes = updatedNodes.map((nodeToUpdate) =>
-              nodeToUpdate.id === n.id
-                ? {
-                    ...nodeToUpdate,
-                    position: {
-                      x: 20,
-                      y: Math.max(
-                        10,
-                        Math.min(parentHeight - nodeHeight - 10, newPositionY),
-                      ),
-                    },
-                  }
-                : nodeToUpdate,
-            );
-          });
-
-          // Обновляем все ноды через Redux
-          updatedNodes.forEach(updatedNode => {
-            dispatch(updateNode(updatedNode));
-          });
-        }
-      }
+      // Используем Redux действие для обновления позиций нод в группе
+      dispatch(updateNodePositionsInGroup({ node }));
     },
-    [nodes, dispatch],
+    [dispatch],
   );
-
-  // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
-  const onNodeDragStop = useCallback((event, node) => {
-    // Используем Redux действие для обновления позиций нод в группе
-    dispatch(updateNodePositionsInGroup({ node }));
-  }, [dispatch]);
 
   // Функция для обновления нод
   const onNodesChange = useCallback(
