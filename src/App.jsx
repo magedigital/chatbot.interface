@@ -113,26 +113,41 @@ function App() {
   // Функция для добавления новой ноды в группу
   const addNodeToScreenGroup = useCallback((groupId, nodeCount) => {
     const newNodeId = `${groupId}-node-${nodeCount + 1}`;
-    const parentNode = nodes.find(n => n.id === groupId);
+    const newNode = {
+      id: newNodeId,
+      type: 'innerNode',
+      position: { x: 20, y: 40 + (nodeCount * 50) }, // Вертикальное расположение
+      data: {
+        label: `Node ${nodeCount + 1}`,
+        color: getRandomColor()
+      },
+      parentNode: groupId,
+    };
 
-    if (parentNode) {
-      const parentHeight = parentNode.data?.style?.height || 220;
-      const newNode = {
-        id: newNodeId,
-        type: 'innerNode',
-        position: { x: 20, y: 40 + (nodeCount * 50) }, // Вертикальное расположение
-        data: {
-          label: `Node ${nodeCount + 1}`,
-          color: getRandomColor()
-        },
-        parentNode: groupId,
-      };
+    // Обновляем размер группы в зависимости от количества нод
+    setNodes(prevNodes => {
+      const updatedNodes = [...prevNodes, newNode];
 
-      // Проверяем, не выходит ли новая нода за границы группы
-      if (newNode.position.y + 50 <= parentHeight) {
-        setNodes(prevNodes => [...prevNodes, newNode]);
+      // Находим группу и увеличиваем её размер
+      const groupNodeIndex = updatedNodes.findIndex(n => n.id === groupId);
+      if (groupNodeIndex !== -1) {
+        const groupNode = updatedNodes[groupNodeIndex];
+        const newHeight = Math.max(100, 60 + ((nodeCount + 1) * 50)); // увеличиваем высоту на 50 пикселей на каждую ноду
+
+        updatedNodes[groupNodeIndex] = {
+          ...groupNode,
+          data: {
+            ...groupNode.data,
+            style: {
+              ...groupNode.data.style,
+              height: newHeight
+            }
+          }
+        };
       }
-    }
+
+      return updatedNodes;
+    });
   }, [nodes, setNodes]);
 
   // Функция для генерации случайного цвета
@@ -198,10 +213,13 @@ function App() {
   // Обновляем window объект для доступа к функции из компонента
   useEffect(() => {
     window.addScreenNode = (groupId, nodeCount, setNodeCount) => {
-      addNodeToScreenGroup(groupId, nodeCount);
+      // Подсчитываем актуальное количество нод в группе
+      const currentGroupNodes = nodes.filter(n => n.parentNode === groupId);
+      const currentCount = currentGroupNodes.length;
+      addNodeToScreenGroup(groupId, currentCount);
       setNodeCount(prev => prev + 1);
     };
-  }, [addNodeToScreenGroup]);
+  }, [addNodeToScreenGroup, nodes]);
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
