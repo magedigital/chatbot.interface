@@ -200,6 +200,36 @@ function App() {
     [setEdges],
   );
 
+  // Ограничение перемещения нод внутри их групп
+  const onNodeDragStop = useCallback((event, node) => {
+    // Проверяем, есть ли у ноды родительская группа
+    if (node.parentNode) {
+      const parentNode = nodes.find(n => n.id === node.parentNode);
+      if (parentNode) {
+        // Получаем размеры родительской группы
+        const parentWidth = parentNode.width || 150;
+        const parentHeight = parentNode.height || 150;
+
+        // Получаем размеры самой ноды
+        const nodeWidth = 180; // ширина ноды
+        const nodeHeight = 50; // примерная высота ноды
+
+        // Ограничиваем координаты ноды в пределах родительской группы
+        const newX = Math.max(0, Math.min(node.position.x, parentWidth - nodeWidth));
+        const newY = Math.max(0, Math.min(node.position.y, parentHeight - nodeHeight));
+
+        // Если координаты выходят за пределы, возвращаем ноду в допустимые границы
+        if (newX !== node.position.x || newY !== node.position.y) {
+          setNodes(prevNodes =>
+            prevNodes.map(n =>
+              n.id === node.id ? { ...n, position: { x: newX, y: newY } } : n
+            )
+          );
+        }
+      }
+    }
+  }, [nodes, setNodes]);
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ReactFlow
@@ -208,6 +238,7 @@ function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
         nodeTypes={nodeTypes}
       >
         <Controls />
