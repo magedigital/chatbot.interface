@@ -7,6 +7,7 @@ import {
   addNode,
   updateNode,
   addNodeToGroup,
+  updateNodePositionsInGroup,
 } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 
@@ -181,6 +182,12 @@ function App() {
     },
     [nodes, dispatch],
   );
+
+  // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
+  const onNodeDragStop = useCallback((event, node) => {
+    // Используем Redux действие для обновления позиций нод в группе
+    dispatch(updateNodePositionsInGroup({ node }));
+  }, [dispatch]);
 
   // Функция для обновления нод
   const onNodesChange = useCallback(
