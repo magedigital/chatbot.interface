@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { arrangeNodePositions } from "./nodeUtils";
 
 const initialState = {
   nodes: [],
@@ -66,40 +67,8 @@ const nodesSlice = createSlice({
         };
       }
 
-      // Вызываем функцию для выстраивания позиций нод в группе
-      // Находим все ноды, принадлежащие этой группе
-      const groupNodes = state.nodes.filter(
-        n => n.parentNode === groupId
-      );
-
-      // Сортируем ноды по Y-координате
-      groupNodes.sort((a, b) => a.position.y - b.position.y);
-
-      // Получаем размеры родительской группы из данных
-      const parentHeight = groupNode.data?.style?.height || 220;
-      const nodeHeight = 50;
-
-      // Распределяем ноды равномерно по вертикали
-      const spacing = parentHeight / (groupNodes.length + 1); // равномерное распределение
-
-      // Обновляем позиции всех нод в группе для вертикального упорядочивания
-      groupNodes.forEach((n, index) => {
-        const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
-
-        const nodeToUpdateIndex = state.nodes.findIndex(nodeToUpdate => nodeToUpdate.id === n.id);
-        if (nodeToUpdateIndex !== -1) {
-          state.nodes[nodeToUpdateIndex] = {
-            ...state.nodes[nodeToUpdateIndex],
-            position: {
-              x: 20,
-              y: Math.max(
-                10,
-                Math.min(parentHeight - nodeHeight - 10, newPositionY)
-              )
-            }
-          };
-        }
-      });
+      // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+      state.nodes = arrangeNodePositions(state.nodes, groupId);
     },
     updateNodePositionsInGroup: (state, action) => {
       const { node, nodeWidth = 180, nodeHeight = 50 } = action.payload;
@@ -131,38 +100,8 @@ const nodesSlice = createSlice({
             };
           }
 
-          // Вызываем общую логику для выстраивания всех нод в группе
-          // Находим все ноды, принадлежащие этой группе
-          const groupNodes = state.nodes.filter(
-            n => n.parentNode === node.parentNode
-          );
-
-          // Сортируем ноды по Y-координате
-          groupNodes.sort((a, b) => a.position.y - b.position.y);
-
-          // Распределяем ноды равномерно по вертикали
-          const spacing = parentHeight / (groupNodes.length + 1); // равномерное распределение
-
-          // Обновляем позиции всех нод в группе для вертикального упорядочивания
-          groupNodes.forEach((n, index) => {
-            const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
-
-            const nodeToUpdateIndex = state.nodes.findIndex(
-              (nodeToUpdate) => nodeToUpdate.id === n.id,
-            );
-            if (nodeToUpdateIndex !== -1) {
-              state.nodes[nodeToUpdateIndex] = {
-                ...state.nodes[nodeToUpdateIndex],
-                position: {
-                  x: 20,
-                  y: Math.max(
-                    10,
-                    Math.min(parentHeight - nodeHeight - 10, newPositionY),
-                  ),
-                },
-              };
-            }
-          });
+          // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+          state.nodes = arrangeNodePositions(state.nodes, node.parentNode);
         }
       }
     },
