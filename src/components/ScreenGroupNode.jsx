@@ -29,7 +29,12 @@ const ScreenGroupNode = ({ data, id, children }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ top: "50%", left: -8 }}
+        style={{
+          top: "50%",
+          left: -8,
+          width: 8,
+          height: 8,
+        }}
       />
       <div
         style={{
