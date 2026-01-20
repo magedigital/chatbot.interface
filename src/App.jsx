@@ -26,56 +26,7 @@ const nodeTypes = {
   screenGroupNode: ScreenGroupNode,
 };
 
-const initialNodes = [
-  // Группа для Screen Node 1 (без начальных нод)
-  {
-    id: "screen1-group",
-    type: "screenGroupNode",
-    position: { x: 250, y: 250 },
-    data: {
-      label: "Screen Node 1",
-      style: {
-        width: 220,
-        height: 100,
-        backgroundColor: "rgba(200, 200, 200, 0.2)",
-        border: "2px solid #555",
-        borderRadius: "8px",
-      },
-    },
-  },
-  // Группа для Screen Node 2 (без начальных нод)
-  {
-    id: "screen2-group",
-    type: "screenGroupNode",
-    position: { x: 550, y: 150 },
-    data: {
-      label: "Screen Node 2",
-      style: {
-        width: 220,
-        height: 100,
-        backgroundColor: "rgba(200, 200, 200, 0.2)",
-        border: "2px solid #555",
-        borderRadius: "8px",
-      },
-    },
-  },
-  // Группа для Screen Node 3 (без начальных нод)
-  {
-    id: "screen3-group",
-    type: "screenGroupNode",
-    position: { x: 550, y: 450 },
-    data: {
-      label: "Screen Node 3",
-      style: {
-        width: 220,
-        height: 100,
-        backgroundColor: "rgba(200, 200, 200, 0.2)",
-        border: "2px solid #555",
-        borderRadius: "8px",
-      },
-    },
-  },
-];
+const initialNodes = [];
 
 const initialEdges = [];
 
@@ -204,14 +155,21 @@ function App() {
 
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
-    const newGroupNode = createScreenGroup(nodes, Math.random() * 200, Math.random() * 200);
+    const newGroupNode = createScreenGroup(nodes);
     dispatch(addNode(newGroupNode));
   }, [dispatch, nodes]);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <TopPanel onAddScreen={handleAddScreen} />
-      <div style={{ width: "100%", height: "calc(100% - 60px)", position: "relative", top: "60px" }}>
+      <div
+        style={{
+          width: "100%",
+          height: "calc(100% - 60px)",
+          position: "relative",
+          top: "60px",
+        }}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}

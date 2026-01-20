@@ -45,13 +45,17 @@ export const createNodeInGroup = (groupId, nodes) => {
 /**
  * Функция для создания новой группы экрана
  * @param {Array} existingNodes - массив существующих нод
- * @param {number} x - координата X для новой группы
- * @param {number} y - координата Y для новой группы
+ * @param {number} offsetX - смещение по X для новой группы
+ * @param {number} offsetY - смещение по Y для новой группы
  * @returns {Object} - новая группа нод
  */
-export const createScreenGroup = (existingNodes, x = 0, y = 0) => {
+export const createScreenGroup = (existingNodes, offsetX = 50, offsetY = 50) => {
   const groupCount = existingNodes.filter(n => n.type === 'screenGroupNode').length;
   const groupId = `screen-group-${Date.now()}`;
+
+  // Рассчитываем координаты с учетом количества существующих групп
+  const x = 50 + (groupCount * offsetX);
+  const y = 50 + (groupCount * offsetY);
 
   const newGroupNode = {
     id: groupId,
