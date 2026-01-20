@@ -43,6 +43,36 @@ export const createNodeInGroup = (groupId, nodes) => {
 };
 
 /**
+ * Функция для создания новой группы экрана
+ * @param {Array} existingNodes - массив существующих нод
+ * @param {number} x - координата X для новой группы
+ * @param {number} y - координата Y для новой группы
+ * @returns {Object} - новая группа нод
+ */
+export const createScreenGroup = (existingNodes, x = 0, y = 0) => {
+  const groupCount = existingNodes.filter(n => n.type === 'screenGroupNode').length;
+  const groupId = `screen-group-${Date.now()}`;
+
+  const newGroupNode = {
+    id: groupId,
+    type: "screenGroupNode",
+    position: { x, y },
+    data: {
+      label: `Screen Group ${groupCount + 1}`,
+      style: {
+        width: 220,
+        height: 100, // начальная высота для пустой группы
+        backgroundColor: "rgba(200, 200, 200, 0.2)",
+        border: "2px solid #555",
+        borderRadius: "8px",
+      },
+    },
+  };
+
+  return newGroupNode;
+};
+
+/**
  * Функция для обновления размеров группы под размер списка нод
  * @param {Array} nodes - массив нод
  * @param {string} groupId - ID группы

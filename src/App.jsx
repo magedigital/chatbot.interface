@@ -18,6 +18,7 @@ import "primeicons/primeicons.css";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
+import { createScreenGroup } from "./store/nodeUtils";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -203,23 +204,7 @@ function App() {
 
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
-    const groupId = `screen-group-${Date.now()}`;
-    const newGroupNode = {
-      id: groupId,
-      type: "screenGroupNode",
-      position: { x: Math.random() * 200, y: Math.random() * 200 },
-      data: {
-        label: `Screen Group ${nodes.filter(n => n.type === 'screenGroupNode').length + 1}`,
-        style: {
-          width: 220,
-          height: 100, // начальная высота для пустой группы
-          backgroundColor: "rgba(200, 200, 200, 0.2)",
-          border: "2px solid #555",
-          borderRadius: "8px",
-        },
-      },
-    };
-
+    const newGroupNode = createScreenGroup(nodes, Math.random() * 200, Math.random() * 200);
     dispatch(addNode(newGroupNode));
   }, [dispatch, nodes]);
 
