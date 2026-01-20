@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { arrangeNodePositions } from "./nodeUtils";
+import { arrangeNodePositions, createNodeInGroup } from "./nodeUtils";
 
 const initialState = {
   nodes: [],
@@ -45,10 +45,13 @@ const nodesSlice = createSlice({
       state.edges = state.edges.filter((edge) => edge.id !== action.payload);
     },
     addNodeToGroup: (state, action) => {
-      const { groupId, nodeData } = action.payload;
+      const { groupId } = action.payload;
+
+      // Создаем новую ноду
+      const newNode = createNodeInGroup(groupId, state.nodes);
 
       // Добавляем новую ноду
-      state.nodes.push(nodeData);
+      state.nodes.push(newNode);
 
       // Обновляем размер группы
       const groupNode = state.nodes.find((n) => n.id === groupId);
@@ -71,38 +74,11 @@ const nodesSlice = createSlice({
       state.nodes = arrangeNodePositions(state.nodes, groupId);
     },
     updateNodePositionsInGroup: (state, action) => {
-      const { node, nodeWidth = 180, nodeHeight = 50 } = action.payload;
-
+      const { node } = action.payload;
       // Проверяем, есть ли у ноды родительская группа
       if (node.parentNode) {
-        const parentNode = state.nodes.find((n) => n.id === node.parentNode);
-        if (parentNode) {
-          // Получаем размеры родительской группы из данных
-          const parentWidth = parentNode.data?.style?.width || 220;
-          const parentHeight = parentNode.data?.style?.height || 220;
-
-          // Ограничиваем координаты ноды в пределах родительской группы
-          const newX = Math.max(
-            0,
-            Math.min(node.position.x, parentWidth - nodeWidth),
-          );
-          const newY = Math.max(
-            0,
-            Math.min(node.position.y, parentHeight - nodeHeight),
-          );
-
-          // Обновляем позицию ноды
-          const nodeIndex = state.nodes.findIndex((n) => n.id === node.id);
-          if (nodeIndex !== -1) {
-            state.nodes[nodeIndex] = {
-              ...state.nodes[nodeIndex],
-              position: { x: newX, y: newY },
-            };
-          }
-
-          // Вызываем внешнюю функцию для выстраивания позиций нод в группе
-          state.nodes = arrangeNodePositions(state.nodes, node.parentNode);
-        }
+        // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+        state.nodes = arrangeNodePositions(state.nodes, node.parentNode);
       }
     },
   },

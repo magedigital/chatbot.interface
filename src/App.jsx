@@ -91,21 +91,6 @@ function App() {
     [dispatch],
   );
 
-  // Функция для генерации случайного цвета
-  const getRandomColor = () => {
-    const colors = [
-      "#ffebee",
-      "#f3e5f5",
-      "#e8eaf6",
-      "#e0f2f1",
-      "#e8f5e8",
-      "#fff3e0",
-      "#fbe9e7",
-      "#efebe9",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
@@ -121,8 +106,6 @@ function App() {
       // Проверяем, есть ли у ноды родительская группа
       if (node.parentNode) {
         // Находим все ноды в той же группе
-
-        console.log(nodes);
 
         const siblingNodes = nodes.filter(
           (n) => n.parentNode === node.parentNode && n.id !== node.id,
