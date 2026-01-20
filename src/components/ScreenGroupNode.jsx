@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { addNodeToGroup } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
+import { GROUP } from "../store/nodeConfig";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({ data, id, children }) => {
@@ -50,20 +51,30 @@ const ScreenGroupNode = ({ data, id, children }) => {
         {data.label}
       </div>
 
-      <Button
-        icon="pi pi-plus"
-        onClick={handleClick}
-        className="p-button-sm p-button-outlined"
+      <div
         style={{
           position: "absolute",
-          top: 5,
-          right: 5,
-          zIndex: 10,
+          top: 0,
+          left: 0,
+          right: 0,
+          height: GROUP.groupHeadHeight,
+          overflow: "hidden",
         }}
-      />
+      >
+        <Button
+          icon="pi pi-plus"
+          onClick={handleClick}
+          className="p-button-sm p-button-outlined"
+          style={{
+            position: "absolute",
+            top: 5,
+            right: 5,
+          }}
+        />
+      </div>
 
       {/* Контейнер для дочерних нод */}
-      <div style={{ marginTop: 30 }}>{children}</div>
+      {children}
     </div>
   );
 };

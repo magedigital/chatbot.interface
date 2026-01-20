@@ -1,5 +1,6 @@
 import React from "react";
 import { Handle, Position } from "reactflow";
+import { NODE } from "../store/nodeConfig";
 
 // Компонент вложенной ноды с уникальным ID
 const InnerNode = ({ data, id }) => {
@@ -11,7 +12,8 @@ const InnerNode = ({ data, id }) => {
         border: "1px solid #aaa",
         borderRadius: 4,
         textAlign: "center",
-        width: 180,
+        width: NODE.width,
+        height: NODE.height,
       }}
     >
       <div>{data.label}</div>
