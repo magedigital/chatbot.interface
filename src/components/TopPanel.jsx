@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from 'primereact/button';
 
-const TopPanel = ({ onAddScreen }) => {
+const TopPanel = ({ onAddScreen, onClearAllGroups }) => {
   return (
-    <div 
-      style={{ 
-        height: '60px', 
-        backgroundColor: '#f8f9fa', 
+    <div
+      style={{
+        height: '60px',
+        backgroundColor: '#f8f9fa',
         borderBottom: '1px solid #dee2e6',
         display: 'flex',
         alignItems: 'center',
@@ -23,6 +23,13 @@ const TopPanel = ({ onAddScreen }) => {
         icon="pi pi-plus"
         onClick={() => onAddScreen()}
         className="p-button p-component"
+        style={{ marginRight: '10px' }}
+      />
+      <Button
+        label="Очистить"
+        icon="pi pi-trash"
+        onClick={() => onClearAllGroups()}
+        className="p-button-danger p-button p-component"
       />
     </div>
   );

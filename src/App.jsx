@@ -9,11 +9,13 @@ import {
   updateNode,
   addNodeToGroup,
   updateNodePositionsInGroup,
+  removeNode,
 } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
@@ -159,9 +161,41 @@ function App() {
     dispatch(addNode(newGroupNode));
   }, [dispatch, nodes]);
 
+  // Функция для очистки всех групп
+  const handleClearAllGroups = useCallback(() => {
+    confirmDialog({
+      message: 'Вы действительно хотите удалить все группы?',
+      header: 'Подтверждение',
+      icon: 'pi pi-exclamation-triangle',
+      acceptClassName: 'p-button-danger',
+      accept: () => {
+        // Находим все группы экранов
+        const screenGroups = nodes.filter(n => n.type === 'screenGroupNode');
+
+        // Удаляем каждую группу и все её дочерние ноды
+        screenGroups.forEach(group => {
+          // Находим все дочерние ноды
+          const childNodes = nodes.filter(n => n.parentNode === group.id);
+
+          // Удаляем дочерние ноды
+          childNodes.forEach(childNode => {
+            dispatch(removeNode(childNode.id));
+          });
+
+          // Удаляем саму группу
+          dispatch(removeNode(group.id));
+        });
+      },
+      reject: () => {
+        // Действие отменено, ничего не делаем
+      }
+    });
+  }, [dispatch, nodes]);
+
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <TopPanel onAddScreen={handleAddScreen} />
+      <ConfirmDialog />
+      <TopPanel onAddScreen={handleAddScreen} onClearAllGroups={handleClearAllGroups} />
       <div
         style={{
           width: "100%",
