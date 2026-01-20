@@ -148,8 +148,8 @@ export const arrangeNodePositions = (nodes, groupId, nodeHeight = NODE.height) =
         position: {
           x: NODE.horizontalPadding,
           y: Math.max(
-            POS.verticalPadding,
-            Math.min(parentHeight - nodeHeight - POS.verticalPadding, newPositionY)
+            10, // используем конкретное значение вместо POS.verticalPadding
+            Math.min(parentHeight - nodeHeight - 10, newPositionY) // используем конкретное значение
           )
         }
       };
