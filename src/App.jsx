@@ -115,6 +115,39 @@ function App() {
     [dispatch],
   );
 
+  // Ограничение перемещения ноды внутри её родительской группы во время перетаскивания
+  const onNodeDrag = useCallback((event, node) => {
+    if (node.parentNode) {
+      const parentNode = nodes.find(n => n.id === node.parentNode);
+      if (parentNode) {
+        // Получаем размеры родительской группы из данных
+        const parentWidth = parentNode.data?.style?.width || 220;
+        const parentHeight = parentNode.data?.style?.height || 220;
+
+        // Получаем размеры самой ноды
+        const nodeWidth = 180; // ширина ноды
+        const nodeHeight = 50; // примерная высота ноды
+
+        // Ограничиваем координаты ноды в пределах родительской группы
+        const maxX = parentWidth - nodeWidth;
+        const maxY = parentHeight - nodeHeight;
+
+        // Проверяем, нужно ли ограничить позицию ноды
+        if (node.position.x < 0 || node.position.x > maxX || node.position.y < 0 || node.position.y > maxY) {
+          // Корректируем позицию ноды, чтобы она оставалась внутри группы
+          const correctedNode = {
+            ...node,
+            position: {
+              x: Math.max(0, Math.min(node.position.x, maxX)),
+              y: Math.max(0, Math.min(node.position.y, maxY))
+            }
+          };
+          dispatch(updateNode(correctedNode));
+        }
+      }
+    }
+  }, [nodes, dispatch]);
+
   // Функция для обновления нод
   const onNodesChange = useCallback(
     (changes) => {
@@ -152,6 +185,7 @@ function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeDrag={onNodeDrag}
         onNodeDragStop={onNodeDragStop}
         nodeTypes={nodeTypes}
       >
