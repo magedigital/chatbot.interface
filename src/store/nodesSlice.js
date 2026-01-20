@@ -67,6 +67,22 @@ const nodesSlice = createSlice({
         state.nodes = arrangeNodePositions(state.nodes, node.parentNode);
       }
     },
+
+    // Редюсер для очистки всех групп экранов
+    clearAllScreenGroups: (state) => {
+      // Находим все группы экранов (ноды типа 'screenGroupNode')
+      const screenGroupIds = state.nodes
+        .filter(n => n.type === 'screenGroupNode')
+        .map(group => group.id);
+
+      // Удаляем все ноды, которые принадлежат этим группам (включая дочерние ноды)
+      state.nodes = state.nodes.filter(node =>
+        !node.parentNode || !screenGroupIds.includes(node.parentNode)
+      ).filter(node =>
+        // Также удаляем сами группы экранов
+        !screenGroupIds.includes(node.id)
+      );
+    },
   },
 });
 
@@ -81,6 +97,7 @@ export const {
   removeEdge,
   addNodeToGroup,
   updateNodePositionsInGroup,
+  clearAllScreenGroups,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;

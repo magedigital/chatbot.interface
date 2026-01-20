@@ -10,6 +10,7 @@ import {
   addNodeToGroup,
   updateNodePositionsInGroup,
   removeNode,
+  clearAllScreenGroups,
 } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -169,28 +170,14 @@ function App() {
       icon: 'pi pi-exclamation-triangle',
       acceptClassName: 'p-button-danger',
       accept: () => {
-        // Находим все группы экранов
-        const screenGroups = nodes.filter(n => n.type === 'screenGroupNode');
-
-        // Удаляем каждую группу и все её дочерние ноды
-        screenGroups.forEach(group => {
-          // Находим все дочерние ноды
-          const childNodes = nodes.filter(n => n.parentNode === group.id);
-
-          // Удаляем дочерние ноды
-          childNodes.forEach(childNode => {
-            dispatch(removeNode(childNode.id));
-          });
-
-          // Удаляем саму группу
-          dispatch(removeNode(group.id));
-        });
+        // Вызываем Redux действие для очистки всех групп экранов
+        dispatch(clearAllScreenGroups());
       },
       reject: () => {
         // Действие отменено, ничего не делаем
       }
     });
-  }, [dispatch, nodes]);
+  }, [dispatch]);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
