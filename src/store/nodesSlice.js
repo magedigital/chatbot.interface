@@ -65,6 +65,38 @@ const nodesSlice = createSlice({
           },
         };
       }
+
+      // Вызываем функцию для выстраивания позиций нод в группе
+      const groupNodes = state.nodes.filter(
+        n => n.parentNode === groupId
+      );
+
+      // Сортируем ноды по Y-координате
+      groupNodes.sort((a, b) => a.position.y - b.position.y);
+
+      // Распределяем ноды равномерно по вертикали
+      const parentHeight = groupNode.data?.style?.height || 220;
+      const nodeHeight = 50;
+      const spacing = parentHeight / (groupNodes.length + 1); // равномерное распределение
+
+      // Обновляем позиции всех нод в группе для вертикального упорядочивания
+      groupNodes.forEach((n, index) => {
+        const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
+
+        const nodeToUpdateIndex = state.nodes.findIndex(nodeToUpdate => nodeToUpdate.id === n.id);
+        if (nodeToUpdateIndex !== -1) {
+          state.nodes[nodeToUpdateIndex] = {
+            ...state.nodes[nodeToUpdateIndex],
+            position: {
+              x: 20,
+              y: Math.max(
+                10,
+                Math.min(parentHeight - nodeHeight - 10, newPositionY)
+              )
+            }
+          };
+        }
+      });
     },
     updateNodePositionsInGroup: (state, action) => {
       const { node, nodeWidth = 180, nodeHeight = 50 } = action.payload;
@@ -96,25 +128,19 @@ const nodesSlice = createSlice({
             };
           }
 
-          // Находим все ноды, принадлежащие этой же группе
-          const siblingNodes = state.nodes.filter(
-            (n) => n.parentNode === node.parentNode && n.id !== node.id,
+          // Вызываем общую логику для выстраивания всех нод в группе
+          const groupNodes = state.nodes.filter(
+            n => n.parentNode === node.parentNode
           );
 
-          // Добавляем текущую ноду в список для сортировки
-          const allGroupNodes = [
-            ...siblingNodes,
-            { ...node, position: { x: newX, y: newY } },
-          ];
-
           // Сортируем ноды по Y-координате
-          allGroupNodes.sort((a, b) => a.position.y - b.position.y);
+          groupNodes.sort((a, b) => a.position.y - b.position.y);
 
           // Распределяем ноды равномерно по вертикали
-          const spacing = parentHeight / (allGroupNodes.length + 1); // равномерное распределение
+          const spacing = parentHeight / (groupNodes.length + 1); // равномерное распределение
 
           // Обновляем позиции всех нод в группе для вертикального упорядочивания
-          allGroupNodes.forEach((n, index) => {
+          groupNodes.forEach((n, index) => {
             const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
 
             const nodeToUpdateIndex = state.nodes.findIndex(
