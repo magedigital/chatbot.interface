@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   nodes: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const nodesSlice = createSlice({
-  name: 'nodes',
+  name: "nodes",
   initialState,
   reducers: {
     setNodes: (state, action) => {
@@ -20,10 +20,12 @@ const nodesSlice = createSlice({
       state.nodes.push(action.payload);
     },
     removeNode: (state, action) => {
-      state.nodes = state.nodes.filter(node => node.id !== action.payload);
+      state.nodes = state.nodes.filter((node) => node.id !== action.payload);
     },
     updateNode: (state, action) => {
-      const index = state.nodes.findIndex(node => node.id === action.payload.id);
+      const index = state.nodes.findIndex(
+        (node) => node.id === action.payload.id,
+      );
       if (index !== -1) {
         state.nodes[index] = action.payload;
       }
@@ -32,10 +34,14 @@ const nodesSlice = createSlice({
       state.selectedNode = action.payload;
     },
     addEdge: (state, action) => {
-      state.edges.push(action.payload);
+      const newEdge = {
+        ...action.payload,
+        id: `edge-${action.payload.source}-${action.payload.target}`,
+      };
+      state.edges.push(newEdge);
     },
     removeEdge: (state, action) => {
-      state.edges = state.edges.filter(edge => edge.id !== action.payload);
+      state.edges = state.edges.filter((edge) => edge.id !== action.payload);
     },
     addNodeToGroup: (state, action) => {
       const { groupId, nodeData } = action.payload;
@@ -44,17 +50,19 @@ const nodesSlice = createSlice({
       state.nodes.push(nodeData);
 
       // Обновляем размер группы
-      const groupNode = state.nodes.find(n => n.id === groupId);
+      const groupNode = state.nodes.find((n) => n.id === groupId);
       if (groupNode) {
-        const groupChildren = state.nodes.filter(n => n.parentNode === groupId);
+        const groupChildren = state.nodes.filter(
+          (n) => n.parentNode === groupId,
+        );
         const newHeight = Math.max(100, 60 + groupChildren.length * 50);
 
         groupNode.data = {
           ...groupNode.data,
           style: {
             ...groupNode.data.style,
-            height: newHeight
-          }
+            height: newHeight,
+          },
         };
       }
     },
@@ -63,31 +71,40 @@ const nodesSlice = createSlice({
 
       // Проверяем, есть ли у ноды родительская группа
       if (node.parentNode) {
-        const parentNode = state.nodes.find(n => n.id === node.parentNode);
+        const parentNode = state.nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
           // Получаем размеры родительской группы из данных
           const parentWidth = parentNode.data?.style?.width || 220;
           const parentHeight = parentNode.data?.style?.height || 220;
 
           // Ограничиваем координаты ноды в пределах родительской группы
-          const newX = Math.max(0, Math.min(node.position.x, parentWidth - nodeWidth));
-          const newY = Math.max(0, Math.min(node.position.y, parentHeight - nodeHeight));
+          const newX = Math.max(
+            0,
+            Math.min(node.position.x, parentWidth - nodeWidth),
+          );
+          const newY = Math.max(
+            0,
+            Math.min(node.position.y, parentHeight - nodeHeight),
+          );
 
           // Обновляем позицию ноды
-          const nodeIndex = state.nodes.findIndex(n => n.id === node.id);
+          const nodeIndex = state.nodes.findIndex((n) => n.id === node.id);
           if (nodeIndex !== -1) {
-            state.nodes[nodeIndex] = { ...state.nodes[nodeIndex], position: { x: newX, y: newY } };
+            state.nodes[nodeIndex] = {
+              ...state.nodes[nodeIndex],
+              position: { x: newX, y: newY },
+            };
           }
 
           // Находим все ноды, принадлежащие этой же группе
           const siblingNodes = state.nodes.filter(
-            n => n.parentNode === node.parentNode && n.id !== node.id
+            (n) => n.parentNode === node.parentNode && n.id !== node.id,
           );
 
           // Добавляем текущую ноду в список для сортировки
           const allGroupNodes = [
             ...siblingNodes,
-            { ...node, position: { x: newX, y: newY } }
+            { ...node, position: { x: newX, y: newY } },
           ];
 
           // Сортируем ноды по Y-координате
@@ -100,7 +117,9 @@ const nodesSlice = createSlice({
           allGroupNodes.forEach((n, index) => {
             const newPositionY = spacing * (index + 1) - nodeHeight / 2; // центрируем по высоте ноды
 
-            const nodeToUpdateIndex = state.nodes.findIndex(nodeToUpdate => nodeToUpdate.id === n.id);
+            const nodeToUpdateIndex = state.nodes.findIndex(
+              (nodeToUpdate) => nodeToUpdate.id === n.id,
+            );
             if (nodeToUpdateIndex !== -1) {
               state.nodes[nodeToUpdateIndex] = {
                 ...state.nodes[nodeToUpdateIndex],
@@ -108,9 +127,9 @@ const nodesSlice = createSlice({
                   x: 20,
                   y: Math.max(
                     10,
-                    Math.min(parentHeight - nodeHeight - 10, newPositionY)
-                  )
-                }
+                    Math.min(parentHeight - nodeHeight - 10, newPositionY),
+                  ),
+                },
               };
             }
           });

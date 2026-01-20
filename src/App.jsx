@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactFlow, { MiniMap, Controls, Background, addEdge } from "reactflow";
+import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import {
   setNodes,
   setEdges,
   addNode,
+  addEdge as addEdgeAction,
   updateNode,
   addNodeToGroup,
   updateNodePositionsInGroup,
@@ -90,7 +91,7 @@ function App() {
         ...params,
         id: `edge-${params.source}-${params.target}`,
       };
-      dispatch(addEdge(newEdge));
+      dispatch(addEdgeAction(newEdge));
     },
     [dispatch],
   );
