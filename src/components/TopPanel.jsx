@@ -1,0 +1,31 @@
+import React from 'react';
+import { Button } from 'primereact/button';
+
+const TopPanel = ({ onAddScreen }) => {
+  return (
+    <div 
+      style={{ 
+        height: '60px', 
+        backgroundColor: '#f8f9fa', 
+        borderBottom: '1px solid #dee2e6',
+        display: 'flex',
+        alignItems: 'center',
+        paddingLeft: '20px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000
+      }}
+    >
+      <Button
+        label="Добавить экран"
+        icon="pi pi-plus"
+        onClick={() => onAddScreen()}
+        className="p-button p-component"
+      />
+    </div>
+  );
+};
+
+export default TopPanel;

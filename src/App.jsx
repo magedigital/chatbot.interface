@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import {
@@ -11,9 +11,13 @@ import {
   updateNodePositionsInGroup,
 } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
+import TopPanel from "./components/TopPanel";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -197,25 +201,48 @@ function App() {
     [dispatch],
   );
 
-  // Удаляем глобальную функцию, так как теперь используем Redux напрямую в компоненте
+  // Функция для добавления новой группы экрана
+  const handleAddScreen = useCallback(() => {
+    const groupId = `screen-group-${Date.now()}`;
+    const newGroupNode = {
+      id: groupId,
+      type: "screenGroupNode",
+      position: { x: Math.random() * 200, y: Math.random() * 200 },
+      data: {
+        label: `Screen Group ${nodes.filter(n => n.type === 'screenGroupNode').length + 1}`,
+        style: {
+          width: 220,
+          height: 100, // начальная высота для пустой группы
+          backgroundColor: "rgba(200, 200, 200, 0.2)",
+          border: "2px solid #555",
+          borderRadius: "8px",
+        },
+      },
+    };
+
+    dispatch(addNode(newGroupNode));
+  }, [dispatch, nodes]);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeDragStart={onNodeDragStart}
-        onNodeDrag={onNodeDrag}
-        onNodeDragStop={onNodeDragStop}
-        nodeTypes={nodeTypes}
-      >
-        <Controls />
-        <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
-      </ReactFlow>
+    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+      <TopPanel onAddScreen={handleAddScreen} />
+      <div style={{ width: "100%", height: "calc(100% - 60px)", position: "relative", top: "60px" }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDrag={onNodeDrag}
+          onNodeDragStop={onNodeDragStop}
+          nodeTypes={nodeTypes}
+        >
+          <Controls />
+          <MiniMap />
+          <Background variant="dots" gap={12} size={1} />
+        </ReactFlow>
+      </div>
     </div>
   );
 }
