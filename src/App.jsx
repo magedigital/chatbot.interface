@@ -86,12 +86,7 @@ function App() {
 
   const onConnect = useCallback(
     (params) => {
-      // Создаем новую связь с уникальным ID
-      const newEdge = {
-        ...params,
-        id: `edge-${params.source}-${params.target}`,
-      };
-      dispatch(addEdgeAction(newEdge));
+      dispatch(addEdgeAction(params));
     },
     [dispatch],
   );
