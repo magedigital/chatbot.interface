@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { arrangeNodePositions, createNodeInGroup } from "./nodeUtils";
+import { arrangeNodePositions, createNodeInGroup, updateGroupNodeDimensions } from "./nodeUtils";
 
 const initialState = {
   nodes: [],
@@ -53,22 +53,8 @@ const nodesSlice = createSlice({
       // Добавляем новую ноду
       state.nodes.push(newNode);
 
-      // Обновляем размер группы
-      const groupNode = state.nodes.find((n) => n.id === groupId);
-      if (groupNode) {
-        const groupChildren = state.nodes.filter(
-          (n) => n.parentNode === groupId,
-        );
-        const newHeight = Math.max(100, 60 + groupChildren.length * 50);
-
-        groupNode.data = {
-          ...groupNode.data,
-          style: {
-            ...groupNode.data.style,
-            height: newHeight,
-          },
-        };
-      }
+      // Обновляем размеры группы
+      state.nodes = updateGroupNodeDimensions(state.nodes, groupId);
 
       // Вызываем внешнюю функцию для выстраивания позиций нод в группе
       state.nodes = arrangeNodePositions(state.nodes, groupId);

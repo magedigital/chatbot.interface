@@ -43,6 +43,39 @@ export const createNodeInGroup = (groupId, nodes) => {
 };
 
 /**
+ * Функция для обновления размеров группы под размер списка нод
+ * @param {Array} nodes - массив нод
+ * @param {string} groupId - ID группы
+ * @returns {Array} - обновленный массив нод
+ */
+export const updateGroupNodeDimensions = (nodes, groupId) => {
+  const groupNode = nodes.find(n => n.id === groupId);
+  if (!groupNode) return nodes;
+
+  const groupChildren = nodes.filter(
+    n => n.parentNode === groupId,
+  );
+  const newHeight = Math.max(100, 60 + groupChildren.length * 50);
+
+  const updatedNodes = [...nodes];
+  const groupNodeIndex = updatedNodes.findIndex(n => n.id === groupId);
+  if (groupNodeIndex !== -1) {
+    updatedNodes[groupNodeIndex] = {
+      ...updatedNodes[groupNodeIndex],
+      data: {
+        ...updatedNodes[groupNodeIndex].data,
+        style: {
+          ...updatedNodes[groupNodeIndex].data?.style,
+          height: newHeight,
+        },
+      },
+    };
+  }
+
+  return updatedNodes;
+};
+
+/**
  * Функция для выстраивания позиций нод в группе
  * @param {Array} nodes - массив нод
  * @param {string} groupId - ID группы
