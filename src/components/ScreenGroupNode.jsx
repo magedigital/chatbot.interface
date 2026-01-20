@@ -32,8 +32,8 @@ const ScreenGroupNode = ({ data, id, children }) => {
         style={{
           top: "50%",
           left: -8,
-          width: 8,
-          height: 8,
+          width: 15,
+          height: 15,
         }}
       />
       <div

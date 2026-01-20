@@ -18,7 +18,7 @@ const InnerNode = ({ data, id }) => {
       <Handle
         type="source"
         position={Position.Right}
-        style={{ right: -8, top: "50%" }}
+        style={{ right: -8, top: "50%", width: 15, height: 15 }}
       />
     </div>
   );

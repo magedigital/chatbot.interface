@@ -2,6 +2,8 @@
  * Служебные функции для манипуляций над нодами
  */
 
+import { GROUP, NODE, POS } from "./nodeConfig";
+
 /**
  * Функция для создания новой ноды в группе
  * @param {string} groupId - ID группы
@@ -49,13 +51,13 @@ export const createNodeInGroup = (groupId, nodes) => {
  * @param {number} offsetY - смещение по Y для новой группы
  * @returns {Object} - новая группа нод
  */
-export const createScreenGroup = (existingNodes, offsetX = 50, offsetY = 50) => {
+export const createScreenGroup = (existingNodes, offsetX = GROUP.offsetX, offsetY = GROUP.offsetY) => {
   const groupCount = existingNodes.filter(n => n.type === 'screenGroupNode').length;
   const groupId = `screen-group-${Date.now()}`;
 
   // Рассчитываем координаты с учетом количества существующих групп
-  const x = 50 + (groupCount * offsetX);
-  const y = 50 + (groupCount * offsetY);
+  const x = GROUP.initialX + (groupCount * offsetX);
+  const y = GROUP.initialY + (groupCount * offsetY);
 
   const newGroupNode = {
     id: groupId,
@@ -64,8 +66,8 @@ export const createScreenGroup = (existingNodes, offsetX = 50, offsetY = 50) => 
     data: {
       label: `Screen Group ${groupCount + 1}`,
       style: {
-        width: 220,
-        height: 100, // начальная высота для пустой группы
+        width: GROUP.width,
+        height: POS.minGroupHeight, // начальная высота для пустой группы
         backgroundColor: "rgba(200, 200, 200, 0.2)",
         border: "2px solid #555",
         borderRadius: "8px",
@@ -89,7 +91,7 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
   const groupChildren = nodes.filter(
     n => n.parentNode === groupId,
   );
-  const newHeight = Math.max(100, 60 + groupChildren.length * 50);
+  const newHeight = Math.max(POS.minGroupHeight, POS.baseGroupHeight + groupChildren.length * NODE.height);
 
   const updatedNodes = [...nodes];
   const groupNodeIndex = updatedNodes.findIndex(n => n.id === groupId);
@@ -113,10 +115,10 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
  * Функция для выстраивания позиций нод в группе
  * @param {Array} nodes - массив нод
  * @param {string} groupId - ID группы
- * @param {number} nodeHeight - высота ноды (по умолчанию 50)
+ * @param {number} nodeHeight - высота ноды (по умолчанию берется из NODE.height)
  * @returns {Array} - обновленный массив нод
  */
-export const arrangeNodePositions = (nodes, groupId, nodeHeight = 50) => {
+export const arrangeNodePositions = (nodes, groupId, nodeHeight = NODE.height) => {
   const groupNode = nodes.find(n => n.id === groupId);
   if (!groupNode) return nodes;
 
@@ -129,7 +131,7 @@ export const arrangeNodePositions = (nodes, groupId, nodeHeight = 50) => {
   groupNodes.sort((a, b) => a.position.y - b.position.y);
 
   // Получаем размеры родительской группы из данных
-  const parentHeight = groupNode.data?.style?.height || 220;
+  const parentHeight = groupNode.data?.style?.height || GROUP.height;
 
   // Распределяем ноды равномерно по вертикали
   const spacing = parentHeight / (groupNodes.length + 1); // равномерное распределение
@@ -144,10 +146,10 @@ export const arrangeNodePositions = (nodes, groupId, nodeHeight = 50) => {
       updatedNodes[nodeToUpdateIndex] = {
         ...updatedNodes[nodeToUpdateIndex],
         position: {
-          x: 20,
+          x: NODE.horizontalPadding,
           y: Math.max(
-            10,
-            Math.min(parentHeight - nodeHeight - 10, newPositionY)
+            POS.verticalPadding,
+            Math.min(parentHeight - nodeHeight - POS.verticalPadding, newPositionY)
           )
         }
       };
