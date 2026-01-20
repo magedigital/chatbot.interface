@@ -115,6 +115,29 @@ function App() {
     [dispatch],
   );
 
+  // Обработчик начала перетаскивания ноды - устанавливаем z-index для отображения поверх других нод
+  const onNodeDragStart = useCallback((event, node) => {
+    // Проверяем, есть ли у ноды родительская группа
+    if (node.parentNode) {
+      // Находим все ноды в той же группе
+      const siblingNodes = nodes.filter(n => n.parentNode === node.parentNode && n.id !== node.id);
+
+      // Находим максимальный z-index среди нод в группе
+      const maxZIndex = siblingNodes.reduce((max, n) => {
+        const zIndex = n.zIndex || 0;
+        return zIndex > max ? zIndex : max;
+      }, 0);
+
+      // Устанавливаем z-index перетаскиваемой ноды на 1 больше максимального
+      const updatedNode = {
+        ...node,
+        zIndex: maxZIndex + 1
+      };
+
+      dispatch(updateNode(updatedNode));
+    }
+  }, [nodes, dispatch]);
+
   // Ограничение перемещения ноды внутри её родительской группы во время перетаскивания
   const onNodeDrag = useCallback((event, node) => {
     if (node.parentNode) {
@@ -185,6 +208,7 @@ function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeDragStart={onNodeDragStart}
         onNodeDrag={onNodeDrag}
         onNodeDragStop={onNodeDragStop}
         nodeTypes={nodeTypes}
