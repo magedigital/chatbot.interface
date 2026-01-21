@@ -1,15 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  BaseEdge,
-  Connection,
-  Edge,
-  Node,
-  isValidConnection,
-} from "reactflow";
+import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import {
   setNodes,
   setEdges,
@@ -55,9 +46,29 @@ function App() {
 
   const onConnect = useCallback(
     (params) => {
-      dispatch(addEdgeAction(params));
+      // Проверяем, есть ли уже соединение от этого источника
+      const existingEdge = edges.find(edge => edge.source === params.source);
+      if (existingEdge) {
+        // Если есть, удаляем старое соединение
+        dispatch(removeEdge(existingEdge.id));
+      }
+
+      // Создаем новое соединение
+      const newEdge = {
+        ...params,
+        id: `edge-${params.source}-${params.target}`,
+        style: {
+          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+        },
+        markerEnd: { type: "arrowclosed" },
+        deletable: true,
+        reconnectable: true,
+        updatable: true,
+      };
+
+      dispatch(addEdgeAction(newEdge));
     },
-    [dispatch],
+    [dispatch, edges],
   );
 
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
@@ -171,7 +182,7 @@ function App() {
     (event, edge) => {
       dispatch(removeEdge(edge.id));
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Обработчик обновления ребра
@@ -195,16 +206,13 @@ function App() {
 
       dispatch(addEdgeAction(updatedEdge));
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Обработчик начала обновления ребра
-  const onEdgeUpdateStart = useCallback(
-    (event, edge, handleType) => {
-      // Начало перетаскивания ребра
-    },
-    []
-  );
+  const onEdgeUpdateStart = useCallback((event, edge, handleType) => {
+    // Начало перетаскивания ребра
+  }, []);
 
   // Обработчик окончания обновления ребра
   const onEdgeUpdateEnd = useCallback(
@@ -214,7 +222,7 @@ function App() {
         dispatch(removeEdge(edge.id));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Функция для добавления новой группы экрана
