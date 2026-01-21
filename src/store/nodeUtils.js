@@ -95,7 +95,8 @@ export const getGroupNodeHeight = (nodeCount) => {
     nodeCount * NODE.height +
     nodeCount * (NODE.groupVerticalSpacing - 1) +
     GROUP.controlsHeight +
-    (nodeCount > 0 ? GROUP.verticalSpacing * 2 : 0)
+    (nodeCount > 0 ? GROUP.verticalSpacing : 0) +
+    GROUP.verticalSpacing
   );
 };
 

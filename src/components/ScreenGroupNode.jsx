@@ -1,6 +1,10 @@
 import React, { useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { addNodeToGroup, removeNode, removeGroupNode } from "../store/nodesSlice";
+import {
+  addNodeToGroup,
+  removeNode,
+  removeGroupNode,
+} from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -89,9 +93,13 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           fontWeight: "bold",
           textAlign: "center",
           position: "absolute",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           top: GROUP.verticalPadding,
-          left: 0,
-          right: 0,
+          left: (GROUP.width - NODE.width) / 2,
+          width: NODE.width,
+          height: GROUP.topHeight,
         }}
       >
         {data.label}
@@ -99,20 +107,16 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           ref={menuBtn}
           icon="pi pi-ellipsis-v"
           className="p-button-text p-button-plain"
+          size="small"
           style={{
-            marginLeft: "8px",
-            padding: "2px",
-            fontSize: "12px",
+            width: "auto",
+            paddingLeft: 4,
+            paddingRight: 4,
           }}
           onClick={handleMenuToggle}
         />
-        <Menu
-          ref={menu}
-          model={menuItems}
-          popup
-          // onHide={() => menu && menu.current && menu.current.hide()}
-        />
       </div>
+      <Menu ref={menu} model={menuItems} popup />
 
       <div
         style={{

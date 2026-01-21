@@ -18,6 +18,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { PrimeReactProvider } from "primereact/api";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
@@ -250,45 +251,51 @@ function App() {
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <ConfirmDialog />
-      <TopPanel
-        onAddScreen={handleAddScreen}
-        onClearAllGroups={handleClearAllGroups}
-      />
-      <div
-        style={{
-          width: "100%",
-          height: "calc(100% - 60px)",
-          position: "relative",
-          top: "60px",
+      <PrimeReactProvider
+        value={{
+          hideOverlaysOnDocumentScrolling: true,
         }}
       >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeDragStart={onNodeDragStart}
-          onNodeDrag={onNodeDrag}
-          onNodeDragStop={onNodeDragStop}
-          onEdgeDoubleClick={onEdgeDoubleClick}
-          onEdgeUpdate={onEdgeUpdate}
-          onEdgeUpdateStart={onEdgeUpdateStart}
-          onEdgeUpdateEnd={onEdgeUpdateEnd}
-          nodeTypes={nodeTypes}
+        <ConfirmDialog />
+        <TopPanel
+          onAddScreen={handleAddScreen}
+          onClearAllGroups={handleClearAllGroups}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "calc(100% - 60px)",
+            position: "relative",
+            top: "60px",
+          }}
         >
-          <Controls />
-          <MiniMap />
-          <Background
-            variant="dots"
-            gap={20}
-            size={1}
-            color="#E9B1A3"
-            style={{ backgroundColor: "#2F435A" }}
-          />
-        </ReactFlow>
-      </div>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeDragStart={onNodeDragStart}
+            onNodeDrag={onNodeDrag}
+            onNodeDragStop={onNodeDragStop}
+            onEdgeDoubleClick={onEdgeDoubleClick}
+            onEdgeUpdate={onEdgeUpdate}
+            onEdgeUpdateStart={onEdgeUpdateStart}
+            onEdgeUpdateEnd={onEdgeUpdateEnd}
+            nodeTypes={nodeTypes}
+          >
+            <Controls />
+            <MiniMap />
+            <Background
+              variant="dots"
+              gap={20}
+              size={1}
+              color="#E9B1A3"
+              style={{ backgroundColor: "#2F435A" }}
+            />
+          </ReactFlow>
+        </div>
+      </PrimeReactProvider>
     </div>
   );
 }
