@@ -9,11 +9,14 @@ const InnerNode = ({ data, id }) => {
       style={{
         background: data.color || "#777",
         padding: data.style?.padding || 8,
-        border: data.style?.border || Node.border + "px solid #fff",
+        border:
+          data.style?.border || NODE.border + "px solid " + NODE.borderColor,
         borderRadius: data.style?.borderRadius || NODE.borderRadius,
-        textAlign: data.style?.textAlign || "center",
         width: data.style?.width || NODE.width,
         height: data.style?.height || NODE.height,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <div>{data.label}</div>

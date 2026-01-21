@@ -62,8 +62,7 @@ const ScreenGroupNode = ({ data, id, children }) => {
         <Button
           icon="pi pi-plus"
           onClick={handleClick}
-          className="p-button-sm"
-          severity="info"
+          size="small"
           style={{
             width: "100%",
           }}

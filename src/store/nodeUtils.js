@@ -15,18 +15,9 @@ export const createNodeInGroup = (groupId, nodes) => {
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
 
-  // Цвета в последовательном порядке (установленные цвета)
-  const colors = [
-    "#fdc576", // Light Orange
-    "#ffaeab", // Light Pink
-    "#f4b2e5", // Light Magenta
-    "#89d6ff", // Light Blue
-    "#8ce5cb", // Light Green
-  ];
-
   // Выбираем цвет последовательно по индексу
-  const colorIndex = nodeCount % colors.length;
-  const selectedColor = colors[colorIndex];
+  const colorIndex = nodeCount % NODE.colors.length;
+  const selectedColor = NODE.colors[colorIndex];
 
   const newNodeId = `${groupId}-node-${nodeCount + 1}`;
   const newNode = {
@@ -73,6 +64,9 @@ export const createScreenGroup = (
   const x = GROUP.initialX + groupCount * offsetX;
   const y = GROUP.initialY + groupCount * offsetY;
 
+  const colorIndex = groupCount % GROUP.colors.length;
+  const selectedColor = GROUP.colors[colorIndex];
+
   const newGroupNode = {
     id: groupId,
     type: "screenGroupNode",
@@ -82,9 +76,9 @@ export const createScreenGroup = (
       style: {
         width: GROUP.width,
         height: getGroupNodeHeight(0),
-        backgroundColor: GROUP.backgroundColor,
+        backgroundColor: selectedColor,
         border: GROUP.border + "px solid " + GROUP.borderColor,
-        borderRadius: "8px",
+        borderRadius: GROUP.borderRadius,
       },
     },
   };

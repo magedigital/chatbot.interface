@@ -43,9 +43,13 @@ const nodesSlice = createSlice({
       const newEdge = {
         ...action.payload,
         id: `edge-${action.payload.source}-${action.payload.target}`,
+        style: {
+          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+        },
         markerEnd: { type: MarkerType.ArrowClosed },
         deletable: true,
-        reconnectable: "source",
+        reconnectable: true, // Разрешаем переподключение
+        updatable: true, // Разрешаем обновление соединений
       };
       state.edges.push(newEdge);
     },

@@ -1,6 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactFlow, { MiniMap, Controls, Background, BaseEdge } from "reactflow";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  BaseEdge,
+  Connection,
+  Edge,
+  Node,
+  isValidConnection,
+} from "reactflow";
 import {
   setNodes,
   setEdges,
@@ -10,6 +19,7 @@ import {
   addNodeToGroup,
   updateNodePositionsInGroup,
   removeNode,
+  removeEdge,
   clearAllScreenGroups,
 } from "./store/nodesSlice";
 import "reactflow/dist/style.css";
@@ -156,6 +166,57 @@ function App() {
     [dispatch],
   );
 
+  // Обработчик двойного клика по ребру - удаление ребра
+  const onEdgeDoubleClick = useCallback(
+    (event, edge) => {
+      dispatch(removeEdge(edge.id));
+    },
+    [dispatch]
+  );
+
+  // Обработчик обновления ребра
+  const onEdgeUpdate = useCallback(
+    (oldEdge, newConnection) => {
+      // Удаляем старое ребро
+      dispatch(removeEdge(oldEdge.id));
+
+      // Создаем новое ребро с обновленным соединением
+      const updatedEdge = {
+        ...newConnection,
+        id: `edge-${newConnection.source}-${newConnection.target}`,
+        style: {
+          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+        },
+        markerEnd: { type: "arrowclosed" },
+        deletable: true,
+        reconnectable: true,
+        updatable: true,
+      };
+
+      dispatch(addEdgeAction(updatedEdge));
+    },
+    [dispatch]
+  );
+
+  // Обработчик начала обновления ребра
+  const onEdgeUpdateStart = useCallback(
+    (event, edge, handleType) => {
+      // Начало перетаскивания ребра
+    },
+    []
+  );
+
+  // Обработчик окончания обновления ребра
+  const onEdgeUpdateEnd = useCallback(
+    (event, edge, handleType) => {
+      // Если ребро отпущено в пустом месте (без соединения с узлом), удаляем его
+      if (!edge.target && !edge.sourceHandle) {
+        dispatch(removeEdge(edge.id));
+      }
+    },
+    [dispatch]
+  );
+
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
     const newGroupNode = createScreenGroup(nodes);
@@ -203,6 +264,10 @@ function App() {
           onNodeDragStart={onNodeDragStart}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
+          onEdgeDoubleClick={onEdgeDoubleClick}
+          onEdgeUpdate={onEdgeUpdate}
+          onEdgeUpdateStart={onEdgeUpdateStart}
+          onEdgeUpdateEnd={onEdgeUpdateEnd}
           nodeTypes={nodeTypes}
         >
           <Controls />
