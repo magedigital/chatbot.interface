@@ -15,27 +15,38 @@ export const createNodeInGroup = (groupId, nodes) => {
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
 
-  // Генерируем случайный цвет
+  // Цвета в последовательном порядке (более темные)
   const colors = [
-    "#ffebee",
-    "#f3e5f5",
-    "#e8eaf6",
-    "#e0f2f1",
-    "#e8f5e8",
-    "#fff3e0",
-    "#fbe9e7",
-    "#efebe9",
+    "#f44336", // Red
+    "#9c27b0", // Purple
+    "#3f51b5", // Indigo
+    "#009688", // Teal
+    "#4caf50", // Green
+    "#ff9800", // Orange
+    "#ff5722", // Deep Orange
+    "#795548", // Brown
   ];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+  // Выбираем цвет последовательно по индексу
+  const colorIndex = nodeCount % colors.length;
+  const selectedColor = colors[colorIndex];
 
   const newNodeId = `${groupId}-node-${nodeCount + 1}`;
   const newNode = {
     id: newNodeId,
     type: "innerNode",
-    position: { x: 20, y: 40 + nodeCount * 50 }, // Вертикальное расположение
+    position: {
+      x: (GROUP.width - NODE.width) / 2,
+      y:
+        GROUP.verticalPadding +
+        GROUP.topHeight +
+        GROUP.verticalSpacing +
+        NODE.groupVerticalPadding +
+        (NODE.height + NODE.groupVerticalSpacing) * nodeCount,
+    }, // Вертикальное расположение
     data: {
       label: `Node ${nodeCount + 1}`,
-      color: randomColor,
+      color: selectedColor,
     },
     parentNode: groupId,
     selectable: false,
@@ -73,15 +84,28 @@ export const createScreenGroup = (
       label: `Screen Group ${groupCount + 1}`,
       style: {
         width: GROUP.width,
-        height: GROUP.minGroupHeight, // начальная высота для пустой группы
-        backgroundColor: "rgba(200, 200, 200, 0.2)",
-        border: "2px solid #555",
+        height: getGroupNodeHeight(0),
+        backgroundColor: GROUP.backgroundColor,
+        border: GROUP.border + "px solid " + GROUP.borderColor,
         borderRadius: "8px",
       },
     },
   };
 
   return newGroupNode;
+};
+
+export const getGroupNodeHeight = (nodeCount) => {
+  return (
+    GROUP.border * 2 +
+    GROUP.topHeight +
+    GROUP.verticalPadding * 2 +
+    (nodeCount > 0 ? NODE.groupVerticalPadding * 2 : 0) +
+    nodeCount * NODE.height +
+    nodeCount * (NODE.groupVerticalSpacing - 1) +
+    GROUP.controlsHeight +
+    (nodeCount > 0 ? GROUP.verticalSpacing * 2 : 0)
+  );
 };
 
 /**
@@ -95,13 +119,6 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
   if (!groupNode) return nodes;
 
   const groupChildren = nodes.filter((n) => n.parentNode === groupId);
-  const newHeight = Math.max(
-    GROUP.minGroupHeight,
-    GROUP.groupHeadHeight +
-      NODE.verticalPadding * 2 +
-      groupChildren.length * NODE.height +
-      groupChildren.length * (NODE.verticalSpacing - 1),
-  );
 
   const updatedNodes = [...nodes];
   const groupNodeIndex = updatedNodes.findIndex((n) => n.id === groupId);
@@ -112,7 +129,7 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
         ...updatedNodes[groupNodeIndex].data,
         style: {
           ...updatedNodes[groupNodeIndex].data?.style,
-          height: newHeight,
+          height: getGroupNodeHeight(groupChildren.length),
         },
       },
     };
@@ -142,9 +159,11 @@ export const arrangeNodePositions = (nodes, groupId) => {
   const updatedNodes = [...nodes];
   groupNodes.forEach((n, index) => {
     const newPositionY =
-      GROUP.groupHeadHeight +
-      NODE.verticalPadding +
-      (NODE.height + NODE.verticalSpacing) * index; // центрируем по высоте ноды
+      GROUP.topHeight +
+      GROUP.verticalPadding +
+      GROUP.verticalSpacing +
+      NODE.groupVerticalPadding +
+      (NODE.height + NODE.groupVerticalSpacing) * index; // центрируем по высоте ноды
 
     const nodeToUpdateIndex = updatedNodes.findIndex(
       (nodeToUpdate) => nodeToUpdate.id === n.id,

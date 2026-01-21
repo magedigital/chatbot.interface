@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import ReactFlow, { MiniMap, Controls, Background, BaseEdge } from "reactflow";
 import {
   setNodes,
   setEdges,
@@ -16,7 +16,7 @@ import "reactflow/dist/style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
@@ -165,24 +165,27 @@ function App() {
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {
     confirmDialog({
-      message: 'Вы действительно хотите удалить все группы?',
-      header: 'Подтверждение',
-      icon: 'pi pi-exclamation-triangle',
-      acceptClassName: 'p-button-danger',
+      message: "Вы действительно хотите удалить все группы?",
+      header: "Подтверждение",
+      icon: "pi pi-exclamation-triangle",
+      acceptClassName: "p-button-danger",
       accept: () => {
         // Вызываем Redux действие для очистки всех групп экранов
         dispatch(clearAllScreenGroups());
       },
       reject: () => {
         // Действие отменено, ничего не делаем
-      }
+      },
     });
   }, [dispatch]);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <ConfirmDialog />
-      <TopPanel onAddScreen={handleAddScreen} onClearAllGroups={handleClearAllGroups} />
+      <TopPanel
+        onAddScreen={handleAddScreen}
+        onClearAllGroups={handleClearAllGroups}
+      />
       <div
         style={{
           width: "100%",
@@ -204,7 +207,13 @@ function App() {
         >
           <Controls />
           <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
+          <Background
+            variant="dots"
+            gap={20}
+            size={1}
+            color="#E9B1A3"
+            style={{ backgroundColor: "#2F435A" }}
+          />
         </ReactFlow>
       </div>
     </div>

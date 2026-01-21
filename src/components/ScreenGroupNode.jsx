@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { addNodeToGroup } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
-import { GROUP } from "../store/nodeConfig";
+import { GROUP, NODE } from "../store/nodeConfig";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({ data, id, children }) => {
@@ -19,12 +19,12 @@ const ScreenGroupNode = ({ data, id, children }) => {
   return (
     <div
       style={{
-        background: data.style?.backgroundColor || "rgba(200, 200, 200, 0.2)",
-        border: data.style?.border || "2px solid #555",
-        borderRadius: data.style?.borderRadius || "8px",
-        width: data.style?.width || 220,
-        height: data.style?.height || 100,
-        position: "relative",
+        background: data.style?.backgroundColor || "rgba(255, 255, 255, 0.5)",
+        border: data.style?.border || GROUP.border + "px solid #555",
+        borderRadius: data.style?.borderRadius || GROUP.borderRadius,
+        width: data.style?.width || GROUP.width,
+        height: data.style?.height || GROUP.height,
+        position: data.style?.position || "relative",
       }}
     >
       <Handle
@@ -32,18 +32,17 @@ const ScreenGroupNode = ({ data, id, children }) => {
         position={Position.Left}
         style={{
           top: "50%",
-          left: -8,
-          width: 15,
-          height: 15,
+          left: -GROUP.handleSize / 2,
+          width: GROUP.handleSize,
+          height: GROUP.handleSize,
         }}
       />
       <div
         style={{
           fontWeight: "bold",
-          marginBottom: 10,
           textAlign: "center",
           position: "absolute",
-          top: -25,
+          top: GROUP.verticalPadding,
           left: 0,
           right: 0,
         }}
@@ -54,21 +53,19 @@ const ScreenGroupNode = ({ data, id, children }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: GROUP.groupHeadHeight,
-          overflow: "hidden",
+          left: (GROUP.width - NODE.width) / 2,
+          bottom: GROUP.verticalPadding,
+          width: NODE.width,
+          height: GROUP.groupControlsHeight,
         }}
       >
         <Button
           icon="pi pi-plus"
           onClick={handleClick}
-          className="p-button-sm p-button-outlined"
+          className="p-button-sm"
+          severity="info"
           style={{
-            position: "absolute",
-            top: 5,
-            right: 5,
+            width: "100%",
           }}
         />
       </div>

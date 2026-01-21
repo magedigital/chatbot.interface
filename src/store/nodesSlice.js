@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { arrangeNodePositions, createNodeInGroup, updateGroupNodeDimensions } from "./nodeUtils";
+import {
+  arrangeNodePositions,
+  createNodeInGroup,
+  updateGroupNodeDimensions,
+} from "./nodeUtils";
+import { MarkerType } from "reactflow";
 
 const initialState = {
   nodes: [],
@@ -38,6 +43,9 @@ const nodesSlice = createSlice({
       const newEdge = {
         ...action.payload,
         id: `edge-${action.payload.source}-${action.payload.target}`,
+        markerEnd: { type: MarkerType.ArrowClosed },
+        deletable: true,
+        reconnectable: "source",
       };
       state.edges.push(newEdge);
     },
@@ -72,16 +80,20 @@ const nodesSlice = createSlice({
     clearAllScreenGroups: (state) => {
       // Находим все группы экранов (ноды типа 'screenGroupNode')
       const screenGroupIds = state.nodes
-        .filter(n => n.type === 'screenGroupNode')
-        .map(group => group.id);
+        .filter((n) => n.type === "screenGroupNode")
+        .map((group) => group.id);
 
       // Удаляем все ноды, которые принадлежат этим группам (включая дочерние ноды)
-      state.nodes = state.nodes.filter(node =>
-        !node.parentNode || !screenGroupIds.includes(node.parentNode)
-      ).filter(node =>
-        // Также удаляем сами группы экранов
-        !screenGroupIds.includes(node.id)
-      );
+      state.nodes = state.nodes
+        .filter(
+          (node) =>
+            !node.parentNode || !screenGroupIds.includes(node.parentNode),
+        )
+        .filter(
+          (node) =>
+            // Также удаляем сами группы экранов
+            !screenGroupIds.includes(node.id),
+        );
     },
   },
 });

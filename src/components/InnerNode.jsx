@@ -7,20 +7,26 @@ const InnerNode = ({ data, id }) => {
   return (
     <div
       style={{
-        background: data.color || "#f0f0f0",
-        padding: 8,
-        border: "1px solid #aaa",
-        borderRadius: 4,
-        textAlign: "center",
-        width: NODE.width,
-        height: NODE.height,
+        background: data.color || "#777",
+        padding: data.style?.padding || 8,
+        border: data.style?.border || Node.border + "px solid #fff",
+        borderRadius: data.style?.borderRadius || NODE.borderRadius,
+        textAlign: data.style?.textAlign || "center",
+        width: data.style?.width || NODE.width,
+        height: data.style?.height || NODE.height,
       }}
     >
       <div>{data.label}</div>
       <Handle
         type="source"
         position={Position.Right}
-        style={{ right: -8, top: "50%", width: 15, height: 15 }}
+        style={{
+          position: "absolute",
+          top: "50%",
+          right: -NODE.handleSize / 2,
+          width: NODE.handleSize,
+          height: NODE.handleSize,
+        }}
       />
     </div>
   );
