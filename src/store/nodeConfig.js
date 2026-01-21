@@ -28,7 +28,7 @@ export const NODE = {
   height: 50,
   groupVerticalPadding: 10,
   groupVerticalSpacing: 10,
-  border: 1,
+  border: 2,
   borderRadius: 4,
   handleSize: 15,
 };

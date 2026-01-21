@@ -15,16 +15,13 @@ export const createNodeInGroup = (groupId, nodes) => {
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
 
-  // Цвета в последовательном порядке (более темные)
+  // Цвета в последовательном порядке (установленные цвета)
   const colors = [
-    "#f44336", // Red
-    "#9c27b0", // Purple
-    "#3f51b5", // Indigo
-    "#009688", // Teal
-    "#4caf50", // Green
-    "#ff9800", // Orange
-    "#ff5722", // Deep Orange
-    "#795548", // Brown
+    "#fdc576", // Light Orange
+    "#ffaeab", // Light Pink
+    "#f4b2e5", // Light Magenta
+    "#89d6ff", // Light Blue
+    "#8ce5cb", // Light Green
   ];
 
   // Выбираем цвет последовательно по индексу
