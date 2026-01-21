@@ -28,6 +28,30 @@ const nodesSlice = createSlice({
     removeNode: (state, action) => {
       state.nodes = state.nodes.filter((node) => node.id !== action.payload);
     },
+
+    removeGroupNode: (state, action) => {
+      const groupId = action.payload;
+
+      // Находим все ноды, принадлежащие этой группе
+      const childNodes = state.nodes.filter(
+        (node) => node.parentNode === groupId
+      );
+
+      // Удаляем все внутренние ноды группы
+      childNodes.forEach(childNode => {
+        state.nodes = state.nodes.filter(node => node.id !== childNode.id);
+      });
+
+      // Удаляем все соединения, связанные с внутренними нодами и самой группой
+      state.edges = state.edges.filter(edge =>
+        !childNodes.some(childNode =>
+          edge.source === childNode.id || edge.target === childNode.id
+        ) && edge.source !== groupId && edge.target !== groupId
+      );
+
+      // Удаляем саму группу
+      state.nodes = state.nodes.filter((node) => node.id !== groupId);
+    },
     updateNode: (state, action) => {
       const index = state.nodes.findIndex(
         (node) => node.id === action.payload.id,
@@ -114,6 +138,7 @@ export const {
   addNodeToGroup,
   updateNodePositionsInGroup,
   clearAllScreenGroups,
+  removeGroupNode,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;

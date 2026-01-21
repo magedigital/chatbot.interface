@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { addNodeToGroup, removeNode } from "../store/nodesSlice";
+import { addNodeToGroup, removeNode, removeGroupNode } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -35,32 +35,32 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
     } else {
       // Резервный вариант удаления, если onDeleteGroup не передан
       confirmDialog({
-        message: 'Вы действительно хотите удалить эту группу?',
-        header: 'Подтверждение',
-        icon: 'pi pi-exclamation-triangle',
-        acceptClassName: 'p-button-danger',
+        message: "Вы действительно хотите удалить эту группу?",
+        header: "Подтверждение",
+        icon: "pi pi-exclamation-triangle",
+        acceptClassName: "p-button-danger",
         accept: () => {
-          // Удаляем саму группу
-          dispatch(removeNode(id));
+          // Удаляем группу и все её дочерние ноды и соединения
+          dispatch(removeGroupNode(id));
         },
         reject: () => {
           // Действие отменено, ничего не делаем
-        }
+        },
       });
     }
   }, [id, dispatch, onDeleteGroup]);
 
   const menuItems = [
     {
-      label: 'Редактировать',
-      icon: 'pi pi-pencil',
-      command: handleEdit
+      label: "Редактировать",
+      icon: "pi pi-pencil",
+      command: handleEdit,
     },
     {
-      label: 'Удалить',
-      icon: 'pi pi-trash',
-      command: handleDelete
-    }
+      label: "Удалить",
+      icon: "pi pi-trash",
+      command: handleDelete,
+    },
   ];
 
   return (
@@ -110,7 +110,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           ref={menu}
           model={menuItems}
           popup
-          onHide={() => menu.current && menu.current.hide()}
+          // onHide={() => menu && menu.current && menu.current.hide()}
         />
       </div>
 
@@ -135,9 +135,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
 
       {/* Контейнер для дочерних нод */}
       {children}
-
-      {/* Компонент подтверждения */}
-      <ConfirmDialog />
     </div>
   );
 };

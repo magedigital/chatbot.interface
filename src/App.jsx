@@ -21,14 +21,13 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
-import ScreenGroupNodeWrapper from "./components/ScreenGroupNodeWrapper";
 import TopPanel from "./components/TopPanel";
 import { createScreenGroup } from "./store/nodeUtils";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   innerNode: InnerNode,
-  screenGroupNode: ScreenGroupNodeWrapper,
+  screenGroupNode: ScreenGroupNode,
 };
 
 const initialNodes = [];
@@ -48,7 +47,7 @@ function App() {
   const onConnect = useCallback(
     (params) => {
       // Проверяем, есть ли уже соединение от этого источника
-      const existingEdge = edges.find(edge => edge.source === params.source);
+      const existingEdge = edges.find((edge) => edge.source === params.source);
       if (existingEdge) {
         // Если есть, удаляем старое соединение
         dispatch(removeEdge(existingEdge.id));
