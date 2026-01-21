@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { addNodeToGroup } from "../store/nodesSlice";
+import { addNodeToGroup, removeNode } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
+import { Menu } from "primereact/menu";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { GROUP, NODE } from "../store/nodeConfig";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
-const ScreenGroupNode = ({ data, id, children }) => {
+const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const dispatch = useDispatch();
+  const menu = useRef(null);
+  const menuBtn = useRef(null);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -15,6 +19,49 @@ const ScreenGroupNode = ({ data, id, children }) => {
     // Используем Redux действие для добавления ноды в группу
     dispatch(addNodeToGroup({ groupId: id }));
   };
+
+  const handleMenuToggle = (e) => {
+    e.stopPropagation();
+    menu.current.toggle(e);
+  };
+
+  const handleEdit = () => {
+    console.log("Clicked");
+  };
+
+  const handleDelete = useCallback(() => {
+    if (onDeleteGroup) {
+      onDeleteGroup();
+    } else {
+      // Резервный вариант удаления, если onDeleteGroup не передан
+      confirmDialog({
+        message: 'Вы действительно хотите удалить эту группу?',
+        header: 'Подтверждение',
+        icon: 'pi pi-exclamation-triangle',
+        acceptClassName: 'p-button-danger',
+        accept: () => {
+          // Удаляем саму группу
+          dispatch(removeNode(id));
+        },
+        reject: () => {
+          // Действие отменено, ничего не делаем
+        }
+      });
+    }
+  }, [id, dispatch, onDeleteGroup]);
+
+  const menuItems = [
+    {
+      label: 'Редактировать',
+      icon: 'pi pi-pencil',
+      command: handleEdit
+    },
+    {
+      label: 'Удалить',
+      icon: 'pi pi-trash',
+      command: handleDelete
+    }
+  ];
 
   return (
     <div
@@ -48,6 +95,23 @@ const ScreenGroupNode = ({ data, id, children }) => {
         }}
       >
         {data.label}
+        <Button
+          ref={menuBtn}
+          icon="pi pi-ellipsis-v"
+          className="p-button-text p-button-plain"
+          style={{
+            marginLeft: "8px",
+            padding: "2px",
+            fontSize: "12px",
+          }}
+          onClick={handleMenuToggle}
+        />
+        <Menu
+          ref={menu}
+          model={menuItems}
+          popup
+          onHide={() => menu.current && menu.current.hide()}
+        />
       </div>
 
       <div
@@ -71,6 +135,9 @@ const ScreenGroupNode = ({ data, id, children }) => {
 
       {/* Контейнер для дочерних нод */}
       {children}
+
+      {/* Компонент подтверждения */}
+      <ConfirmDialog />
     </div>
   );
 };

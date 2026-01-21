@@ -21,13 +21,14 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
+import ScreenGroupNodeWrapper from "./components/ScreenGroupNodeWrapper";
 import TopPanel from "./components/TopPanel";
 import { createScreenGroup } from "./store/nodeUtils";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   innerNode: InnerNode,
-  screenGroupNode: ScreenGroupNode,
+  screenGroupNode: ScreenGroupNodeWrapper,
 };
 
 const initialNodes = [];
