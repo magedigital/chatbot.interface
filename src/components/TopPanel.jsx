@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'primereact/button';
 
-const TopPanel = ({ onAddScreen, onClearAllGroups }) => {
+const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
   return (
     <div
       style={{
@@ -22,6 +22,13 @@ const TopPanel = ({ onAddScreen, onClearAllGroups }) => {
         label="Добавить экран"
         icon="pi pi-plus"
         onClick={() => onAddScreen()}
+        className="p-button p-component"
+        style={{ marginRight: '10px' }}
+      />
+      <Button
+        label="Расположить"
+        icon="pi pi-sort-alt"
+        onClick={() => onLayout()}
         className="p-button p-component"
         style={{ marginRight: '10px' }}
       />

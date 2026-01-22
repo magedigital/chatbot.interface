@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import ELK from 'elkjs/lib/elk.bundled.js';
 import {
   setNodes,
   setEdges,
@@ -24,6 +25,48 @@ import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { createScreenGroup } from "./store/nodeUtils";
+
+// Инициализация ELK
+const elk = new ELK();
+
+// Опции для ELK
+const elkOptions = {
+  'elk.algorithm': 'layered',
+  'elk.layered.spacing.nodeNodeBetweenLayers': '100',
+  'elk.spacing.nodeNode': '80',
+};
+
+// Функция для получения размещения элементов с помощью ELK
+const getLayoutedElements = (nodes, edges, options = {}) => {
+  const isHorizontal = options?.['elk.direction'] === 'RIGHT';
+  const graph = {
+    id: 'root',
+    layoutOptions: options,
+    children: nodes.map((node) => ({
+      ...node,
+      // Настройка позиций хэндлов в зависимости от направления размещения
+      targetPosition: isHorizontal ? 'left' : 'top',
+      sourcePosition: isHorizontal ? 'right' : 'bottom',
+
+      // Установка фиксированных размеров для ELK
+      width: node.width || 150,
+      height: node.height || 50,
+    })),
+    edges: edges,
+  };
+
+  return elk
+    .layout(graph)
+    .then((layoutedGraph) => ({
+      nodes: layoutedGraph.children.map((node) => ({
+        ...node,
+        // React Flow ожидает свойство position вместо полей x и y
+        position: { x: node.x, y: node.y },
+      })),
+      edges: layoutedGraph.edges,
+    }))
+    .catch(console.error);
+};
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -232,6 +275,28 @@ function App() {
     dispatch(addNode(newGroupNode));
   }, [dispatch, nodes]);
 
+  // Состояние для отслеживания направления размещения
+  const [layoutDirection, setLayoutDirection] = useState('DOWN'); // 'DOWN' для вертикального, 'RIGHT' для горизонтального
+
+  // Функция для автоматического размещения нод с использованием ELK
+  const handleLayout = useCallback(() => {
+    // Переключаем направление размещения
+    const newDirection = layoutDirection === 'DOWN' ? 'RIGHT' : 'DOWN';
+    setLayoutDirection(newDirection);
+
+    // Опции для ELK в зависимости от направления
+    const options = {
+      ...elkOptions,
+      'elk.direction': newDirection,
+    };
+
+    // Применяем размещение к текущим нодам и связям
+    getLayoutedElements(nodes, edges, options).then(({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+      dispatch(setNodes(layoutedNodes));
+      dispatch(setEdges(layoutedEdges));
+    });
+  }, [nodes, edges, layoutDirection, dispatch]);
+
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {
     confirmDialog({
@@ -260,6 +325,7 @@ function App() {
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}
+          onLayout={handleLayout}
         />
         <div
           style={{
