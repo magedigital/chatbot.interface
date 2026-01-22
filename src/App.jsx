@@ -40,14 +40,17 @@ const elkOptions = {
 const getLayoutedElements = async (nodes, edges, options = {}) => {
   const isHorizontal = options?.["elk.direction"] === "RIGHT";
 
-  // Разделяем ноды на групповые (не имеющие parentNode) и внутренние (имеющие parentNode)
-  const groupNodes = nodes.filter(node => !node.parentNode); // Только групповые ноды
-  const innerNodes = nodes.filter(node => node.parentNode); // Внутренние ноды
+  // Разделяем ноды на групповые и внутренние
+  const groupNodes = nodes.filter(node => !node.parentNode);
+  const innerNodes = nodes.filter(node => node.parentNode);
 
-  // Создаем граф только для групповых нод
-  const graph = {
+  // Создаем временный граф для ELK
+  const tempGraph = {
     id: "root",
-    layoutOptions: { ...options },
+    layoutOptions: {
+      ...options,
+      "spacing.nodeNode": "20", // Устанавливаем минимальное расстояние между нодами 20 пикселей
+    },
     children: groupNodes.map((node) => ({
       ...JSON.parse(JSON.stringify(node)),
       // Настройка позиций хэндлов в зависимости от направления размещения
@@ -58,32 +61,71 @@ const getLayoutedElements = async (nodes, edges, options = {}) => {
       width: node.width || 150,
       height: node.height || 50,
     })),
-    edges: edges
-      .filter(edge =>
-        // Фильтруем связи, чтобы оставить только те, которые соединяют групповые ноды
-        groupNodes.some(n => n.id === edge.source) &&
-        groupNodes.some(n => n.id === edge.target)
-      )
-      .map(edge => JSON.parse(JSON.stringify(edge))),
+    edges: [],
   };
 
+  // Анализируем связи от внутренних нод к групповым нодам
+  const processedEdges = [];
+  const groupToGroupEdges = new Set(); // Для избежания дубликатов
+
+  edges.forEach(edge => {
+    const sourceNode = nodes.find(n => n.id === edge.source);
+    const targetNode = nodes.find(n => n.id === edge.target);
+
+    // Определяем групповые ноды, к которым принадлежат исходная и целевая ноды
+    let sourceGroupNode = sourceNode;
+    if (sourceNode?.parentNode) {
+      sourceGroupNode = nodes.find(n => n.id === sourceNode.parentNode);
+    }
+
+    let targetGroupNode = targetNode;
+    if (targetNode?.parentNode) {
+      targetGroupNode = nodes.find(n => n.id === targetNode.parentNode);
+    }
+
+    // Если обе ноды принадлежат группам, создаем связь между групповыми нодами
+    if (sourceGroupNode && targetGroupNode && sourceGroupNode.id !== targetGroupNode.id) {
+      const edgeId = `${sourceGroupNode.id}-${targetGroupNode.id}`;
+
+      if (!groupToGroupEdges.has(edgeId)) {
+        processedEdges.push({
+          ...JSON.parse(JSON.stringify(edge)),
+          source: sourceGroupNode.id,
+          target: targetGroupNode.id,
+          id: edgeId,
+        });
+        groupToGroupEdges.add(edgeId);
+      }
+    }
+  });
+
+  // Добавляем обработанные связи к временному графу
+  tempGraph.edges = processedEdges;
+
   try {
-    const layoutedGraph = await elk.layout(graph);
+    const layoutedGraph = await elk.layout(tempGraph);
 
     if (layoutedGraph && layoutedGraph.children) {
-      // Обновляем только позиции групповых нод
-      const updatedGroupNodes = layoutedGraph.children.map((node) => ({
-        ...node,
-        // React Flow ожидает свойство position вместо полей x и y
-        position: { x: node.x, y: node.y },
-      }));
+      // Создаем карту новых позиций для групповых нод
+      const newGroupPositions = {};
+      layoutedGraph.children.forEach(node => {
+        newGroupPositions[node.id] = { x: node.x, y: node.y };
+      });
 
-      // Сохраняем позиции внутренних нод без изменений
-      const allNodes = [...updatedGroupNodes, ...innerNodes];
+      // Обновляем позиции только групповых нод в исходном массиве
+      const updatedNodes = nodes.map(node => {
+        if (newGroupPositions[node.id]) {
+          return {
+            ...node,
+            position: newGroupPositions[node.id],
+          };
+        }
+        return node; // Внутренние ноды и неизмененные групповые ноды остаются без изменений
+      });
 
       return {
-        nodes: allNodes,
-        edges: layoutedGraph.edges || [],
+        nodes: updatedNodes,
+        edges: edges, // Сохраняем оригинальные связи
       };
     } else {
       // Возвращаем исходные данные, если ELK не смог их обработать
