@@ -72,10 +72,10 @@ export const createScreenGroup = (
     type: "screenGroupNode",
     position: { x, y },
     data: {
+      width: GROUP.width,
+      height: getGroupNodeHeight(0),
       label: `Screen Group ${groupCount + 1}`,
       style: {
-        width: GROUP.width,
-        height: getGroupNodeHeight(0),
         backgroundColor: selectedColor,
         border: GROUP.border + "px solid " + GROUP.borderColor,
         borderRadius: GROUP.borderRadius,
@@ -121,8 +121,8 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
         ...updatedNodes[groupNodeIndex].data,
         style: {
           ...updatedNodes[groupNodeIndex].data?.style,
-          height: getGroupNodeHeight(groupChildren.length),
         },
+        height: getGroupNodeHeight(groupChildren.length),
       },
     };
   }

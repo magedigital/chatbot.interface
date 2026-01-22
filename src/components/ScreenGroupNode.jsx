@@ -12,7 +12,14 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { GROUP, NODE } from "../store/nodeConfig";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
-const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
+const ScreenGroupNode = ({
+  width,
+  height,
+  data,
+  id,
+  children,
+  onDeleteGroup,
+}) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
@@ -73,9 +80,9 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
         background: data.style?.backgroundColor || "rgba(255, 255, 255, 0.5)",
         border: data.style?.border || GROUP.border + "px solid #555",
         borderRadius: data.style?.borderRadius || GROUP.borderRadius,
-        width: data.style?.width || GROUP.width,
-        height: data.style?.height || GROUP.height,
         position: data.style?.position || "relative",
+        width: data.width || GROUP.width,
+        height: data.height || GROUP.height,
       }}
     >
       <Handle
