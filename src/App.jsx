@@ -37,13 +37,15 @@ const elkOptions = {
 };
 
 // Функция для получения размещения элементов с помощью ELK
-const getLayoutedElements = (nodes, edges, options = {}) => {
+const getLayoutedElements = async (nodes, edges, options = {}) => {
   const isHorizontal = options?.["elk.direction"] === "RIGHT";
+
+  // Создаем копии данных для ELK, чтобы избежать проблем с иммутабельностью
   const graph = {
     id: "root",
-    layoutOptions: options,
+    layoutOptions: { ...options },
     children: nodes.map((node) => ({
-      ...node,
+      ...JSON.parse(JSON.stringify(node)),
       // Настройка позиций хэндлов в зависимости от направления размещения
       targetPosition: isHorizontal ? "left" : "top",
       sourcePosition: isHorizontal ? "right" : "bottom",
@@ -52,20 +54,36 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
       width: node.width || 150,
       height: node.height || 50,
     })),
-    edges: edges,
+    edges: edges.map(edge => JSON.parse(JSON.stringify(edge))),
   };
 
-  return elk
-    .layout(graph)
-    .then((layoutedGraph) => ({
-      nodes: layoutedGraph.children.map((node) => ({
-        ...node,
-        // React Flow ожидает свойство position вместо полей x и y
-        position: { x: node.x, y: node.y },
-      })),
-      edges: layoutedGraph.edges,
-    }))
-    .catch(console.error);
+  try {
+    const layoutedGraph = await elk.layout(graph);
+
+    if (layoutedGraph && layoutedGraph.children) {
+      return {
+        nodes: layoutedGraph.children.map((node) => ({
+          ...node,
+          // React Flow ожидает свойство position вместо полей x и y
+          position: { x: node.x, y: node.y },
+        })),
+        edges: layoutedGraph.edges || [],
+      };
+    } else {
+      // Возвращаем исходные данные, если ELK не смог их обработать
+      return {
+        nodes: nodes,
+        edges: edges,
+      };
+    }
+  } catch (error) {
+    console.error('Ошибка при размещении элементов с помощью ELK:', error);
+    // Возвращаем исходные данные в случае ошибки
+    return {
+      nodes: nodes,
+      edges: edges,
+    };
+  }
 };
 
 // Регистрация пользовательских типов нод
