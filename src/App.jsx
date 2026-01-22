@@ -40,11 +40,15 @@ const elkOptions = {
 const getLayoutedElements = async (nodes, edges, options = {}) => {
   const isHorizontal = options?.["elk.direction"] === "RIGHT";
 
-  // Создаем копии данных для ELK, чтобы избежать проблем с иммутабельностью
+  // Разделяем ноды на групповые (не имеющие parentNode) и внутренние (имеющие parentNode)
+  const groupNodes = nodes.filter(node => !node.parentNode); // Только групповые ноды
+  const innerNodes = nodes.filter(node => node.parentNode); // Внутренние ноды
+
+  // Создаем граф только для групповых нод
   const graph = {
     id: "root",
     layoutOptions: { ...options },
-    children: nodes.map((node) => ({
+    children: groupNodes.map((node) => ({
       ...JSON.parse(JSON.stringify(node)),
       // Настройка позиций хэндлов в зависимости от направления размещения
       targetPosition: isHorizontal ? "left" : "top",
@@ -54,19 +58,31 @@ const getLayoutedElements = async (nodes, edges, options = {}) => {
       width: node.width || 150,
       height: node.height || 50,
     })),
-    edges: edges.map(edge => JSON.parse(JSON.stringify(edge))),
+    edges: edges
+      .filter(edge =>
+        // Фильтруем связи, чтобы оставить только те, которые соединяют групповые ноды
+        groupNodes.some(n => n.id === edge.source) &&
+        groupNodes.some(n => n.id === edge.target)
+      )
+      .map(edge => JSON.parse(JSON.stringify(edge))),
   };
 
   try {
     const layoutedGraph = await elk.layout(graph);
 
     if (layoutedGraph && layoutedGraph.children) {
+      // Обновляем только позиции групповых нод
+      const updatedGroupNodes = layoutedGraph.children.map((node) => ({
+        ...node,
+        // React Flow ожидает свойство position вместо полей x и y
+        position: { x: node.x, y: node.y },
+      }));
+
+      // Сохраняем позиции внутренних нод без изменений
+      const allNodes = [...updatedGroupNodes, ...innerNodes];
+
       return {
-        nodes: layoutedGraph.children.map((node) => ({
-          ...node,
-          // React Flow ожидает свойство position вместо полей x и y
-          position: { x: node.x, y: node.y },
-        })),
+        nodes: allNodes,
         edges: layoutedGraph.edges || [],
       };
     } else {
