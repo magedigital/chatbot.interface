@@ -81,6 +81,7 @@ export const createScreenGroup = (
         borderRadius: GROUP.borderRadius,
       },
     },
+    selectable: false,
   };
 
   return newGroupNode;
