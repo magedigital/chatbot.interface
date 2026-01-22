@@ -2,7 +2,7 @@
  * Утилиты для автоматического размещения нод
  */
 
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK from "elkjs/lib/elk.bundled.js";
 
 // Инициализация ELK
 const elk = new ELK();
@@ -18,8 +18,8 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
   const isHorizontal = options?.["elk.direction"] === "RIGHT";
 
   // Разделяем ноды на групповые и внутренние
-  const groupNodes = nodes.filter(node => !node.parentNode);
-  const innerNodes = nodes.filter(node => node.parentNode);
+  const groupNodes = nodes.filter((node) => !node.parentNode);
+  const innerNodes = nodes.filter((node) => node.parentNode);
 
   // Создаем временный граф для ELK
   const tempGraph = {
@@ -35,8 +35,8 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
       sourcePosition: isHorizontal ? "right" : "bottom",
 
       // Установка фиксированных размеров для ELK
-      width: node.width || 150,
-      height: node.height || 50,
+      width: node.data.width || 150,
+      height: node.data.height || 50,
     })),
     edges: [],
   };
@@ -45,23 +45,27 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
   const processedEdges = [];
   const groupToGroupEdges = new Set(); // Для избежания дубликатов
 
-  edges.forEach(edge => {
-    const sourceNode = nodes.find(n => n.id === edge.source);
-    const targetNode = nodes.find(n => n.id === edge.target);
+  edges.forEach((edge) => {
+    const sourceNode = nodes.find((n) => n.id === edge.source);
+    const targetNode = nodes.find((n) => n.id === edge.target);
 
     // Определяем групповые ноды, к которым принадлежат исходная и целевая ноды
     let sourceGroupNode = sourceNode;
     if (sourceNode?.parentNode) {
-      sourceGroupNode = nodes.find(n => n.id === sourceNode.parentNode);
+      sourceGroupNode = nodes.find((n) => n.id === sourceNode.parentNode);
     }
-    
+
     let targetGroupNode = targetNode;
     if (targetNode?.parentNode) {
-      targetGroupNode = nodes.find(n => n.id === targetNode.parentNode);
+      targetGroupNode = nodes.find((n) => n.id === targetNode.parentNode);
     }
 
     // Если обе ноды принадлежат группам, создаем связь между групповыми нодами
-    if (sourceGroupNode && targetGroupNode && sourceGroupNode.id !== targetGroupNode.id) {
+    if (
+      sourceGroupNode &&
+      targetGroupNode &&
+      sourceGroupNode.id !== targetGroupNode.id
+    ) {
       const edgeId = `${sourceGroupNode.id}-${targetGroupNode.id}`;
 
       if (!groupToGroupEdges.has(edgeId)) {
@@ -85,12 +89,12 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
     if (layoutedGraph && layoutedGraph.children) {
       // Создаем карту новых позиций для групповых нод
       const newGroupPositions = {};
-      layoutedGraph.children.forEach(node => {
+      layoutedGraph.children.forEach((node) => {
         newGroupPositions[node.id] = { x: node.x, y: node.y };
       });
 
       // Обновляем позиции только групповых нод в исходном массиве
-      const updatedNodes = nodes.map(node => {
+      const updatedNodes = nodes.map((node) => {
         if (newGroupPositions[node.id]) {
           return {
             ...node,
@@ -112,7 +116,7 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
       };
     }
   } catch (error) {
-    console.error('Ошибка при размещении элементов с помощью ELK:', error);
+    console.error("Ошибка при размещении элементов с помощью ELK:", error);
     // Возвращаем исходные данные в случае ошибки
     return {
       nodes: nodes,

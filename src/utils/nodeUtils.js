@@ -2,7 +2,7 @@
  * Служебные функции для манипуляций над нодами
  */
 
-import { GROUP, NODE } from "./nodeConfig";
+import { GROUP, NODE } from "../config/nodeConfig";
 
 /**
  * Функция для создания новой ноды в группе

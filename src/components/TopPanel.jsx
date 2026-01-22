@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button } from 'primereact/button';
+import { Menu } from 'primereact/menu';
 
 const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
+  const menu = useRef(null);
+
+  const menuItems = [
+    {
+      label: 'Расположить',
+      icon: 'pi pi-sort-alt',
+      command: () => onLayout()
+    },
+    {
+      label: 'Очистить',
+      icon: 'pi pi-trash',
+      command: () => onClearAllGroups()
+    }
+  ];
+
   return (
     <div
       style={{
@@ -26,17 +42,15 @@ const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
         style={{ marginRight: '10px' }}
       />
       <Button
-        label="Расположить"
-        icon="pi pi-sort-alt"
-        onClick={() => onLayout()}
+        icon="pi pi-ellipsis-v"
+        onClick={(e) => menu.current.toggle(e)}
         className="p-button p-component"
-        style={{ marginRight: '10px' }}
+        style={{ marginLeft: 'auto', marginRight: '20px' }}
       />
-      <Button
-        label="Очистить"
-        icon="pi pi-trash"
-        onClick={() => onClearAllGroups()}
-        className="p-button-danger p-button p-component"
+      <Menu
+        ref={menu}
+        model={menuItems}
+        popup
       />
     </div>
   );

@@ -26,16 +26,12 @@ import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { createScreenGroup } from "./utils/nodeUtils";
 
-// Инициализация ELK
-const elk = new ELK();
-
 // Опции для ELK
 const elkOptions = {
   "elk.algorithm": "layered",
   "elk.layered.spacing.nodeNodeBetweenLayers": "100",
   "elk.spacing.nodeNode": "80",
 };
-
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {

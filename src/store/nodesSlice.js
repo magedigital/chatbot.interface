@@ -3,7 +3,7 @@ import {
   arrangeNodePositions,
   createNodeInGroup,
   updateGroupNodeDimensions,
-} from "./nodeUtils";
+} from "../utils/nodeUtils";
 import { MarkerType } from "reactflow";
 
 const initialState = {
@@ -34,19 +34,23 @@ const nodesSlice = createSlice({
 
       // Находим все ноды, принадлежащие этой группе
       const childNodes = state.nodes.filter(
-        (node) => node.parentNode === groupId
+        (node) => node.parentNode === groupId,
       );
 
       // Удаляем все внутренние ноды группы
-      childNodes.forEach(childNode => {
-        state.nodes = state.nodes.filter(node => node.id !== childNode.id);
+      childNodes.forEach((childNode) => {
+        state.nodes = state.nodes.filter((node) => node.id !== childNode.id);
       });
 
       // Удаляем все соединения, связанные с внутренними нодами и самой группой
-      state.edges = state.edges.filter(edge =>
-        !childNodes.some(childNode =>
-          edge.source === childNode.id || edge.target === childNode.id
-        ) && edge.source !== groupId && edge.target !== groupId
+      state.edges = state.edges.filter(
+        (edge) =>
+          !childNodes.some(
+            (childNode) =>
+              edge.source === childNode.id || edge.target === childNode.id,
+          ) &&
+          edge.source !== groupId &&
+          edge.target !== groupId,
       );
 
       // Удаляем саму группу
