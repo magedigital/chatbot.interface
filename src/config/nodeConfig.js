@@ -45,10 +45,3 @@ export const NODE = {
     "#8ce5cb", // Light Green
   ],
 };
-
-// Опции для ELK
-export const elkOptions = {
-  "elk.algorithm": "layered",
-  "elk.layered.spacing.nodeNodeBetweenLayers": "200",
-  "elk.spacing.nodeNode": "50",
-};

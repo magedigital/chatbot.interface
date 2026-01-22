@@ -272,6 +272,25 @@ function App() {
     );
   }, [nodes, edges, dispatch]);
 
+  // Функция для автоматического размещения нод по алгоритму rectpacking
+  const handleLayoutRectPacking = useCallback(() => {
+    // Опции для ELK с алгоритмом rectpacking
+    const options = {
+      ...elkOptions,
+      "elk.algorithm": "rectpacking",
+    };
+
+    // Применяем размещение к текущим нодам и связям
+    getLayoutedElements(nodes, edges, options).then(
+      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+        if (layoutedNodes && layoutedEdges) {
+          dispatch(setNodes(layoutedNodes));
+          dispatch(setEdges(layoutedEdges));
+        }
+      },
+    );
+  }, [nodes, edges, dispatch]);
+
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {
     confirmDialog({
@@ -302,6 +321,7 @@ function App() {
           onClearAllGroups={handleClearAllGroups}
           onLayoutVertical={handleLayoutVertical}
           onLayoutHorizontal={handleLayoutHorizontal}
+          onLayoutRectPacking={handleLayoutRectPacking}
         />
         <div
           style={{

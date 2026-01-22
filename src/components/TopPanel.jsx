@@ -7,6 +7,7 @@ const TopPanel = ({
   onClearAllGroups,
   onLayoutVertical,
   onLayoutHorizontal,
+  onLayoutRectPacking,
 }) => {
   const menu = useRef(null);
 
@@ -20,6 +21,11 @@ const TopPanel = ({
       label: "Расположить горизонтально",
       icon: "pi pi-arrow-right-arrow-left",
       command: () => onLayoutHorizontal(),
+    },
+    {
+      label: "Расположить по порядку",
+      icon: "pi pi-th-large",
+      command: () => onLayoutRectPacking(),
     },
     {
       label: "Очистить",
