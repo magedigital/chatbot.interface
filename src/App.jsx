@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK from "elkjs/lib/elk.bundled.js";
 import {
   setNodes,
   setEdges,
@@ -31,22 +31,22 @@ const elk = new ELK();
 
 // Опции для ELK
 const elkOptions = {
-  'elk.algorithm': 'layered',
-  'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-  'elk.spacing.nodeNode': '80',
+  "elk.algorithm": "layered",
+  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
+  "elk.spacing.nodeNode": "80",
 };
 
 // Функция для получения размещения элементов с помощью ELK
 const getLayoutedElements = (nodes, edges, options = {}) => {
-  const isHorizontal = options?.['elk.direction'] === 'RIGHT';
+  const isHorizontal = options?.["elk.direction"] === "RIGHT";
   const graph = {
-    id: 'root',
+    id: "root",
     layoutOptions: options,
     children: nodes.map((node) => ({
       ...node,
       // Настройка позиций хэндлов в зависимости от направления размещения
-      targetPosition: isHorizontal ? 'left' : 'top',
-      sourcePosition: isHorizontal ? 'right' : 'bottom',
+      targetPosition: isHorizontal ? "left" : "top",
+      sourcePosition: isHorizontal ? "right" : "bottom",
 
       // Установка фиксированных размеров для ELK
       width: node.width || 150,
@@ -276,25 +276,29 @@ function App() {
   }, [dispatch, nodes]);
 
   // Состояние для отслеживания направления размещения
-  const [layoutDirection, setLayoutDirection] = useState('DOWN'); // 'DOWN' для вертикального, 'RIGHT' для горизонтального
+  const [layoutDirection, setLayoutDirection] = useState("DOWN"); // 'DOWN' для вертикального, 'RIGHT' для горизонтального
 
   // Функция для автоматического размещения нод с использованием ELK
   const handleLayout = useCallback(() => {
     // Переключаем направление размещения
-    const newDirection = layoutDirection === 'DOWN' ? 'RIGHT' : 'DOWN';
+    const newDirection = layoutDirection === "DOWN" ? "RIGHT" : "DOWN";
     setLayoutDirection(newDirection);
 
     // Опции для ELK в зависимости от направления
     const options = {
       ...elkOptions,
-      'elk.direction': newDirection,
+      "elk.direction": newDirection,
     };
 
     // Применяем размещение к текущим нодам и связям
-    getLayoutedElements(nodes, edges, options).then(({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-      dispatch(setNodes(layoutedNodes));
-      dispatch(setEdges(layoutedEdges));
-    });
+    getLayoutedElements(nodes, edges, options).then(
+      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+        if (layoutedNodes && layoutedEdges) {
+          dispatch(setNodes(layoutedNodes));
+          dispatch(setEdges(layoutedEdges));
+        }
+      },
+    );
   }, [nodes, edges, layoutDirection, dispatch]);
 
   // Функция для очистки всех групп
