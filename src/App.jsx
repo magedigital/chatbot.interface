@@ -86,26 +86,57 @@ function App() {
   // Обработчик начала перетаскивания ноды - устанавливаем z-index для отображения поверх других нод
   const onNodeDragStart = useCallback(
     (event, node) => {
-      // Проверяем, есть ли у ноды родительская группа
-      if (node.parentNode) {
-        // Находим все ноды в той же группе
+      // Находим максимальный z-index среди всех нод
+      const maxZIndex = nodes.reduce((max, n) => {
+        const zIndex = n.zIndex || 0;
+        return zIndex > max ? zIndex : max;
+      }, 0);
 
-        const siblingNodes = nodes.filter(
-          (n) => n.parentNode === node.parentNode && n.id !== node.id,
-        );
+      // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
+      const childNodes = nodes.filter(n => n.parentNode === node.id);
+      if (childNodes.length > 0) {
+        // Обновляем z-index для групповой ноды
+        const updatedGroupNode = {
+          ...node,
+          zIndex: maxZIndex + 1
+        };
+        dispatch(updateNode(updatedGroupNode));
 
-        // Находим максимальный z-index среди нод в группе
-        const maxZIndex = siblingNodes.reduce((max, n) => {
-          const zIndex = n.zIndex || 0;
-          return zIndex > max ? zIndex : max;
-        }, 0);
+        // Обновляем z-index для всех внутренних нод группы
+        childNodes.forEach(childNode => {
+          const updatedChildNode = {
+            ...childNode,
+            zIndex: maxZIndex + 1
+          };
+          dispatch(updateNode(updatedChildNode));
+        });
+      } else if (node.parentNode) {
+        // Если это внутренняя нода, поднимаем её и её родительскую группу на передний план
+        const parentNode = nodes.find(n => n.id === node.parentNode);
+        if (parentNode) {
+          // Обновляем z-index для родительской группы
+          const updatedParentNode = {
+            ...parentNode,
+            zIndex: maxZIndex + 1
+          };
+          dispatch(updateNode(updatedParentNode));
 
-        // Устанавливаем z-index перетаскиваемой ноды на 1 больше максимального
+          // Обновляем z-index для всех внутренних нод в той же группе
+          const siblingNodes = nodes.filter(n => n.parentNode === node.parentNode);
+          siblingNodes.forEach(siblingNode => {
+            const updatedSiblingNode = {
+              ...siblingNode,
+              zIndex: maxZIndex + 1
+            };
+            dispatch(updateNode(updatedSiblingNode));
+          });
+        }
+      } else {
+        // Если это обычная нода (не групповая и не внутренняя), просто поднимаем её на передний план
         const updatedNode = {
           ...node,
-          zIndex: maxZIndex + 1,
+          zIndex: maxZIndex + 1
         };
-
         dispatch(updateNode(updatedNode));
       }
     },
