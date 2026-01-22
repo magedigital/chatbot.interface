@@ -7,9 +7,14 @@ const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
 
   const menuItems = [
     {
-      label: 'Расположить',
+      label: 'Расположить вертикально',
       icon: 'pi pi-sort-alt',
-      command: () => onLayout()
+      command: () => onLayoutVertical()
+    },
+    {
+      label: 'Расположить горизонтально',
+      icon: 'pi pi-arrow-right-arrow-left',
+      command: () => onLayoutHorizontal()
     },
     {
       label: 'Очистить',

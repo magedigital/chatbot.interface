@@ -240,19 +240,12 @@ function App() {
     dispatch(addNode(newGroupNode));
   }, [dispatch, nodes]);
 
-  // Состояние для отслеживания направления размещения
-  const [layoutDirection, setLayoutDirection] = useState("DOWN"); // 'DOWN' для вертикального, 'RIGHT' для горизонтального
-
-  // Функция для автоматического размещения нод с использованием ELK
-  const handleLayout = useCallback(() => {
-    // Переключаем направление размещения
-    const newDirection = layoutDirection === "DOWN" ? "RIGHT" : "DOWN";
-    setLayoutDirection(newDirection);
-
-    // Опции для ELK в зависимости от направления
+  // Функция для автоматического вертикального размещения нод с использованием ELK
+  const handleLayoutVertical = useCallback(() => {
+    // Опции для ELK с вертикальным направлением
     const options = {
       ...elkOptions,
-      "elk.direction": newDirection,
+      "elk.direction": "DOWN",
     };
 
     // Применяем размещение к текущим нодам и связям
@@ -264,7 +257,26 @@ function App() {
         }
       },
     );
-  }, [nodes, edges, layoutDirection, dispatch]);
+  }, [nodes, edges, dispatch]);
+
+  // Функция для автоматического горизонтального размещения нод с использованием ELK
+  const handleLayoutHorizontal = useCallback(() => {
+    // Опции для ELK с горизонтальным направлением
+    const options = {
+      ...elkOptions,
+      "elk.direction": "RIGHT",
+    };
+
+    // Применяем размещение к текущим нодам и связям
+    getLayoutedElements(nodes, edges, options).then(
+      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+        if (layoutedNodes && layoutedEdges) {
+          dispatch(setNodes(layoutedNodes));
+          dispatch(setEdges(layoutedEdges));
+        }
+      },
+    );
+  }, [nodes, edges, dispatch]);
 
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {
@@ -294,8 +306,13 @@ function App() {
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}
-          onLayout={handleLayout}
+          onLayoutVertical={handleLayoutVertical}
+          onLayoutHorizontal={handleLayoutHorizontal}
         />
+      </div>
+    </div>
+  );
+}
         <div
           style={{
             width: "100%",
