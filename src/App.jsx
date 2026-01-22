@@ -24,7 +24,7 @@ import { PrimeReactProvider } from "primereact/api";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
-import { createScreenGroup } from "./store/nodeUtils";
+import { createScreenGroup } from "./utils/nodeUtils";
 
 // Инициализация ELK
 const elk = new ELK();

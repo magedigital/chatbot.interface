@@ -1,6 +1,6 @@
 import React from "react";
 import { Handle, Position } from "reactflow";
-import { NODE } from "../store/nodeConfig";
+import { NODE } from "../config/nodeConfig";
 
 // Компонент вложенной ноды с уникальным ID
 const InnerNode = ({ data, id }) => {

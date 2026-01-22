@@ -9,7 +9,7 @@ import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
-import { GROUP, NODE } from "../store/nodeConfig";
+import { GROUP, NODE } from "../config/nodeConfig";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({
