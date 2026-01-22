@@ -1,42 +1,47 @@
-import React, { useRef } from 'react';
-import { Button } from 'primereact/button';
-import { Menu } from 'primereact/menu';
+import React, { useRef } from "react";
+import { Button } from "primereact/button";
+import { Menu } from "primereact/menu";
 
-const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
+const TopPanel = ({
+  onAddScreen,
+  onClearAllGroups,
+  onLayoutVertical,
+  onLayoutHorizontal,
+}) => {
   const menu = useRef(null);
 
   const menuItems = [
     {
-      label: 'Расположить вертикально',
-      icon: 'pi pi-sort-alt',
-      command: () => onLayoutVertical()
+      label: "Расположить вертикально",
+      icon: "pi pi-sort-alt",
+      command: () => onLayoutVertical(),
     },
     {
-      label: 'Расположить горизонтально',
-      icon: 'pi pi-arrow-right-arrow-left',
-      command: () => onLayoutHorizontal()
+      label: "Расположить горизонтально",
+      icon: "pi pi-arrow-right-arrow-left",
+      command: () => onLayoutHorizontal(),
     },
     {
-      label: 'Очистить',
-      icon: 'pi pi-trash',
-      command: () => onClearAllGroups()
-    }
+      label: "Очистить",
+      icon: "pi pi-trash",
+      command: () => onClearAllGroups(),
+    },
   ];
 
   return (
     <div
       style={{
-        height: '60px',
-        backgroundColor: '#f8f9fa',
-        borderBottom: '1px solid #dee2e6',
-        display: 'flex',
-        alignItems: 'center',
-        paddingLeft: '20px',
-        position: 'absolute',
+        height: "60px",
+        backgroundColor: "#f8f9fa",
+        borderBottom: "1px solid #dee2e6",
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: "20px",
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       <Button
@@ -44,19 +49,15 @@ const TopPanel = ({ onAddScreen, onClearAllGroups, onLayout }) => {
         icon="pi pi-plus"
         onClick={() => onAddScreen()}
         className="p-button p-component"
-        style={{ marginRight: '10px' }}
+        style={{ marginRight: "10px" }}
       />
       <Button
         icon="pi pi-ellipsis-v"
         onClick={(e) => menu.current.toggle(e)}
         className="p-button p-component"
-        style={{ marginLeft: 'auto', marginRight: '20px' }}
+        style={{ marginLeft: "auto", marginRight: "20px" }}
       />
-      <Menu
-        ref={menu}
-        model={menuItems}
-        popup
-      />
+      <Menu ref={menu} model={menuItems} popup />
     </div>
   );
 };

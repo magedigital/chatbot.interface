@@ -50,5 +50,7 @@ export const NODE = {
 export const elkOptions = {
   "elk.algorithm": "layered",
   "elk.layered.spacing.nodeNodeBetweenLayers": "200",
-  "elk.spacing.nodeNode": "50",
+  "elk.spacing.nodeNode": "100", // Увеличил расстояние между нодами
+  "elk.spacing.componentComponent": "120", // Расстояние между компонентами
+  "elk.spacing.nodeNode.selfLoop": "100", // Расстояние для самозацикленных нод
 };

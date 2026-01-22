@@ -26,7 +26,6 @@ export const getLayoutedElements = async (nodes, edges, options = {}) => {
     id: "root",
     layoutOptions: {
       ...options,
-      "spacing.nodeNode": "20", // Устанавливаем минимальное расстояние между нодами 20 пикселей
     },
     children: groupNodes.map((node) => ({
       ...JSON.parse(JSON.stringify(node)),

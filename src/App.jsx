@@ -25,13 +25,7 @@ import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { createScreenGroup } from "./utils/nodeUtils";
-
-// Опции для ELK
-const elkOptions = {
-  "elk.algorithm": "layered",
-  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
-  "elk.spacing.nodeNode": "80",
-};
+import { elkOptions } from "./config/layoutConfig";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -309,10 +303,6 @@ function App() {
           onLayoutVertical={handleLayoutVertical}
           onLayoutHorizontal={handleLayoutHorizontal}
         />
-      </div>
-    </div>
-  );
-}
         <div
           style={{
             width: "100%",
