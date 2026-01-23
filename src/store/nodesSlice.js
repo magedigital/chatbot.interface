@@ -151,7 +151,7 @@ const nodesSlice = createSlice({
             id: state.nodes[index].id,
             data: state.nodes[index].data,
           };
-          console.log("????", state.dialogs);
+          console.log("????", state.dialogs.editDialog);
         }
       }
     },

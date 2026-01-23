@@ -16,10 +16,9 @@ const DialogManager = () => {
   };
 
   const { editDialog } = useSelector(
-    (state) =>
-      state.dialogs || {
-        editDialog: null,
-      },
+    (state) => ({
+      editDialog: state.dialogs?.editDialog || null
+    })
   );
 
   console.log("!!!!!", editDialog);
