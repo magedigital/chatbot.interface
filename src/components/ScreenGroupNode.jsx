@@ -1,15 +1,17 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   addNodeToGroup,
   removeNode,
   removeGroupNode,
+  updateNode,
 } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { GROUP, NODE } from "../config/nodeConfig";
+import EditGroupDialog from "./EditGroupDialog";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({
@@ -19,10 +21,12 @@ const ScreenGroupNode = ({
   id,
   children,
   onDeleteGroup,
+  onUpdateNode,
 }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -37,7 +41,21 @@ const ScreenGroupNode = ({
   };
 
   const handleEdit = () => {
-    console.log("Clicked");
+    setEditDialogVisible(true);
+  };
+
+  const handleSaveEdit = (newLabel) => {
+    if (onUpdateNode) {
+      // Обновляем ноду с новым названием
+      const updatedNode = {
+        ...data,
+        label: newLabel
+      };
+      onUpdateNode({ ...updatedNode, id });
+    } else {
+      // Если onUpdateNode не передан, используем Redux действие
+      dispatch(updateNode({ id, data: { ...data, label: newLabel } }));
+    }
   };
 
   const handleDelete = useCallback(() => {
@@ -148,6 +166,14 @@ const ScreenGroupNode = ({
 
       {/* Контейнер для дочерних нод */}
       {children}
+
+      {/* Диалог редактирования группы */}
+      <EditGroupDialog
+        visible={editDialogVisible}
+        onHide={() => setEditDialogVisible(false)}
+        onSave={handleSaveEdit}
+        groupData={data}
+      />
     </div>
   );
 };

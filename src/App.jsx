@@ -24,10 +24,15 @@ import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { elkOptions } from "./config/layoutConfig";
 
+// Функция для обновления ноды
+const handleUpdateNode = useCallback((updatedNode) => {
+  dispatch(updateNode(updatedNode));
+}, [dispatch]);
+
 // Регистрация пользовательских типов нод
 const nodeTypes = {
   innerNode: InnerNode,
-  screenGroupNode: ScreenGroupNode,
+  screenGroupNode: (props) => <ScreenGroupNode {...props} onUpdateNode={handleUpdateNode} />,
 };
 
 const initialNodes = [];
