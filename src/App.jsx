@@ -12,6 +12,7 @@ import {
   removeNode,
   removeEdge,
   clearAllScreenGroups,
+  addScreenGroupNode,
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
 import "reactflow/dist/style.css";
@@ -262,7 +263,7 @@ function App() {
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
     const newGroupNode = createScreenGroup(nodes);
-    dispatch(addNode(newGroupNode));
+    dispatch(addScreenGroupNode(newGroupNode));
   }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK

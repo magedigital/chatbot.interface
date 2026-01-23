@@ -108,6 +108,12 @@ const nodesSlice = createSlice({
       }
     },
 
+    // Редюсер для добавления новой групповой ноды
+    addScreenGroupNode: (state, action) => {
+      const newGroupNode = action.payload;
+      state.nodes.push(newGroupNode);
+    },
+
     // Редюсер для очистки всех групп экранов
     clearAllScreenGroups: (state) => {
       // Находим все группы экранов (ноды типа 'screenGroupNode')
@@ -143,6 +149,7 @@ export const {
   updateNodePositionsInGroup,
   clearAllScreenGroups,
   removeGroupNode,
+  addScreenGroupNode,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;
