@@ -12,7 +12,7 @@ export const GROUP = {
   offsetY: 50,
   minHeight: 100,
   controlsHeight: 40,
-  topHeight: 40,
+  topHeight: 60,
   verticalPadding: 20,
   verticalSpacing: 10,
   border: 2,

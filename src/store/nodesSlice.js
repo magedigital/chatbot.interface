@@ -65,6 +65,17 @@ const nodesSlice = createSlice({
         state.nodes[index] = action.payload;
       }
     },
+    updateNodeData: (state, action) => {
+      const index = state.nodes.findIndex(
+        (node) => node.id === action.payload.id,
+      );
+      if (index !== -1) {
+        state.nodes[index] = {
+          ...state.nodes[index],
+          data: action.payload.data,
+        };
+      }
+    },
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
     },
@@ -157,6 +168,7 @@ export const {
   addNode,
   removeNode,
   updateNode,
+  updateNodeData,
   setSelectedNode,
   addEdge,
   removeEdge,

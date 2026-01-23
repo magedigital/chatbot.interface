@@ -5,6 +5,7 @@ import {
   removeNode,
   removeGroupNode,
   updateNode,
+  updateNodeData,
 } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
@@ -14,15 +15,7 @@ import { GROUP, NODE } from "../config/nodeConfig";
 import EditGroupDialog from "./EditGroupDialog";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
-const ScreenGroupNode = ({
-  width,
-  height,
-  data,
-  id,
-  children,
-  onDeleteGroup,
-  onUpdateNode,
-}) => {
+const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
@@ -44,18 +37,8 @@ const ScreenGroupNode = ({
     setEditDialogVisible(true);
   };
 
-  const handleSaveEdit = (newLabel) => {
-    if (onUpdateNode) {
-      // Обновляем ноду с новым названием
-      const updatedNode = {
-        ...data,
-        label: newLabel
-      };
-      onUpdateNode({ ...updatedNode, id });
-    } else {
-      // Если onUpdateNode не передан, используем Redux действие
-      dispatch(updateNode({ id, data: { ...data, label: newLabel } }));
-    }
+  const handleSaveEdit = (data) => {
+    dispatch(updateNodeData({ id, data }));
   };
 
   const handleDelete = useCallback(() => {
@@ -117,8 +100,6 @@ const ScreenGroupNode = ({
       />
       <div
         style={{
-          fontWeight: "bold",
-          textAlign: "center",
           position: "absolute",
           display: "flex",
           alignItems: "center",
@@ -129,7 +110,22 @@ const ScreenGroupNode = ({
           height: GROUP.topHeight,
         }}
       >
-        {data.label}
+        <div
+          style={{
+            fontWeight: "bold",
+            position: "relative",
+            maxheight: GROUP.topHeight,
+            display: "-webkit-box",
+            textOverflow: "ellipsis",
+            "-webkit-line-clamp": "2",
+            "-webkit-box-orient": "vertical",
+            lineHeight: "120%",
+            overflowWrap: "break-word",
+            overflow: "hidden",
+          }}
+        >
+          {data.label}
+        </div>
         <Button
           ref={menuBtn}
           icon="pi pi-ellipsis-v"
@@ -172,7 +168,7 @@ const ScreenGroupNode = ({
         visible={editDialogVisible}
         onHide={() => setEditDialogVisible(false)}
         onSave={handleSaveEdit}
-        groupData={data}
+        data={data}
       />
     </div>
   );

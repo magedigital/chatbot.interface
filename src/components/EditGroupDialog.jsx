@@ -3,23 +3,32 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 
-const EditGroupDialog = ({ visible, onHide, onSave, groupData }) => {
-  const [label, setLabel] = useState(groupData?.label || "");
+const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
+  const [label, setLabel] = useState(data?.label || "");
 
   const handleSave = () => {
-    onSave(label);
+    onSave({ ...data, label });
     onHide();
   };
 
   const handleCancel = () => {
-    setLabel(groupData?.label || ""); // Восстанавливаем исходное значение
     onHide();
   };
 
   const footer = (
     <div>
-      <Button label="Отмена" icon="pi pi-times" onClick={handleCancel} className="p-button-secondary" />
-      <Button label="Сохранить" icon="pi pi-check" onClick={handleSave} className="p-button-primary" />
+      <Button
+        label="Отмена"
+        icon="pi pi-times"
+        onClick={handleCancel}
+        className="p-button-secondary"
+      />
+      <Button
+        label="Сохранить"
+        icon="pi pi-check"
+        onClick={handleSave}
+        className="p-button-primary"
+      />
     </div>
   );
 
