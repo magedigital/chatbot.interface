@@ -25,6 +25,8 @@ export const GROUP = {
     "rgba(186, 140, 190, 0.8)",
     "rgba(127, 78, 168, 0.8)",
   ],
+  handleBackgroundColor: "#fff",
+  handleBorderColor: "#fff",
 };
 
 // Параметры для внутренних нод
@@ -44,4 +46,7 @@ export const NODE = {
     "#89d6ff", // Light Blue
     "#8ce5cb", // Light Green
   ],
+  defaultNodeColor: "rgb(99, 102, 241)",
+  handleBackgroundColor: "#fff",
+  handleBorderColor: "#fff",
 };

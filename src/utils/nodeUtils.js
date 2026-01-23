@@ -10,7 +10,7 @@ import { GROUP, NODE } from "../config/nodeConfig";
  * @param {Array} nodes - массив существующих нод
  * @returns {Object} - новая нода
  */
-export const createNodeInGroup = (groupId, nodes) => {
+export const createNodeInGroup = (groupId, isDefault, nodes) => {
   // Подсчитываем количество нод в группе
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
@@ -33,8 +33,8 @@ export const createNodeInGroup = (groupId, nodes) => {
         (NODE.height + NODE.groupVerticalSpacing) * nodeCount,
     }, // Вертикальное расположение
     data: {
-      label: `Node ${nodeCount + 1}`,
-      color: selectedColor,
+      label: isDefault ? "По умолчанию" : `Node ${nodeCount}`,
+      color: isDefault ? NODE.defaultNodeColor : selectedColor,
     },
     parentNode: groupId,
     selectable: false,
@@ -67,6 +67,11 @@ export const createScreenGroup = (
   const colorIndex = groupCount % GROUP.colors.length;
   const selectedColor = GROUP.colors[colorIndex];
 
+  const maxZIndex = existingNodes.reduce((max, n) => {
+    const zIndex = n.zIndex || 0;
+    return zIndex > max ? zIndex : max;
+  }, 0);
+
   const newGroupNode = {
     id: groupId,
     type: "screenGroupNode",
@@ -82,6 +87,7 @@ export const createScreenGroup = (
       },
     },
     selectable: false,
+    zIndex: maxZIndex,
   };
 
   return newGroupNode;

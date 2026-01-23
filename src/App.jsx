@@ -4,12 +4,9 @@ import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import {
   setNodes,
   setEdges,
-  addNode,
   addEdge as addEdgeAction,
   updateNode,
-  addNodeToGroup,
   updateNodePositionsInGroup,
-  removeNode,
   removeEdge,
   clearAllScreenGroups,
   addScreenGroupNode,
@@ -25,7 +22,6 @@ import { PrimeReactProvider } from "primereact/api";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
-import { createScreenGroup } from "./utils/nodeUtils";
 import { elkOptions } from "./config/layoutConfig";
 
 // Регистрация пользовательских типов нод
@@ -94,40 +90,42 @@ function App() {
       }, 0);
 
       // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
-      const childNodes = nodes.filter(n => n.parentNode === node.id);
+      const childNodes = nodes.filter((n) => n.parentNode === node.id);
       if (childNodes.length > 0) {
         // Обновляем z-index для групповой ноды
         const updatedGroupNode = {
           ...node,
-          zIndex: maxZIndex + 1
+          zIndex: maxZIndex + 1,
         };
         dispatch(updateNode(updatedGroupNode));
 
         // Обновляем z-index для всех внутренних нод группы
-        childNodes.forEach(childNode => {
+        childNodes.forEach((childNode) => {
           const updatedChildNode = {
             ...childNode,
-            zIndex: maxZIndex + 1
+            zIndex: maxZIndex + 1,
           };
           dispatch(updateNode(updatedChildNode));
         });
       } else if (node.parentNode) {
         // Если это внутренняя нода, поднимаем её и её родительскую группу на передний план
-        const parentNode = nodes.find(n => n.id === node.parentNode);
+        const parentNode = nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
           // Обновляем z-index для родительской группы
           const updatedParentNode = {
             ...parentNode,
-            zIndex: maxZIndex + 1
+            zIndex: maxZIndex + 1,
           };
           dispatch(updateNode(updatedParentNode));
 
           // Обновляем z-index для всех внутренних нод в той же группе
-          const siblingNodes = nodes.filter(n => n.parentNode === node.parentNode);
-          siblingNodes.forEach(siblingNode => {
+          const siblingNodes = nodes.filter(
+            (n) => n.parentNode === node.parentNode,
+          );
+          siblingNodes.forEach((siblingNode) => {
             const updatedSiblingNode = {
               ...siblingNode,
-              zIndex: maxZIndex + 1
+              zIndex: maxZIndex + (siblingNode.id === node.id ? 2 : 1),
             };
             dispatch(updateNode(updatedSiblingNode));
           });
@@ -136,7 +134,7 @@ function App() {
         // Если это обычная нода (не групповая и не внутренняя), просто поднимаем её на передний план
         const updatedNode = {
           ...node,
-          zIndex: maxZIndex + 1
+          zIndex: maxZIndex + 1,
         };
         dispatch(updateNode(updatedNode));
       }
@@ -151,12 +149,12 @@ function App() {
         const parentNode = nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
           // Получаем размеры родительской группы из данных
-          const parentWidth = parentNode.data?.style?.width || 220;
-          const parentHeight = parentNode.data?.style?.height || 220;
+          const parentWidth = parentNode.data?.width;
+          const parentHeight = parentNode.data?.height;
 
           // Получаем размеры самой ноды
-          const nodeWidth = 180; // ширина ноды
-          const nodeHeight = 50; // примерная высота ноды
+          const nodeWidth = node.data?.width; // ширина ноды
+          const nodeHeight = node.data?.height; // примерная высота ноды
 
           // Ограничиваем координаты ноды в пределах родительской группы
           const maxX = parentWidth - nodeWidth;
@@ -262,9 +260,8 @@ function App() {
 
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
-    const newGroupNode = createScreenGroup(nodes);
-    dispatch(addScreenGroupNode(newGroupNode));
-  }, [dispatch, nodes]);
+    dispatch(addScreenGroupNode());
+  }, [dispatch]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {

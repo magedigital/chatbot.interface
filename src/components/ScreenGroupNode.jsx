@@ -93,6 +93,8 @@ const ScreenGroupNode = ({
           left: -GROUP.handleSize / 2,
           width: GROUP.handleSize,
           height: GROUP.handleSize,
+          backgroundColor: GROUP.handleBackgroundColor,
+          borderColor: GROUP.handleBorderColor,
         }}
       />
       <div

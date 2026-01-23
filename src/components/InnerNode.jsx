@@ -29,6 +29,8 @@ const InnerNode = ({ data, id }) => {
           right: -NODE.handleSize / 2,
           width: NODE.handleSize,
           height: NODE.handleSize,
+          backgroundColor: NODE.handleBackgroundColor,
+          borderColor: NODE.handleBorderColor,
         }}
       />
     </div>

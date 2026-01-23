@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   arrangeNodePositions,
   createNodeInGroup,
+  createScreenGroup,
   updateGroupNodeDimensions,
 } from "../utils/nodeUtils";
 import { MarkerType } from "reactflow";
@@ -88,7 +89,7 @@ const nodesSlice = createSlice({
       const { groupId } = action.payload;
 
       // Создаем новую ноду
-      const newNode = createNodeInGroup(groupId, state.nodes);
+      const newNode = createNodeInGroup(groupId, false, state.nodes);
 
       // Добавляем новую ноду
       state.nodes.push(newNode);
@@ -110,8 +111,22 @@ const nodesSlice = createSlice({
 
     // Редюсер для добавления новой групповой ноды
     addScreenGroupNode: (state, action) => {
-      const newGroupNode = action.payload;
+      const newGroupNode = createScreenGroup(state.nodes);
       state.nodes.push(newGroupNode);
+
+      const groupId = newGroupNode.id;
+
+      // Создаем новую ноду
+      const newNode = createNodeInGroup(groupId, true, state.nodes);
+
+      // Добавляем новую ноду
+      state.nodes.push(newNode);
+
+      // Обновляем размеры группы
+      state.nodes = updateGroupNodeDimensions(state.nodes, groupId);
+
+      // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+      state.nodes = arrangeNodePositions(state.nodes, groupId);
     },
 
     // Редюсер для очистки всех групп экранов
