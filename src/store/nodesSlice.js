@@ -10,7 +10,9 @@ import { MarkerType } from "reactflow";
 const initialState = {
   nodes: [],
   edges: [],
-  selectedNode: null,
+  dialogs: {
+    editDialog: null,
+  },
 };
 
 const nodesSlice = createSlice({
@@ -76,9 +78,6 @@ const nodesSlice = createSlice({
         };
       }
     },
-    setSelectedNode: (state, action) => {
-      state.selectedNode = action.payload;
-    },
     addEdge: (state, action) => {
       const newEdge = {
         ...action.payload,
@@ -140,6 +139,23 @@ const nodesSlice = createSlice({
       state.nodes = arrangeNodePositions(state.nodes, groupId);
     },
 
+    editScreenGroupNode: (state, action) => {
+      if (!action.payload) {
+        state.dialogs.editDialog = null;
+      } else {
+        const index = state.nodes.findIndex(
+          (node) => node.id === action.payload.groupId,
+        );
+        if (index !== -1) {
+          state.dialogs.editDialog = {
+            id: state.nodes[index].id,
+            data: state.nodes[index].data,
+          };
+          console.log("????", state.dialogs);
+        }
+      }
+    },
+
     // Редюсер для очистки всех групп экранов
     clearAllScreenGroups: (state) => {
       // Находим все группы экранов (ноды типа 'screenGroupNode')
@@ -169,7 +185,6 @@ export const {
   removeNode,
   updateNode,
   updateNodeData,
-  setSelectedNode,
   addEdge,
   removeEdge,
   addNodeToGroup,
@@ -177,6 +192,7 @@ export const {
   clearAllScreenGroups,
   removeGroupNode,
   addScreenGroupNode,
+  editScreenGroupNode,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;

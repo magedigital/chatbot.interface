@@ -4,10 +4,10 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 
 const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
-  const [label, setLabel] = useState(data?.label || "");
+  const [label, setLabel] = useState(data?.data.label || "");
 
   const handleSave = () => {
-    onSave({ ...data, label });
+    onSave({ ...(data ?? {}).data, label });
     onHide();
   };
 

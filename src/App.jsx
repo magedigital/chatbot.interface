@@ -23,6 +23,7 @@ import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { elkOptions } from "./config/layoutConfig";
+import DialogManager from "./components/DialogManager";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -344,7 +345,7 @@ function App() {
           hideOverlaysOnDocumentScrolling: true,
         }}
       >
-        <ConfirmDialog />
+        <DialogManager />
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}

@@ -6,6 +6,7 @@ import {
   removeGroupNode,
   updateNode,
   updateNodeData,
+  editScreenGroupNode,
 } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
@@ -19,7 +20,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
-  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  // const [editDialogVisible, setEditDialogVisible] = useState(false);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -34,11 +35,12 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   };
 
   const handleEdit = () => {
-    setEditDialogVisible(true);
+    // setEditDialogVisible(true);
+    dispatch(editScreenGroupNode({ groupId: id }));
   };
 
   const handleSaveEdit = (data) => {
-    dispatch(updateNodeData({ id, data }));
+    // dispatch(updateNodeData({ id, data }));
   };
 
   const handleDelete = useCallback(() => {
@@ -117,8 +119,8 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
             maxheight: GROUP.topHeight,
             display: "-webkit-box",
             textOverflow: "ellipsis",
-            "-webkit-line-clamp": "2",
-            "-webkit-box-orient": "vertical",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
             lineHeight: "120%",
             overflowWrap: "break-word",
             overflow: "hidden",
@@ -164,12 +166,12 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
       {children}
 
       {/* Диалог редактирования группы */}
-      <EditGroupDialog
+      {/* <EditGroupDialog
         visible={editDialogVisible}
         onHide={() => setEditDialogVisible(false)}
         onSave={handleSaveEdit}
         data={data}
-      />
+      /> */}
     </div>
   );
 };
