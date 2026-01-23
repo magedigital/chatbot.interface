@@ -1,24 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 
 const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
-  const [label, setLabel] = useState(data?.data.label || "");
+  const [label, setLabel] = useState(data?.data?.label || "");
+
+  // Обновляем состояние label при изменении пропса data
+  useEffect(() => {
+    if (data && data.data && data.data.label) {
+      setLabel(data.data.label);
+    } else {
+      setLabel("");
+    }
+  }, [data]);
+
+  console.log("----", data?.data?.label);
 
   const handleSave = () => {
-    onSave({ ...(data ?? {}).data, label });
+    onSave({ ...data, data: { ...data.data, label } });
     onHide();
   };
 
   const handleCancel = () => {
+    // Восстанавливаем исходное значение при отмене
+    if (data && data.data && data.data.label) {
+      setLabel(data.data.label);
+    } else {
+      setLabel("");
+    }
     onHide();
   };
 
   const footer = (
     <div>
       <Button
-        label="Отмена"
+        label={"Отмена"}
         icon="pi pi-times"
         onClick={handleCancel}
         className="p-button-secondary"

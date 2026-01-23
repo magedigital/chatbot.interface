@@ -15,11 +15,9 @@ const DialogManager = () => {
     dispatch(editScreenGroupNode(false));
   };
 
-  const { editDialog } = useSelector(
-    (state) => ({
-      editDialog: state.dialogs?.editDialog || null
-    })
-  );
+  const { editDialog } = useSelector((state) => ({
+    editDialog: state.nodes?.dialogs?.editDialog || null,
+  }));
 
   console.log("!!!!!", editDialog);
 
