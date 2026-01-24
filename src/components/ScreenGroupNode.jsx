@@ -2,18 +2,14 @@ import React, { useRef, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   addNodeToGroup,
-  removeNode,
   removeGroupNode,
-  updateNode,
-  updateNodeData,
   editScreenGroupNode,
 } from "../store/nodesSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
-import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { confirmDialog } from "primereact/confirmdialog";
 import { GROUP, NODE } from "../config/nodeConfig";
-import EditGroupDialog from "./EditGroupDialog";
 
 // Компонент группы экрана с хэндлом типа Target и возможностью добавления нод
 const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
@@ -37,10 +33,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const handleEdit = () => {
     // setEditDialogVisible(true);
     dispatch(editScreenGroupNode({ groupId: id }));
-  };
-
-  const handleSaveEdit = (data) => {
-    // dispatch(updateNodeData({ id, data }));
   };
 
   const handleDelete = useCallback(() => {
@@ -164,14 +156,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
 
       {/* Контейнер для дочерних нод */}
       {children}
-
-      {/* Диалог редактирования группы */}
-      {/* <EditGroupDialog
-        visible={editDialogVisible}
-        onHide={() => setEditDialogVisible(false)}
-        onSave={handleSaveEdit}
-        data={data}
-      /> */}
     </div>
   );
 };
