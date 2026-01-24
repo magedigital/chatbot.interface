@@ -19,8 +19,6 @@ const DialogManager = () => {
     editDialog: state.nodes?.dialogs?.editDialog || null,
   }));
 
-  console.log("!!!!!", editDialog);
-
   return (
     <>
       <ConfirmDialog baseZIndex={1000001} />

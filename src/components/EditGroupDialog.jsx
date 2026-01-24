@@ -15,8 +15,6 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
     }
   }, [data]);
 
-  console.log("----", data?.data?.label);
-
   const handleSave = () => {
     onSave({ ...data, data: { ...data.data, label } });
     onHide();

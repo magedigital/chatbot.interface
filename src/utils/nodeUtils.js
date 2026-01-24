@@ -20,6 +20,10 @@ export const createNodeInGroup = (groupId, isDefault, nodes) => {
   const selectedColor = NODE.colors[colorIndex];
 
   const newNodeId = `${groupId}-node-${nodeCount + 1}`;
+
+  const width = NODE.width;
+  const height = NODE.height;
+
   const newNode = {
     id: newNodeId,
     type: "innerNode",
@@ -32,12 +36,17 @@ export const createNodeInGroup = (groupId, isDefault, nodes) => {
         NODE.groupVerticalPadding +
         (NODE.height + NODE.groupVerticalSpacing) * nodeCount,
     }, // Вертикальное расположение
+    width,
+    height,
     data: {
       label: isDefault ? "По умолчанию" : `Node ${nodeCount}`,
       color: isDefault ? NODE.defaultNodeColor : selectedColor,
+      isDefault,
     },
     parentNode: groupId,
     selectable: false,
+    extent: "parent",
+    // draggable: !isDefault,
   };
 
   return newNode;
@@ -72,13 +81,18 @@ export const createScreenGroup = (
     return zIndex > max ? zIndex : max;
   }, 0);
 
+  const width = GROUP.width;
+  const height = getGroupNodeHeight(0);
+
   const newGroupNode = {
     id: groupId,
     type: "screenGroupNode",
     position: { x, y },
+    width,
+    height,
     data: {
-      width: GROUP.width,
-      height: getGroupNodeHeight(0),
+      width,
+      height,
       label: `Screen Group ${groupCount + 1}`,
       style: {
         backgroundColor: selectedColor,
@@ -121,15 +135,17 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
 
   const updatedNodes = [...nodes];
   const groupNodeIndex = updatedNodes.findIndex((n) => n.id === groupId);
+  const height = getGroupNodeHeight(groupChildren.length);
   if (groupNodeIndex !== -1) {
     updatedNodes[groupNodeIndex] = {
       ...updatedNodes[groupNodeIndex],
+      height,
       data: {
         ...updatedNodes[groupNodeIndex].data,
         style: {
           ...updatedNodes[groupNodeIndex].data?.style,
         },
-        height: getGroupNodeHeight(groupChildren.length),
+        height,
       },
     };
   }

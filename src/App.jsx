@@ -10,6 +10,7 @@ import {
   removeEdge,
   clearAllScreenGroups,
   addScreenGroupNode,
+  addNodeToGroup,
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
 import "reactflow/dist/style.css";
@@ -138,47 +139,6 @@ function App() {
           zIndex: maxZIndex + 1,
         };
         dispatch(updateNode(updatedNode));
-      }
-    },
-    [nodes, dispatch],
-  );
-
-  // Ограничение перемещения ноды внутри её родительской группы во время перетаскивания
-  const onNodeDrag = useCallback(
-    (event, node) => {
-      if (node.parentNode) {
-        const parentNode = nodes.find((n) => n.id === node.parentNode);
-        if (parentNode) {
-          // Получаем размеры родительской группы из данных
-          const parentWidth = parentNode.data?.width;
-          const parentHeight = parentNode.data?.height;
-
-          // Получаем размеры самой ноды
-          const nodeWidth = node.data?.width; // ширина ноды
-          const nodeHeight = node.data?.height; // примерная высота ноды
-
-          // Ограничиваем координаты ноды в пределах родительской группы
-          const maxX = parentWidth - nodeWidth;
-          const maxY = parentHeight - nodeHeight;
-
-          // Проверяем, нужно ли ограничить позицию ноды
-          if (
-            node.position.x < 0 ||
-            node.position.x > maxX ||
-            node.position.y < 0 ||
-            node.position.y > maxY
-          ) {
-            // Корректируем позицию ноды, чтобы она оставалась внутри группы
-            const correctedNode = {
-              ...node,
-              position: {
-                x: Math.max(0, Math.min(node.position.x, maxX)),
-                y: Math.max(0, Math.min(node.position.y, maxY)),
-              },
-            };
-            dispatch(updateNode(correctedNode));
-          }
-        }
       }
     },
     [nodes, dispatch],
@@ -368,7 +328,6 @@ function App() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             onNodeDragStart={onNodeDragStart}
-            onNodeDrag={onNodeDrag}
             onNodeDragStop={onNodeDragStop}
             onEdgeDoubleClick={onEdgeDoubleClick}
             onEdgeUpdate={onEdgeUpdate}

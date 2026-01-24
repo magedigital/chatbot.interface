@@ -137,6 +137,8 @@ const nodesSlice = createSlice({
 
       // Вызываем внешнюю функцию для выстраивания позиций нод в группе
       state.nodes = arrangeNodePositions(state.nodes, groupId);
+
+      action.payload = groupId;
     },
 
     editScreenGroupNode: (state, action) => {
@@ -151,7 +153,6 @@ const nodesSlice = createSlice({
             id: state.nodes[index].id,
             data: state.nodes[index].data,
           };
-          console.log("????", state.dialogs.editDialog);
         }
       }
     },
