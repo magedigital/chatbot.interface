@@ -1,11 +1,15 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { NODE } from "../config/nodeConfig";
+import { useDispatch } from "react-redux";
+import { confirmDialog } from "primereact/confirmdialog";
+import { editInnerNode, removeInnerNode } from "../store/nodesSlice";
 
 // Компонент вложенной ноды с уникальным ID
-const InnerNode = ({ data, id, parentNode }) => {
+const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
+  const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
 
@@ -15,14 +19,29 @@ const InnerNode = ({ data, id, parentNode }) => {
   };
 
   const handleEdit = () => {
-    console.log("Редактировать ноду", id);
+    dispatch(editInnerNode({ nodeId: id }));
   };
 
-  const handleDelete = () => {
-    if (parentNode && typeof window.deleteNodeFromGroup === 'function') {
-      window.deleteNodeFromGroup(id);
+  const handleDelete = useCallback(() => {
+    if (onDeleteNode) {
+      onDeleteNode();
+    } else {
+      // Резервный вариант удаления, если onDeleteGroup не передан
+      confirmDialog({
+        message: "Вы действительно хотите удалить эту ноду?",
+        header: "Подтверждение",
+        icon: "pi pi-exclamation-triangle",
+        acceptClassName: "p-button-danger",
+        accept: () => {
+          // Удаляем группу и все её дочерние ноды и соединения
+          dispatch(removeInnerNode(id));
+        },
+        reject: () => {
+          // Действие отменено, ничего не делаем
+        },
+      });
     }
-  };
+  }, [id, dispatch, onDeleteNode]);
 
   const menuItems = [
     {
@@ -34,6 +53,7 @@ const InnerNode = ({ data, id, parentNode }) => {
       label: "Удалить",
       icon: "pi pi-trash",
       command: handleDelete,
+      disabled: data.isDefault,
     },
   ];
 
@@ -53,7 +73,6 @@ const InnerNode = ({ data, id, parentNode }) => {
         position: "relative",
       }}
     >
-      <div>{data.label}</div>
       <Handle
         type="source"
         position={Position.Right}
@@ -67,21 +86,51 @@ const InnerNode = ({ data, id, parentNode }) => {
           borderColor: NODE.handleBorderColor,
         }}
       />
-      <Button
-        ref={menuBtn}
-        icon="pi pi-ellipsis-v"
-        className="p-button-text p-button-plain"
-        size="small"
+
+      <div
         style={{
           position: "absolute",
-          top: -20,
-          right: 0,
-          width: "auto",
-          paddingLeft: 4,
-          paddingRight: 4,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          paddingLeft: 10,
+          paddingRight: 10,
         }}
-        onClick={handleMenuToggle}
-      />
+      >
+        <div
+          style={{
+            position: "relative",
+            maxheight: NODE.height,
+            display: "-webkit-box",
+            textOverflow: "ellipsis",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
+            lineHeight: "120%",
+            overflowWrap: "break-word",
+            overflow: "hidden",
+          }}
+        >
+          {data.label}
+        </div>
+        <Button
+          ref={menuBtn}
+          icon="pi pi-ellipsis-v"
+          className="p-button-text p-button-plain"
+          size="small"
+          style={{
+            width: "auto",
+            paddingTop: 4,
+            paddingBottom: 4,
+            paddingLeft: 2,
+            paddingRight: 2,
+          }}
+          onClick={handleMenuToggle}
+        />
+      </div>
       <Menu ref={menu} model={menuItems} popup />
     </div>
   );

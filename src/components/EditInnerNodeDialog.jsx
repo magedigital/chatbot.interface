@@ -1,0 +1,73 @@
+import React, { useState, useEffect } from "react";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+
+const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
+  const [label, setLabel] = useState(data?.data?.label || "");
+
+  // Обновляем состояние label при изменении пропса data
+  useEffect(() => {
+    if (data && data.data && data.data.label) {
+      setLabel(data.data.label);
+    } else {
+      setLabel("");
+    }
+  }, [data]);
+
+  const handleSave = () => {
+    onSave({ ...data, data: { ...data.data, label } });
+    onHide();
+  };
+
+  const handleCancel = () => {
+    // Восстанавливаем исходное значение при отмене
+    if (data && data.data && data.data.label) {
+      setLabel(data.data.label);
+    } else {
+      setLabel("");
+    }
+    onHide();
+  };
+
+  const footer = (
+    <div>
+      <Button
+        label={"Отмена"}
+        icon="pi pi-times"
+        onClick={handleCancel}
+        className="p-button-secondary"
+      />
+      <Button
+        label="Сохранить"
+        icon="pi pi-check"
+        onClick={handleSave}
+        className="p-button-primary"
+      />
+    </div>
+  );
+
+  return (
+    <Dialog
+      header="Редактировать ноду"
+      visible={visible}
+      onHide={onHide}
+      footer={footer}
+      style={{ width: "30vw" }}
+      modal
+      closable={true}
+    >
+      <div className="field">
+        <label htmlFor="innerNodeName">Название ноды</label>
+        <InputText
+          id="innerNodeName"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          style={{ width: "100%" }}
+        />
+      </div>
+    </Dialog>
+  );
+};
+
+export default EditInnerNodeDialog;

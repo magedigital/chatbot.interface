@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { editScreenGroupNode, updateNodeData } from "../store/nodesSlice";
+import {
+  editInnerNode,
+  editScreenGroupNode,
+  updateNodeData,
+} from "../store/nodesSlice";
 import EditGroupDialog from "./EditGroupDialog";
+import EditInnerNodeDialog from "./EditInnerNodeDialog";
 
 const DialogManager = () => {
   const dispatch = useDispatch();
 
-  const handleSaveEditDialog = (data) => {
+  const handleSaveEditGroupDialog = (data) => {
     dispatch(updateNodeData(data));
   };
 
-  const handleHideEditDialog = () => {
+  const handleHideEditGroupDialog = () => {
     dispatch(editScreenGroupNode(false));
   };
 
-  const { editDialog } = useSelector((state) => ({
-    editDialog: state.nodes?.dialogs?.editDialog || null,
+  const handleSaveEditInnerNodeDialog = (data) => {
+    dispatch(updateNodeData(data));
+  };
+
+  const handleHideEditInnerNodeDialog = () => {
+    dispatch(editInnerNode(false));
+  };
+
+  const { editGroupDialog, editInnerNodeDialog } = useSelector((state) => ({
+    editGroupDialog: state.nodes?.dialogs?.editGroupDialog || null,
+    editInnerNodeDialog: state.nodes?.dialogs?.editInnerNodeDialog || null,
   }));
 
   return (
@@ -24,10 +38,17 @@ const DialogManager = () => {
       <ConfirmDialog baseZIndex={1000001} />
 
       <EditGroupDialog
-        visible={editDialog !== null}
-        onHide={handleHideEditDialog}
-        onSave={handleSaveEditDialog}
-        data={editDialog}
+        visible={editGroupDialog !== null}
+        onHide={handleHideEditGroupDialog}
+        onSave={handleSaveEditGroupDialog}
+        data={editGroupDialog}
+      />
+
+      <EditInnerNodeDialog
+        visible={editInnerNodeDialog !== null}
+        onHide={handleHideEditInnerNodeDialog}
+        onSave={handleSaveEditInnerNodeDialog}
+        data={editInnerNodeDialog}
       />
     </>
   );

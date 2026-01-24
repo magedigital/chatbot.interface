@@ -11,7 +11,8 @@ const initialState = {
   nodes: [],
   edges: [],
   dialogs: {
-    editDialog: null,
+    editGroupDialog: null,
+    editInnerNodeDialog: null,
   },
 };
 
@@ -58,6 +59,28 @@ const nodesSlice = createSlice({
 
       // Удаляем саму группу
       state.nodes = state.nodes.filter((node) => node.id !== groupId);
+    },
+    removeInnerNode: (state, action) => {
+      const id = action.payload;
+      const index = state.nodes.findIndex((node) => node.id === id);
+
+      if (index !== -1) {
+        const groupId = state.nodes[index]?.parentNode;
+
+        // Удаляем все соединения, связанные с внутренней нодой
+        state.edges = state.edges.filter(
+          (edge) => edge.source !== id && edge.target !== id,
+        );
+
+        // Удаляем саму ноду
+        state.nodes = state.nodes.filter((node) => node.id !== id);
+
+        // Обновляем размеры группы
+        state.nodes = updateGroupNodeDimensions(state.nodes, groupId);
+
+        // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+        state.nodes = arrangeNodePositions(state.nodes, groupId);
+      }
     },
     updateNode: (state, action) => {
       const index = state.nodes.findIndex(
@@ -143,13 +166,29 @@ const nodesSlice = createSlice({
 
     editScreenGroupNode: (state, action) => {
       if (!action.payload) {
-        state.dialogs.editDialog = null;
+        state.dialogs.editGroupDialog = null;
       } else {
         const index = state.nodes.findIndex(
           (node) => node.id === action.payload.groupId,
         );
         if (index !== -1) {
-          state.dialogs.editDialog = {
+          state.dialogs.editGroupDialog = {
+            id: state.nodes[index].id,
+            data: state.nodes[index].data,
+          };
+        }
+      }
+    },
+
+    editInnerNode: (state, action) => {
+      if (!action.payload) {
+        state.dialogs.editInnerNodeDialog = null;
+      } else {
+        const index = state.nodes.findIndex(
+          (node) => node.id === action.payload.nodeId,
+        );
+        if (index !== -1) {
+          state.dialogs.editInnerNodeDialog = {
             id: state.nodes[index].id,
             data: state.nodes[index].data,
           };
@@ -192,8 +231,10 @@ export const {
   updateNodePositionsInGroup,
   clearAllScreenGroups,
   removeGroupNode,
+  removeInnerNode,
   addScreenGroupNode,
   editScreenGroupNode,
+  editInnerNode,
 } = nodesSlice.actions;
 
 export default nodesSlice.reducer;

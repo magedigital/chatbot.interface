@@ -157,11 +157,11 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
  * Функция для выстраивания позиций нод в группе
  * @param {Array} nodes - массив нод
  * @param {string} groupId - ID группы
- * @param {number} nodeHeight - высота ноды (по умолчанию берется из NODE.height)
  * @returns {Array} - обновленный массив нод
  */
 export const arrangeNodePositions = (nodes, groupId) => {
   const groupNode = nodes.find((n) => n.id === groupId);
+
   if (!groupNode) return nodes;
 
   // Находим все ноды, принадлежащие этой группе

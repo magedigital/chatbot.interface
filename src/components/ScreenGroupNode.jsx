@@ -16,7 +16,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
   const menuBtn = useRef(null);
-  // const [editDialogVisible, setEditDialogVisible] = useState(false);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -31,7 +30,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   };
 
   const handleEdit = () => {
-    // setEditDialogVisible(true);
     dispatch(editScreenGroupNode({ groupId: id }));
   };
 
