@@ -38,8 +38,8 @@ const TopPanel = ({
     <div
       style={{
         height: "60px",
-        backgroundColor: "#f8f9fa",
-        borderBottom: "1px solid #dee2e6",
+        backgroundColor: "var(--surface-ground)",
+        borderBottom: "1px solid var(--surface-border)",
         display: "flex",
         alignItems: "center",
         paddingLeft: "20px",

@@ -14,7 +14,10 @@ import {
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
 import "reactflow/dist/style.css";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+// import "primereact/resources/themes/lara-light-indigo/theme.css";
+// import "primereact/resources/themes/vela-blue/theme.css";
+import "primereact/resources/themes/lara-dark-blue/theme.css";
+// import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
@@ -303,6 +306,13 @@ function App() {
       <PrimeReactProvider
         value={{
           hideOverlaysOnDocumentScrolling: true,
+          zIndex: {
+            modal: 1000001, // dialog, sidebar
+            overlay: 1000001, // dropdown, overlaypanel
+            menu: 1000010, // overlay menus
+            tooltip: 1000020, // tooltip
+            toast: 1000030, // toast
+          },
         }}
       >
         <DialogManager />

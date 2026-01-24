@@ -4,11 +4,14 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
-import { TextArea } from "primereact/textarea";
+import { InputTextarea } from "primereact/inputtextarea";
+import { Divider } from "primereact/divider";
+import { Fieldset } from "primereact/fieldset";
+import { UI } from "../config/uiConfig";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
+  const [label, setLabel] = useState(data?.data?.label || "");
   const [formData, setFormData] = useState({
-    message: "Сообщение",
     sendMessage: "Пришлите сообщение",
     goToMode: "Регистрация чека",
     miniApp: "Регистрация кода",
@@ -27,8 +30,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   // Обновляем состояние при изменении пропса data
   useEffect(() => {
     if (data && data.data) {
+      setLabel(data.data.label);
       setFormData({
-        message: data.data.message || "Сообщение",
         sendMessage: data.data.sendMessage || "Пришлите сообщение",
         goToMode: data.data.goToMode || "Регистрация чека",
         miniApp: data.data.miniApp || "Регистрация кода",
@@ -38,10 +41,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         showOnlyGroup: data.data.showOnlyGroup || "Загрузил чек",
         dontShowGroup: data.data.dontShowGroup || "Зарегистрировал код",
         addToGroup: data.data.addToGroup || "Загрузил чек",
-        addRemoveFromGroup: data.data.addRemoveFromGroup || "Зарегистрировал код",
-        deleteButton: data.data.deleteButton !== undefined ? data.data.deleteButton : true,
+        addRemoveFromGroup:
+          data.data.addRemoveFromGroup || "Зарегистрировал код",
+        deleteButton:
+          data.data.deleteButton !== undefined ? data.data.deleteButton : true,
       });
       setParamsList(data.data.paramsList || []);
+    } else {
+      setLabel("");
     }
   }, [data]);
 
@@ -67,32 +74,15 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       data: {
         ...data.data,
         ...formData,
-        paramsList
-      }
+        paramsList,
+        label,
+      },
     };
     onSave(updatedData);
     onHide();
   };
 
   const handleCancel = () => {
-    // Восстанавливаем исходные значения при отмене
-    if (data && data.data) {
-      setFormData({
-        message: data.data.message || "Сообщение",
-        sendMessage: data.data.sendMessage || "Пришлите сообщение",
-        goToMode: data.data.goToMode || "Регистрация чека",
-        miniApp: data.data.miniApp || "Регистрация кода",
-        command: data.data.command || "Отправка ОС",
-        commandParam: data.data.commandParam || "",
-        commandValue: data.data.commandValue || "",
-        showOnlyGroup: data.data.showOnlyGroup || "Загрузил чек",
-        dontShowGroup: data.data.dontShowGroup || "Зарегистрировал код",
-        addToGroup: data.data.addToGroup || "Загрузил чек",
-        addRemoveFromGroup: data.data.addRemoveFromGroup || "Зарегистрировал код",
-        deleteButton: data.data.deleteButton !== undefined ? data.data.deleteButton : true,
-      });
-      setParamsList(data.data.paramsList || []);
-    }
     onHide();
   };
 
@@ -158,23 +148,26 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       style={{ width: "50vw" }}
       modal
       closable={true}
+      baseZIndex={UI.editDialogZIndex}
     >
       <div className="form-field">
-        <label htmlFor="message">Сообщение</label>
+        <label htmlFor="groupName">Название группы</label>
         <InputText
-          id="message"
-          value={formData.message}
-          onChange={(e) => setFormData({...formData, message: e.target.value})}
+          id="groupName"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
           style={{ width: "100%" }}
         />
       </div>
 
       <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="sendMessage">Пришлите сообщение</label>
-        <TextArea
+        <label htmlFor="sendMessage">Сообщение</label>
+        <InputTextarea
           id="sendMessage"
           value={formData.sendMessage}
-          onChange={(e) => setFormData({...formData, sendMessage: e.target.value})}
+          onChange={(e) =>
+            setFormData({ ...formData, sendMessage: e.target.value })
+          }
           placeholder="Пришлите сообщение"
           rows={3}
           style={{ width: "100%" }}
@@ -187,7 +180,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           id="goToMode"
           value={formData.goToMode}
           options={goToModeOptions}
-          onChange={(e) => setFormData({...formData, goToMode: e.value})}
+          onChange={(e) => setFormData({ ...formData, goToMode: e.value })}
           style={{ width: "100%" }}
         />
       </div>
@@ -198,7 +191,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           id="miniApp"
           value={formData.miniApp}
           options={miniAppOptions}
-          onChange={(e) => setFormData({...formData, miniApp: e.value})}
+          onChange={(e) => setFormData({ ...formData, miniApp: e.value })}
           style={{ width: "100%" }}
         />
       </div>
@@ -209,112 +202,151 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           id="command"
           value={formData.command}
           options={commandOptions}
-          onChange={(e) => setFormData({...formData, command: e.value})}
+          onChange={(e) => setFormData({ ...formData, command: e.value })}
           style={{ width: "100%" }}
         />
       </div>
 
       <div className="form-field" style={{ marginTop: "1rem" }}>
         <label>Параметры команды</label>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          <InputText
-            id="commandParam"
-            value={formData.commandParam}
-            onChange={(e) => setFormData({...formData, commandParam: e.target.value})}
-            placeholder="Параметр"
-            style={{ flex: 1 }}
+      </div>
+
+      <Fieldset>
+        <div className="form-field">
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <InputText
+              id="commandParam"
+              value={formData.commandParam}
+              onChange={(e) =>
+                setFormData({ ...formData, commandParam: e.target.value })
+              }
+              placeholder="Параметр"
+              style={{ flex: 1 }}
+            />
+            <InputText
+              id="commandValue"
+              value={formData.commandValue}
+              onChange={(e) =>
+                setFormData({ ...formData, commandValue: e.target.value })
+              }
+              placeholder="Значение"
+              style={{ flex: 1 }}
+            />
+            <Button
+              icon="pi pi-plus"
+              onClick={handleParamAdd}
+              className="p-button-outlined"
+              style={{ minWidth: "auto" }}
+            />
+          </div>
+        </div>
+
+        {/* Список параметров команды */}
+        {paramsList.map((param, index) => (
+          <div
+            key={index}
+            className="form-field"
+            style={{
+              marginTop: "0.5rem",
+              display: "flex",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <InputText
+              value={param.param}
+              onChange={(e) =>
+                handleParamChange(index, "param", e.target.value)
+              }
+              placeholder="Параметр"
+              style={{ flex: 1 }}
+            />
+            <InputText
+              value={param.value}
+              onChange={(e) =>
+                handleParamChange(index, "value", e.target.value)
+              }
+              placeholder="Значение"
+              style={{ flex: 1 }}
+            />
+            <Button
+              icon="pi pi-times"
+              onClick={() => handleParamRemove(index)}
+              className="p-button-outlined p-button-danger"
+              style={{ minWidth: "auto" }}
+            />
+          </div>
+        ))}
+      </Fieldset>
+
+      <div
+        className="form-field"
+        style={{
+          marginTop: "0.5rem",
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
+      >
+        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
+          <label htmlFor="showOnlyGroup">Показывать только группе:</label>
+          <Dropdown
+            id="showOnlyGroup"
+            value={formData.showOnlyGroup}
+            options={showOnlyGroupOptions}
+            onChange={(e) =>
+              setFormData({ ...formData, showOnlyGroup: e.value })
+            }
+            style={{ width: "100%" }}
           />
-          <InputText
-            id="commandValue"
-            value={formData.commandValue}
-            onChange={(e) => setFormData({...formData, commandValue: e.target.value})}
-            placeholder="Значение"
-            style={{ flex: 1 }}
-          />
-          <Button
-            icon="pi pi-plus"
-            onClick={handleParamAdd}
-            className="p-button-outlined"
-            style={{ minWidth: "auto" }}
+        </div>
+
+        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
+          <label htmlFor="dontShowGroup">Не показывать группе:</label>
+          <Dropdown
+            id="dontShowGroup"
+            value={formData.dontShowGroup}
+            options={dontShowGroupOptions}
+            onChange={(e) =>
+              setFormData({ ...formData, dontShowGroup: e.value })
+            }
+            style={{ width: "100%" }}
           />
         </div>
       </div>
 
-      {/* Список параметров команды */}
-      {paramsList.map((param, index) => (
-        <div key={index} className="form-field" style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          <InputText
-            value={param.param}
-            onChange={(e) => handleParamChange(index, "param", e.target.value)}
-            placeholder="Параметр"
-            style={{ flex: 1 }}
-          />
-          <InputText
-            value={param.value}
-            onChange={(e) => handleParamChange(index, "value", e.target.value)}
-            placeholder="Значение"
-            style={{ flex: 1 }}
-          />
-          <Button
-            icon="pi pi-times"
-            onClick={() => handleParamRemove(index)}
-            className="p-button-outlined p-button-danger"
-            style={{ minWidth: "auto" }}
+      <div
+        className="form-field"
+        style={{
+          marginTop: "0.5rem",
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
+      >
+        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
+          <label htmlFor="addToGroup">Добавить в группу:</label>
+          <Dropdown
+            id="addToGroup"
+            value={formData.addToGroup}
+            options={addToGroupOptions}
+            onChange={(e) => setFormData({ ...formData, addToGroup: e.value })}
+            style={{ width: "100%" }}
           />
         </div>
-      ))}
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="showOnlyGroup">Показывать только группе:</label>
-        <Dropdown
-          id="showOnlyGroup"
-          value={formData.showOnlyGroup}
-          options={showOnlyGroupOptions}
-          onChange={(e) => setFormData({...formData, showOnlyGroup: e.value})}
-          style={{ width: "100%" }}
-        />
-      </div>
-
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="dontShowGroup">Не показывать группе:</label>
-        <Dropdown
-          id="dontShowGroup"
-          value={formData.dontShowGroup}
-          options={dontShowGroupOptions}
-          onChange={(e) => setFormData({...formData, dontShowGroup: e.value})}
-          style={{ width: "100%" }}
-        />
-      </div>
-
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="addToGroup">Добавить в группу:</label>
-        <Dropdown
-          id="addToGroup"
-          value={formData.addToGroup}
-          options={addToGroupOptions}
-          onChange={(e) => setFormData({...formData, addToGroup: e.value})}
-          style={{ width: "100%" }}
-        />
-      </div>
-
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="addRemoveFromGroup">Добавить убрать из группы:</label>
-        <Dropdown
-          id="addRemoveFromGroup"
-          value={formData.addRemoveFromGroup}
-          options={addRemoveFromGroupOptions}
-          onChange={(e) => setFormData({...formData, addRemoveFromGroup: e.value})}
-          style={{ width: "100%" }}
-        />
-      </div>
-
-      <div className="form-field" style={{ marginTop: "1rem", display: "flex", alignItems: "center" }}>
-        <Checkbox
-          id="deleteButton"
-          checked={formData.deleteButton}
-          onChange={(e) => setFormData({...formData, deleteButton: e.checked})}
-        />
-        <label htmlFor="deleteButton" style={{ marginLeft: "0.5rem" }}>Удалить кнопку</label>
+        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
+          <label htmlFor="addRemoveFromGroup">Добавить убрать из группы:</label>
+          <Dropdown
+            id="addRemoveFromGroup"
+            value={formData.addRemoveFromGroup}
+            options={addRemoveFromGroupOptions}
+            onChange={(e) =>
+              setFormData({ ...formData, addRemoveFromGroup: e.value })
+            }
+            style={{ width: "100%" }}
+          />
+        </div>
       </div>
     </Dialog>
   );

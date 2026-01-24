@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { UI } from "../config/uiConfig";
 
 const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
@@ -21,12 +22,6 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
   };
 
   const handleCancel = () => {
-    // Восстанавливаем исходное значение при отмене
-    if (data && data.data && data.data.label) {
-      setLabel(data.data.label);
-    } else {
-      setLabel("");
-    }
     onHide();
   };
 
@@ -56,6 +51,7 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
       style={{ width: "30vw" }}
       modal
       closable={true}
+      baseZIndex={UI.editDialogZIndex}
     >
       <div className="field">
         <label htmlFor="groupName">Название группы</label>

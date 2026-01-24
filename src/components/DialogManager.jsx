@@ -8,6 +8,7 @@ import {
 } from "../store/nodesSlice";
 import EditGroupDialog from "./EditGroupDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
+import { UI } from "../config/uiConfig";
 
 const DialogManager = () => {
   const dispatch = useDispatch();
@@ -35,8 +36,6 @@ const DialogManager = () => {
 
   return (
     <>
-      <ConfirmDialog baseZIndex={1000001} />
-
       <EditGroupDialog
         visible={editGroupDialog !== null}
         onHide={handleHideEditGroupDialog}
@@ -50,6 +49,8 @@ const DialogManager = () => {
         onSave={handleSaveEditInnerNodeDialog}
         data={editInnerNodeDialog}
       />
+
+      <ConfirmDialog baseZIndex={UI.confirmDialogZIndex} />
     </>
   );
 };
