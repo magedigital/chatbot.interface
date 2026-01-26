@@ -104,17 +104,28 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
         <div
           style={{
             position: "relative",
-            maxheight: NODE.height,
-            display: "-webkit-box",
-            textOverflow: "ellipsis",
-            WebkitLineClamp: "2",
-            WebkitBoxOrient: "vertical",
-            lineHeight: "120%",
-            overflowWrap: "break-word",
-            overflow: "hidden",
+            height: NODE.height,
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
           }}
+          onDoubleClick={handleEdit}
         >
-          {data.label}
+          <div
+            style={{
+              position: "relative",
+              maxheight: NODE.height,
+              display: "-webkit-box",
+              textOverflow: "ellipsis",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+              lineHeight: "120%",
+              overflowWrap: "break-word",
+              overflow: "hidden",
+            }}
+          >
+            {data.label}
+          </div>
         </div>
         <Button
           ref={menuBtn}

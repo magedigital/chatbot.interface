@@ -104,19 +104,30 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
       >
         <div
           style={{
-            fontWeight: "bold",
             position: "relative",
-            maxheight: GROUP.topHeight,
-            display: "-webkit-box",
-            textOverflow: "ellipsis",
-            WebkitLineClamp: "2",
-            WebkitBoxOrient: "vertical",
-            lineHeight: "120%",
-            overflowWrap: "break-word",
-            overflow: "hidden",
+            height: GROUP.topHeight,
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
           }}
+          onDoubleClick={handleEdit}
         >
-          {data.label}
+          <div
+            style={{
+              fontWeight: "bold",
+              position: "relative",
+              maxheight: GROUP.topHeight,
+              display: "-webkit-box",
+              textOverflow: "ellipsis",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+              lineHeight: "120%",
+              overflowWrap: "break-word",
+              overflow: "hidden",
+            }}
+          >
+            {data.label}
+          </div>
         </div>
         <Button
           ref={menuBtn}

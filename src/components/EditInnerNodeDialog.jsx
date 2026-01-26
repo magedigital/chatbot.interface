@@ -123,7 +123,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   ];
 
   const footer = (
-    <div>
+    <div className="flex justify-content-end gap-2">
       <Button
         label="Отмена"
         icon="pi pi-times"
@@ -150,18 +150,18 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       closable={true}
       baseZIndex={UI.editDialogZIndex}
     >
-      <div className="form-field">
-        <label htmlFor="groupName">Название группы</label>
+      <div className="field mb-3">
+        <label htmlFor="groupName" className="block font-bold mb-2">Название ноды</label>
         <InputText
           id="groupName"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="sendMessage">Сообщение</label>
+      <div className="field mb-3">
+        <label htmlFor="sendMessage" className="block font-bold mb-2">Сообщение</label>
         <InputTextarea
           id="sendMessage"
           value={formData.sendMessage}
@@ -170,50 +170,50 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           }
           placeholder="Пришлите сообщение"
           rows={3}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="goToMode">Перейти в режим:</label>
+      <div className="field mb-3">
+        <label htmlFor="goToMode" className="block font-bold mb-2">Перейти в режим:</label>
         <Dropdown
           id="goToMode"
           value={formData.goToMode}
           options={goToModeOptions}
           onChange={(e) => setFormData({ ...formData, goToMode: e.value })}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="miniApp">MiniApp:</label>
+      <div className="field mb-3">
+        <label htmlFor="miniApp" className="block font-bold mb-2">MiniApp:</label>
         <Dropdown
           id="miniApp"
           value={formData.miniApp}
           options={miniAppOptions}
           onChange={(e) => setFormData({ ...formData, miniApp: e.value })}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label htmlFor="command">Команда</label>
+      <div className="field mb-3">
+        <label htmlFor="command" className="block font-bold mb-2">Команда</label>
         <Dropdown
           id="command"
           value={formData.command}
           options={commandOptions}
           onChange={(e) => setFormData({ ...formData, command: e.value })}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
 
-      <div className="form-field" style={{ marginTop: "1rem" }}>
-        <label>Параметры команды</label>
+      <div className="field mb-3">
+        <label className="block font-bold mb-2">Параметры команды</label>
       </div>
 
-      <Fieldset>
-        <div className="form-field">
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+      <Fieldset legend="Параметры команды">
+        <div className="field mb-2">
+          <div className="flex align-items-center gap-2">
             <InputText
               id="commandParam"
               value={formData.commandParam}
@@ -221,7 +221,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 setFormData({ ...formData, commandParam: e.target.value })
               }
               placeholder="Параметр"
-              style={{ flex: 1 }}
+              className="flex-1"
             />
             <InputText
               id="commandValue"
@@ -230,13 +230,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 setFormData({ ...formData, commandValue: e.target.value })
               }
               placeholder="Значение"
-              style={{ flex: 1 }}
+              className="flex-1"
             />
             <Button
               icon="pi pi-plus"
               onClick={handleParamAdd}
               className="p-button-outlined"
-              style={{ minWidth: "auto" }}
             />
           </div>
         </div>
@@ -245,13 +244,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         {paramsList.map((param, index) => (
           <div
             key={index}
-            className="form-field"
-            style={{
-              marginTop: "0.5rem",
-              display: "flex",
-              gap: "0.5rem",
-              alignItems: "center",
-            }}
+            className="field mb-2 flex align-items-center gap-2"
           >
             <InputText
               value={param.param}
@@ -259,7 +252,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 handleParamChange(index, "param", e.target.value)
               }
               placeholder="Параметр"
-              style={{ flex: 1 }}
+              className="flex-1"
             />
             <InputText
               value={param.value}
@@ -267,85 +260,76 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 handleParamChange(index, "value", e.target.value)
               }
               placeholder="Значение"
-              style={{ flex: 1 }}
+              className="flex-1"
             />
             <Button
               icon="pi pi-times"
               onClick={() => handleParamRemove(index)}
               className="p-button-outlined p-button-danger"
-              style={{ minWidth: "auto" }}
             />
           </div>
         ))}
       </Fieldset>
 
-      <div
-        className="form-field"
-        style={{
-          marginTop: "0.5rem",
-          display: "flex",
-          gap: "0.5rem",
-          alignItems: "center",
-        }}
-      >
-        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
-          <label htmlFor="showOnlyGroup">Показывать только группе:</label>
-          <Dropdown
-            id="showOnlyGroup"
-            value={formData.showOnlyGroup}
-            options={showOnlyGroupOptions}
-            onChange={(e) =>
-              setFormData({ ...formData, showOnlyGroup: e.value })
-            }
-            style={{ width: "100%" }}
-          />
+      <div className="grid mt-2">
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="showOnlyGroup" className="block font-bold mb-2">Показывать только группе:</label>
+            <Dropdown
+              id="showOnlyGroup"
+              value={formData.showOnlyGroup}
+              options={showOnlyGroupOptions}
+              onChange={(e) =>
+                setFormData({ ...formData, showOnlyGroup: e.value })
+              }
+              className="w-full"
+            />
+          </div>
         </div>
 
-        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
-          <label htmlFor="dontShowGroup">Не показывать группе:</label>
-          <Dropdown
-            id="dontShowGroup"
-            value={formData.dontShowGroup}
-            options={dontShowGroupOptions}
-            onChange={(e) =>
-              setFormData({ ...formData, dontShowGroup: e.value })
-            }
-            style={{ width: "100%" }}
-          />
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="dontShowGroup" className="block font-bold mb-2">Не показывать группе:</label>
+            <Dropdown
+              id="dontShowGroup"
+              value={formData.dontShowGroup}
+              options={dontShowGroupOptions}
+              onChange={(e) =>
+                setFormData({ ...formData, dontShowGroup: e.value })
+              }
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
 
-      <div
-        className="form-field"
-        style={{
-          marginTop: "0.5rem",
-          display: "flex",
-          gap: "0.5rem",
-          alignItems: "center",
-        }}
-      >
-        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
-          <label htmlFor="addToGroup">Добавить в группу:</label>
-          <Dropdown
-            id="addToGroup"
-            value={formData.addToGroup}
-            options={addToGroupOptions}
-            onChange={(e) => setFormData({ ...formData, addToGroup: e.value })}
-            style={{ width: "100%" }}
-          />
+      <div className="grid mt-2">
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="addToGroup" className="block font-bold mb-2">Добавить в группу:</label>
+            <Dropdown
+              id="addToGroup"
+              value={formData.addToGroup}
+              options={addToGroupOptions}
+              onChange={(e) => setFormData({ ...formData, addToGroup: e.value })}
+              className="w-full"
+            />
+          </div>
         </div>
 
-        <div className="form-field" style={{ marginTop: "1rem", flex: 1 }}>
-          <label htmlFor="addRemoveFromGroup">Добавить убрать из группы:</label>
-          <Dropdown
-            id="addRemoveFromGroup"
-            value={formData.addRemoveFromGroup}
-            options={addRemoveFromGroupOptions}
-            onChange={(e) =>
-              setFormData({ ...formData, addRemoveFromGroup: e.value })
-            }
-            style={{ width: "100%" }}
-          />
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="addRemoveFromGroup" className="block font-bold mb-2">Добавить убрать из группы:</label>
+            <Dropdown
+              id="addRemoveFromGroup"
+              value={formData.addRemoveFromGroup}
+              options={addRemoveFromGroupOptions}
+              onChange={(e) =>
+                setFormData({ ...formData, addRemoveFromGroup: e.value })
+              }
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
     </Dialog>
