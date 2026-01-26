@@ -48,13 +48,15 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
       visible={visible}
       onHide={onHide}
       footer={footer}
-      style={{ width: "30vw" }}
+      // style={{ width: "30vw" }}
       modal
       closable={true}
       baseZIndex={UI.editDialogZIndex}
     >
       <div className="field mb-3">
-        <label htmlFor="groupName" className="block font-bold mb-2">Название группы</label>
+        <label htmlFor="groupName" className="block font-bold mb-2">
+          Название группы
+        </label>
         <InputText
           id="groupName"
           value={label}
