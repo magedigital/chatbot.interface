@@ -21,13 +21,15 @@ import "primereact/resources/themes/lara-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
-import { PrimeReactProvider } from "primereact/api";
+import { addLocale, PrimeReactProvider } from "primereact/api";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
 import { elkOptions } from "./config/layoutConfig";
 import DialogManager from "./components/DialogManager";
+
+import * as locales from "./locales/ru.json";
 
 // Регистрация пользовательских типов нод
 const nodeTypes = {
@@ -47,6 +49,7 @@ function App() {
   useEffect(() => {
     dispatch(setNodes(initialNodes));
     dispatch(setEdges(initialEdges));
+    addLocale("ru", locales["ru"]);
   }, [dispatch]);
 
   const onConnect = useCallback(
@@ -305,6 +308,7 @@ function App() {
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <PrimeReactProvider
         value={{
+          locale: "ru",
           hideOverlaysOnDocumentScrolling: true,
           zIndex: {
             modal: 1000001, // dialog, sidebar

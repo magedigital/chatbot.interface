@@ -26,7 +26,7 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
   };
 
   const footer = (
-    <div>
+    <div className="flex justify-content-end gap-2">
       <Button
         label={"Отмена"}
         icon="pi pi-times"
@@ -53,13 +53,13 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
       closable={true}
       baseZIndex={UI.editDialogZIndex}
     >
-      <div className="field">
-        <label htmlFor="groupName">Название группы</label>
+      <div className="field mb-3">
+        <label htmlFor="groupName" className="block font-bold mb-2">Название группы</label>
         <InputText
           id="groupName"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          style={{ width: "100%" }}
+          className="w-full"
         />
       </div>
     </Dialog>

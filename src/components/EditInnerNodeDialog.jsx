@@ -218,66 +218,51 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <Fieldset legend="Параметры команды">
-        <div className="field mb-2">
-          <div className="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2">
-            <InputText
-              id="commandParam"
-              value={formData.commandParam}
-              onChange={(e) =>
-                setFormData({ ...formData, commandParam: e.target.value })
-              }
-              placeholder="Параметр"
-              className="w-full sm:w-auto flex-1"
-            />
-            <InputText
-              id="commandValue"
-              value={formData.commandValue}
-              onChange={(e) =>
-                setFormData({ ...formData, commandValue: e.target.value })
-              }
-              placeholder="Значение"
-              className="w-full sm:w-auto flex-1"
-            />
-            <Button
-              icon="pi pi-plus"
-              onClick={handleParamAdd}
-              className="p-button-outlined"
-            />
-          </div>
-        </div>
-
         {/* Список параметров команды */}
         {paramsList.map((param, index) => (
-          <div key={index} className="field mb-2 flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2">
-            <InputText
-              value={param.param}
-              onChange={(e) =>
-                handleParamChange(index, "param", e.target.value)
-              }
-              placeholder="Параметр"
-              className="w-full sm:w-auto flex-1"
-            />
-            <InputText
-              value={param.value}
-              onChange={(e) =>
-                handleParamChange(index, "value", e.target.value)
-              }
-              placeholder="Значение"
-              className="w-full sm:w-auto flex-1"
-            />
+          <div
+            key={index}
+            className="field flex flex-row align-items-center gap-2"
+          >
+            <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
+              <InputText
+                value={param.param}
+                onChange={(e) =>
+                  handleParamChange(index, "param", e.target.value)
+                }
+                placeholder="Параметр"
+                className="w-full flex-1"
+              />
+              <InputText
+                value={param.value}
+                onChange={(e) =>
+                  handleParamChange(index, "value", e.target.value)
+                }
+                placeholder="Значение"
+                className="w-full flex-1"
+              />
+            </div>
             <Button
               icon="pi pi-times"
               onClick={() => handleParamRemove(index)}
-              className="p-button-outlined p-button-danger"
+              className="p-button-outlined p-button-danger flex-none"
             />
           </div>
         ))}
+        <Button
+          icon="pi pi-plus"
+          onClick={handleParamAdd}
+          className="p-button-outlined w-full"
+        />
       </Fieldset>
 
-      <div className="grid mt-2">
-        <div className="col-6">
-          <div className="field mb-3">
-            <label htmlFor="showOnlyGroup" className="block font-bold mb-2">
+      <div className="field w-full mt-2">
+        <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
+          <div className="field flex-1 w-full mb-3">
+            <label
+              htmlFor="showOnlyGroup"
+              className="block w-full font-bold mb-2"
+            >
               Показывать только группе:
             </label>
             <Dropdown
@@ -290,10 +275,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
               className="w-full"
             />
           </div>
-        </div>
 
-        <div className="col-6">
-          <div className="field mb-3">
+          <div className="field flex-1 w-full mb-3">
             <label htmlFor="dontShowGroup" className="block font-bold mb-2">
               Не показывать группе:
             </label>
@@ -310,9 +293,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         </div>
       </div>
 
-      <div className="grid mt-2">
-        <div className="col-6">
-          <div className="field mb-3">
+      <div className="field w-full mt-2">
+        <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
+          <div className="field flex-1 w-full mb-3">
             <label htmlFor="addToGroup" className="block font-bold mb-2">
               Добавить в группу:
             </label>
@@ -326,10 +309,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
               className="w-full"
             />
           </div>
-        </div>
 
-        <div className="col-6">
-          <div className="field mb-3">
+          <div className="field flex-1 w-full mb-3">
             <label
               htmlFor="addRemoveFromGroup"
               className="block font-bold mb-2"
