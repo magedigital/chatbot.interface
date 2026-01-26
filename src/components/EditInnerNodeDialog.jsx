@@ -151,7 +151,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       baseZIndex={UI.editDialogZIndex}
     >
       <div className="field mb-3">
-        <label htmlFor="groupName" className="block font-bold mb-2">Название ноды</label>
+        <label htmlFor="groupName" className="block font-bold mb-2">
+          Название ноды
+        </label>
         <InputText
           id="groupName"
           value={label}
@@ -161,7 +163,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="sendMessage" className="block font-bold mb-2">Сообщение</label>
+        <label htmlFor="sendMessage" className="block font-bold mb-2">
+          Сообщение
+        </label>
         <InputTextarea
           id="sendMessage"
           value={formData.sendMessage}
@@ -175,7 +179,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="goToMode" className="block font-bold mb-2">Перейти в режим:</label>
+        <label htmlFor="goToMode" className="block font-bold mb-2">
+          Перейти в режим:
+        </label>
         <Dropdown
           id="goToMode"
           value={formData.goToMode}
@@ -186,7 +192,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="miniApp" className="block font-bold mb-2">MiniApp:</label>
+        <label htmlFor="miniApp" className="block font-bold mb-2">
+          MiniApp:
+        </label>
         <Dropdown
           id="miniApp"
           value={formData.miniApp}
@@ -197,7 +205,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="command" className="block font-bold mb-2">Команда</label>
+        <label htmlFor="command" className="block font-bold mb-2">
+          Команда
+        </label>
         <Dropdown
           id="command"
           value={formData.command}
@@ -207,13 +217,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         />
       </div>
 
-      <div className="field mb-3">
-        <label className="block font-bold mb-2">Параметры команды</label>
-      </div>
-
       <Fieldset legend="Параметры команды">
         <div className="field mb-2">
-          <div className="flex align-items-center gap-2">
+          <div className="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2">
             <InputText
               id="commandParam"
               value={formData.commandParam}
@@ -221,7 +227,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 setFormData({ ...formData, commandParam: e.target.value })
               }
               placeholder="Параметр"
-              className="flex-1"
+              className="w-full sm:w-auto flex-1"
             />
             <InputText
               id="commandValue"
@@ -230,7 +236,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 setFormData({ ...formData, commandValue: e.target.value })
               }
               placeholder="Значение"
-              className="flex-1"
+              className="w-full sm:w-auto flex-1"
             />
             <Button
               icon="pi pi-plus"
@@ -242,17 +248,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
         {/* Список параметров команды */}
         {paramsList.map((param, index) => (
-          <div
-            key={index}
-            className="field mb-2 flex align-items-center gap-2"
-          >
+          <div key={index} className="field mb-2 flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2">
             <InputText
               value={param.param}
               onChange={(e) =>
                 handleParamChange(index, "param", e.target.value)
               }
               placeholder="Параметр"
-              className="flex-1"
+              className="w-full sm:w-auto flex-1"
             />
             <InputText
               value={param.value}
@@ -260,7 +263,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
                 handleParamChange(index, "value", e.target.value)
               }
               placeholder="Значение"
-              className="flex-1"
+              className="w-full sm:w-auto flex-1"
             />
             <Button
               icon="pi pi-times"
@@ -274,7 +277,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       <div className="grid mt-2">
         <div className="col-6">
           <div className="field mb-3">
-            <label htmlFor="showOnlyGroup" className="block font-bold mb-2">Показывать только группе:</label>
+            <label htmlFor="showOnlyGroup" className="block font-bold mb-2">
+              Показывать только группе:
+            </label>
             <Dropdown
               id="showOnlyGroup"
               value={formData.showOnlyGroup}
@@ -289,7 +294,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
         <div className="col-6">
           <div className="field mb-3">
-            <label htmlFor="dontShowGroup" className="block font-bold mb-2">Не показывать группе:</label>
+            <label htmlFor="dontShowGroup" className="block font-bold mb-2">
+              Не показывать группе:
+            </label>
             <Dropdown
               id="dontShowGroup"
               value={formData.dontShowGroup}
@@ -306,12 +313,16 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       <div className="grid mt-2">
         <div className="col-6">
           <div className="field mb-3">
-            <label htmlFor="addToGroup" className="block font-bold mb-2">Добавить в группу:</label>
+            <label htmlFor="addToGroup" className="block font-bold mb-2">
+              Добавить в группу:
+            </label>
             <Dropdown
               id="addToGroup"
               value={formData.addToGroup}
               options={addToGroupOptions}
-              onChange={(e) => setFormData({ ...formData, addToGroup: e.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, addToGroup: e.value })
+              }
               className="w-full"
             />
           </div>
@@ -319,7 +330,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
         <div className="col-6">
           <div className="field mb-3">
-            <label htmlFor="addRemoveFromGroup" className="block font-bold mb-2">Добавить убрать из группы:</label>
+            <label
+              htmlFor="addRemoveFromGroup"
+              className="block font-bold mb-2"
+            >
+              Добавить убрать из группы:
+            </label>
             <Dropdown
               id="addRemoveFromGroup"
               value={formData.addRemoveFromGroup}
