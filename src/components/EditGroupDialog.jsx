@@ -26,7 +26,7 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
   };
 
   const footer = (
-    <div className="flex justify-content-end gap-2">
+    <div className="flex justify-content-end gap-2 flex-column sm:flex-row mt-4">
       <Button
         label={"Отмена"}
         icon="pi pi-times"
@@ -48,7 +48,7 @@ const EditGroupDialog = ({ visible, onHide, onSave, data }) => {
       visible={visible}
       onHide={onHide}
       footer={footer}
-      // style={{ width: "30vw" }}
+      className="max-w-max w-screen"
       modal
       closable={true}
       baseZIndex={UI.editDialogZIndex}

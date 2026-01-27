@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import {
@@ -10,7 +10,6 @@ import {
   removeEdge,
   clearAllScreenGroups,
   addScreenGroupNode,
-  addNodeToGroup,
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
 import "reactflow/dist/style.css";
@@ -20,7 +19,7 @@ import "primereact/resources/themes/lara-dark-blue/theme.css";
 // import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { confirmDialog } from "primereact/confirmdialog";
 import { addLocale, PrimeReactProvider } from "primereact/api";
 
 import InnerNode from "./components/InnerNode";
@@ -30,12 +29,6 @@ import { elkOptions } from "./config/layoutConfig";
 import DialogManager from "./components/DialogManager";
 
 import * as locales from "./locales/ru.json";
-
-// Регистрация пользовательских типов нод
-const nodeTypes = {
-  innerNode: InnerNode,
-  screenGroupNode: ScreenGroupNode,
-};
 
 const initialNodes = [];
 
@@ -51,6 +44,15 @@ function App() {
     dispatch(setEdges(initialEdges));
     addLocale("ru", locales["ru"]);
   }, [dispatch]);
+
+  // Регистрация пользовательских типов нод
+  const nodeTypes = useMemo(
+    () => ({
+      innerNode: InnerNode,
+      screenGroupNode: ScreenGroupNode,
+    }),
+    [],
+  );
 
   const onConnect = useCallback(
     (params) => {
