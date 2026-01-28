@@ -6,7 +6,7 @@ import {
   editScreenGroupNode,
   updateNodeData,
 } from "../store/nodesSlice";
-import EditGroupDialog from "./EditGroupDialog";
+import EditScreenDialog from "./EditScreenDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
 import { UI } from "../config/uiConfig";
 
@@ -29,18 +29,18 @@ const DialogManager = () => {
     dispatch(editInnerNode(false));
   };
 
-  const { editGroupDialog, editInnerNodeDialog } = useSelector((state) => ({
-    editGroupDialog: state.nodes?.dialogs?.editGroupDialog || null,
+  const { editScreenDialog, editInnerNodeDialog } = useSelector((state) => ({
+    editScreenDialog: state.nodes?.dialogs?.editScreenDialog || null,
     editInnerNodeDialog: state.nodes?.dialogs?.editInnerNodeDialog || null,
   }));
 
   return (
     <>
-      <EditGroupDialog
-        visible={editGroupDialog !== null}
+      <EditScreenDialog
+        visible={editScreenDialog !== null}
         onHide={handleHideEditGroupDialog}
         onSave={handleSaveEditGroupDialog}
-        data={editGroupDialog}
+        data={editScreenDialog}
       />
 
       <EditInnerNodeDialog

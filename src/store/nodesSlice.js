@@ -11,7 +11,7 @@ const initialState = {
   nodes: [],
   edges: [],
   dialogs: {
-    editGroupDialog: null,
+    editScreenDialog: null,
     editInnerNodeDialog: null,
   },
 };
@@ -166,13 +166,13 @@ const nodesSlice = createSlice({
 
     editScreenGroupNode: (state, action) => {
       if (!action.payload) {
-        state.dialogs.editGroupDialog = null;
+        state.dialogs.editScreenDialog = null;
       } else {
         const index = state.nodes.findIndex(
           (node) => node.id === action.payload.groupId,
         );
         if (index !== -1) {
-          state.dialogs.editGroupDialog = {
+          state.dialogs.editScreenDialog = {
             id: state.nodes[index].id,
             data: state.nodes[index].data,
           };

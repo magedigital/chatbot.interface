@@ -150,7 +150,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
   return (
     <Dialog
-      header="Редактировать внутреннюю ноду"
+      header="Редактировать кнопку"
       visible={visible}
       onHide={onHide}
       footer={footer}
@@ -228,6 +228,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         </AccordionTab>
       </Accordion>
       <div className="field mb-3">
+        <label className="block font-bold mb-2">Действия при нажатии:</label>
         <TabView
           activeIndex={activeTab}
           onTabChange={(e) => setActiveTab(e.index)}
