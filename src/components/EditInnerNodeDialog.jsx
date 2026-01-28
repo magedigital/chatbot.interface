@@ -2,27 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import { Checkbox } from "primereact/checkbox";
+import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
-import { Divider } from "primereact/divider";
-import { Fieldset } from "primereact/fieldset";
 import { UI } from "../config/uiConfig";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
+  const [activeTab, setActiveTab] = useState(0);
+  
   const [formData, setFormData] = useState({
     sendMessage: "Пришлите сообщение",
-    goToMode: "Регистрация чека",
-    miniApp: "Регистрация кода",
-    command: "Отправка ОС",
+    goToScreen: "Экран 1",
+    openMiniApp: "MiniApp 1",
+    command: "",
     commandParam: "",
     commandValue: "",
-    showOnlyGroup: "Загрузил чек",
-    dontShowGroup: "Зарегистрировал код",
-    addToGroup: "Загрузил чек",
-    addRemoveFromGroup: "Зарегистрировал код",
-    deleteButton: true,
+    setUserStatus: "Заполнил данные",
+    unsetUserStatus: "Заполнил данные",
+    visibleForStatus: "Заполнил данные",
+    hiddenForStatus: "Заполнил данные",
   });
 
   const [paramsList, setParamsList] = useState([]);
@@ -30,25 +29,35 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   // Обновляем состояние при изменении пропса data
   useEffect(() => {
     if (data && data.data) {
-      setLabel(data.data.label);
+      setLabel(data.data.label || "");
       setFormData({
         sendMessage: data.data.sendMessage || "Пришлите сообщение",
-        goToMode: data.data.goToMode || "Регистрация чека",
-        miniApp: data.data.miniApp || "Регистрация кода",
-        command: data.data.command || "Отправка ОС",
+        goToScreen: data.data.goToScreen || "Экран 1",
+        openMiniApp: data.data.openMiniApp || "MiniApp 1",
+        command: data.data.command || "",
         commandParam: data.data.commandParam || "",
         commandValue: data.data.commandValue || "",
-        showOnlyGroup: data.data.showOnlyGroup || "Загрузил чек",
-        dontShowGroup: data.data.dontShowGroup || "Зарегистрировал код",
-        addToGroup: data.data.addToGroup || "Загрузил чек",
-        addRemoveFromGroup:
-          data.data.addRemoveFromGroup || "Зарегистрировал код",
-        deleteButton:
-          data.data.deleteButton !== undefined ? data.data.deleteButton : true,
+        setUserStatus: data.data.setUserStatus || "Заполнил данные",
+        unsetUserStatus: data.data.unsetUserStatus || "Заполнил данные",
+        visibleForStatus: data.data.visibleForStatus || "Заполнил данные",
+        hiddenForStatus: data.data.hiddenForStatus || "Заполнил данные",
       });
       setParamsList(data.data.paramsList || []);
     } else {
       setLabel("");
+      setFormData({
+        sendMessage: "Пришлите сообщение",
+        goToScreen: "Экран 1",
+        openMiniApp: "MiniApp 1",
+        command: "",
+        commandParam: "",
+        commandValue: "",
+        setUserStatus: "Заполнил данные",
+        unsetUserStatus: "Заполнил данные",
+        visibleForStatus: "Заполнил данные",
+        hiddenForStatus: "Заполнил данные",
+      });
+      setParamsList([]);
     }
   }, [data]);
 
@@ -87,43 +96,30 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   };
 
   // Опции для выпадающих списков
-  const goToModeOptions = [
-    { label: "Регистрация чека", value: "Регистрация чека" },
-    { label: "Другой режим", value: "Другой режим" },
+  const screenOptions = [
+    { label: "Экран 1", value: "Экран 1" },
+    { label: "Экран 2", value: "Экран 2" },
+    { label: "Экран 3", value: "Экран 3" },
+    { label: "Экран 4", value: "Экран 4" },
+    { label: "Экран 5", value: "Экран 5" },
   ];
 
   const miniAppOptions = [
-    { label: "Регистрация кода", value: "Регистрация кода" },
-    { label: "Другой MiniApp", value: "Другой MiniApp" },
+    { label: "MiniApp 1", value: "MiniApp 1" },
+    { label: "MiniApp 2", value: "MiniApp 2" },
+    { label: "MiniApp 3", value: "MiniApp 3" },
+    { label: "MiniApp 4", value: "MiniApp 4" },
+    { label: "MiniApp 5", value: "MiniApp 5" },
   ];
 
-  const commandOptions = [
-    { label: "Отправка ОС", value: "Отправка ОС" },
-    { label: "Другая команда", value: "Другая команда" },
-  ];
-
-  const showOnlyGroupOptions = [
+  const userStatusOptions = [
+    { label: "Заполнил данные", value: "Заполнил данные" },
     { label: "Загрузил чек", value: "Загрузил чек" },
-    { label: "Другая группа", value: "Другая группа" },
-  ];
-
-  const dontShowGroupOptions = [
     { label: "Зарегистрировал код", value: "Зарегистрировал код" },
-    { label: "Другая группа", value: "Другая группа" },
-  ];
-
-  const addToGroupOptions = [
-    { label: "Загрузил чек", value: "Загрузил чек" },
-    { label: "Другая группа", value: "Другая группа" },
-  ];
-
-  const addRemoveFromGroupOptions = [
-    { label: "Зарегистрировал код", value: "Зарегистрировал код" },
-    { label: "Другая группа", value: "Другая группа" },
   ];
 
   const footer = (
-    <div className="flex justify-content-end gap-2 flex-column sm:flex-row mt-4">
+    <div className="flex justify-content-end gap-2">
       <Button
         label="Отмена"
         icon="pi pi-times"
@@ -145,17 +141,15 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       visible={visible}
       onHide={onHide}
       footer={footer}
-      className="max-w-max w-screen"
+      style={{ width: "50vw" }}
       modal
       closable={true}
       baseZIndex={UI.editDialogZIndex}
     >
       <div className="field mb-3">
-        <label htmlFor="groupName" className="block font-bold mb-2">
-          Название ноды
-        </label>
+        <label htmlFor="buttonLabel" className="block font-bold mb-2">Название кнопки</label>
         <InputText
-          id="groupName"
+          id="buttonLabel"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           className="w-full"
@@ -163,166 +157,179 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="sendMessage" className="block font-bold mb-2">
-          Сообщение
-        </label>
+        <label htmlFor="message" className="block font-bold mb-2">Сообщение после нажатия</label>
         <InputTextarea
-          id="sendMessage"
+          id="message"
           value={formData.sendMessage}
           onChange={(e) =>
             setFormData({ ...formData, sendMessage: e.target.value })
           }
-          placeholder="Пришлите сообщение"
+          placeholder="Сообщение"
           rows={3}
           className="w-full"
         />
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="goToMode" className="block font-bold mb-2">
-          Перейти в режим:
-        </label>
-        <Dropdown
-          id="goToMode"
-          value={formData.goToMode}
-          options={goToModeOptions}
-          onChange={(e) => setFormData({ ...formData, goToMode: e.value })}
-          className="w-full"
-        />
-      </div>
-
-      <div className="field mb-3">
-        <label htmlFor="miniApp" className="block font-bold mb-2">
-          MiniApp:
-        </label>
-        <Dropdown
-          id="miniApp"
-          value={formData.miniApp}
-          options={miniAppOptions}
-          onChange={(e) => setFormData({ ...formData, miniApp: e.value })}
-          className="w-full"
-        />
-      </div>
-
-      <div className="field mb-3">
-        <label htmlFor="command" className="block font-bold mb-2">
-          Команда
-        </label>
-        <Dropdown
-          id="command"
-          value={formData.command}
-          options={commandOptions}
-          onChange={(e) => setFormData({ ...formData, command: e.value })}
-          className="w-full"
-        />
-      </div>
-
-      <Fieldset legend="Параметры команды">
-        {/* Список параметров команды */}
-        {paramsList.map((param, index) => (
-          <div
-            key={index}
-            className="field flex flex-row align-items-center gap-2"
-          >
-            <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
-              <InputText
-                value={param.param}
-                onChange={(e) =>
-                  handleParamChange(index, "param", e.target.value)
-                }
-                placeholder="Параметр"
-                className="w-full flex-1"
-              />
-              <InputText
-                value={param.value}
-                onChange={(e) =>
-                  handleParamChange(index, "value", e.target.value)
-                }
-                placeholder="Значение"
-                className="w-full flex-1"
+        <TabView activeIndex={activeTab} onTabChange={(e) => setActiveTab(e.index)}>
+          <TabPanel header="Перейти к другому экрану">
+            <div className="field mb-3">
+              <label htmlFor="selectScreen" className="block font-bold mb-2">Выбрать экран</label>
+              <Dropdown
+                id="selectScreen"
+                value={formData.goToScreen}
+                options={screenOptions}
+                onChange={(e) => setFormData({ ...formData, goToScreen: e.value })}
+                className="w-full"
               />
             </div>
-            <Button
-              icon="pi pi-times"
-              onClick={() => handleParamRemove(index)}
-              className="p-button-outlined p-button-danger flex-none"
-            />
-          </div>
-        ))}
-        <Button
-          icon="pi pi-plus"
-          onClick={handleParamAdd}
-          className="p-button-outlined w-full"
-        />
-      </Fieldset>
+          </TabPanel>
 
-      <div className="field w-full mt-2">
-        <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
-          <div className="field flex-1 w-full mb-3">
-            <label
-              htmlFor="showOnlyGroup"
-              className="block w-full font-bold mb-2"
-            >
-              Показывать только группе:
-            </label>
-            <Dropdown
-              id="showOnlyGroup"
-              value={formData.showOnlyGroup}
-              options={showOnlyGroupOptions}
-              onChange={(e) =>
-                setFormData({ ...formData, showOnlyGroup: e.value })
-              }
-              className="w-full"
-            />
-          </div>
+          <TabPanel header="Открыть MiniApp">
+            <div className="field mb-3">
+              <label htmlFor="selectMiniApp" className="block font-bold mb-2">Выбрать MiniApp</label>
+              <Dropdown
+                id="selectMiniApp"
+                value={formData.openMiniApp}
+                options={miniAppOptions}
+                onChange={(e) => setFormData({ ...formData, openMiniApp: e.value })}
+                className="w-full"
+              />
+            </div>
+          </TabPanel>
 
-          <div className="field flex-1 w-full mb-3">
-            <label htmlFor="dontShowGroup" className="block font-bold mb-2">
-              Не показывать группе:
-            </label>
+          <TabPanel header="Вызвать команду">
+            <div className="field mb-3">
+              <label htmlFor="command" className="block font-bold mb-2">Команда</label>
+              <InputText
+                id="command"
+                value={formData.command}
+                onChange={(e) =>
+                  setFormData({ ...formData, command: e.target.value })
+                }
+                placeholder="Команда"
+                className="w-full"
+              />
+            </div>
+
+            <div className="field mb-2">
+              <div className="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2">
+                <InputText
+                  id="commandParam"
+                  value={formData.commandParam}
+                  onChange={(e) =>
+                    setFormData({ ...formData, commandParam: e.target.value })
+                  }
+                  placeholder="Параметр"
+                  className="w-full sm:w-auto flex-1"
+                />
+                <InputText
+                  id="commandValue"
+                  value={formData.commandValue}
+                  onChange={(e) =>
+                    setFormData({ ...formData, commandValue: e.target.value })
+                  }
+                  placeholder="Значение"
+                  className="w-full sm:w-auto flex-1"
+                />
+                <Button
+                  icon="pi pi-plus"
+                  onClick={handleParamAdd}
+                  className="p-button-outlined"
+                />
+              </div>
+            </div>
+
+            {/* Список параметров команды */}
+            {paramsList.map((param, index) => (
+              <div
+                key={index}
+                className="field mb-2 flex flex-column sm:flex-row align-items-start sm:align-items-center gap-2"
+              >
+                <InputText
+                  value={param.param}
+                  onChange={(e) =>
+                    handleParamChange(index, "param", e.target.value)
+                  }
+                  placeholder="Параметр"
+                  className="w-full sm:w-auto flex-1"
+                />
+                <InputText
+                  value={param.value}
+                  onChange={(e) =>
+                    handleParamChange(index, "value", e.target.value)
+                  }
+                  placeholder="Значение"
+                  className="w-full sm:w-auto flex-1"
+                />
+                <Button
+                  icon="pi pi-times"
+                  onClick={() => handleParamRemove(index)}
+                  className="p-button-outlined p-button-danger"
+                />
+              </div>
+            ))}
+
+            <div className="grid mt-2">
+              <div className="col-6">
+                <div className="field mb-3">
+                  <label htmlFor="setUserStatus" className="block font-bold mb-2">Установить статус пользователя:</label>
+                  <Dropdown
+                    id="setUserStatus"
+                    value={formData.setUserStatus}
+                    options={userStatusOptions}
+                    onChange={(e) =>
+                      setFormData({ ...formData, setUserStatus: e.value })
+                    }
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="col-6">
+                <div className="field mb-3">
+                  <label htmlFor="unsetUserStatus" className="block font-bold mb-2">Снять статус пользователя:</label>
+                  <Dropdown
+                    id="unsetUserStatus"
+                    value={formData.unsetUserStatus}
+                    options={userStatusOptions}
+                    onChange={(e) =>
+                      setFormData({ ...formData, unsetUserStatus: e.value })
+                    }
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </TabPanel>
+        </TabView>
+      </div>
+
+      <div className="grid mt-2">
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="visibleForStatus" className="block font-bold mb-2">Видна для пользователя со статусом:</label>
             <Dropdown
-              id="dontShowGroup"
-              value={formData.dontShowGroup}
-              options={dontShowGroupOptions}
+              id="visibleForStatus"
+              value={formData.visibleForStatus}
+              options={userStatusOptions}
               onChange={(e) =>
-                setFormData({ ...formData, dontShowGroup: e.value })
+                setFormData({ ...formData, visibleForStatus: e.value })
               }
               className="w-full"
             />
           </div>
         </div>
-      </div>
 
-      <div className="field w-full mt-2">
-        <div className="w-full flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2">
-          <div className="field flex-1 w-full mb-3">
-            <label htmlFor="addToGroup" className="block font-bold mb-2">
-              Добавить в группу:
-            </label>
+        <div className="col-6">
+          <div className="field mb-3">
+            <label htmlFor="hiddenForStatus" className="block font-bold mb-2">Скрыта для пользователя со статусом:</label>
             <Dropdown
-              id="addToGroup"
-              value={formData.addToGroup}
-              options={addToGroupOptions}
+              id="hiddenForStatus"
+              value={formData.hiddenForStatus}
+              options={userStatusOptions}
               onChange={(e) =>
-                setFormData({ ...formData, addToGroup: e.value })
-              }
-              className="w-full"
-            />
-          </div>
-
-          <div className="field flex-1 w-full mb-3">
-            <label
-              htmlFor="addRemoveFromGroup"
-              className="block font-bold mb-2"
-            >
-              Добавить убрать из группы:
-            </label>
-            <Dropdown
-              id="addRemoveFromGroup"
-              value={formData.addRemoveFromGroup}
-              options={addRemoveFromGroupOptions}
-              onChange={(e) =>
-                setFormData({ ...formData, addRemoveFromGroup: e.value })
+                setFormData({ ...formData, hiddenForStatus: e.value })
               }
               className="w-full"
             />
