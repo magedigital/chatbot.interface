@@ -19,9 +19,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
   // Получаем все экраны из store (кроме стартового)
   const allScreens = useSelector((state) =>
-    state.nodes.nodes.filter(
-      (node) => node.type === "screenGroupNode" && !node.data.isStartScreen,
-    ),
+    state.nodes.nodes.filter((node) => node.type === "screenGroupNode"),
   );
 
   // Создаем опции для выпадающих списков экранов
@@ -50,8 +48,9 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   useEffect(() => {
     if (data && data.data) {
       // Находим связь, исходящую из этой ноды (если есть)
-      const outgoingEdge = allEdges.find(edge => edge.source === data.id);
-      const targetScreenId = outgoingEdge ? outgoingEdge.target : (data.data.goToScreen || "-");
+      const outgoingEdge = allEdges.find((edge) => edge.source === data.id);
+
+      const targetScreenId = outgoingEdge ? outgoingEdge.target : "-";
 
       setLabel(data.data.label || "");
       setFormData({
