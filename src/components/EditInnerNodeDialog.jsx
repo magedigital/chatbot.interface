@@ -13,22 +13,24 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   const dispatch = useDispatch();
-  const allEdges = useSelector(state => state.nodes.edges);
+  const allEdges = useSelector((state) => state.nodes.edges);
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
 
   // Получаем все экраны из store (кроме стартового)
-  const allScreens = useSelector(state =>
-    state.nodes.nodes.filter(node => node.type === 'screenGroupNode' && !node.data.isStartScreen)
+  const allScreens = useSelector((state) =>
+    state.nodes.nodes.filter(
+      (node) => node.type === "screenGroupNode" && !node.data.isStartScreen,
+    ),
   );
 
   // Создаем опции для выпадающих списков экранов
   const screenOptions = [
     { label: "Без перехода", value: "-" },
-    ...allScreens.map(screen => ({
+    ...allScreens.map((screen) => ({
       label: screen.data.label,
-      value: screen.id
-    }))
+      value: screen.id,
+    })),
   ];
 
   const [formData, setFormData] = useState({
@@ -47,10 +49,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   // Обновляем состояние при изменении пропса data
   useEffect(() => {
     if (data && data.data) {
+      // Находим связь, исходящую из этой ноды (если есть)
+      const outgoingEdge = allEdges.find(edge => edge.source === data.id);
+      const targetScreenId = outgoingEdge ? outgoingEdge.target : (data.data.goToScreen || "-");
+
       setLabel(data.data.label || "");
       setFormData({
         sendMessage: data.data.sendMessage || "",
-        goToScreen: data.data.goToScreen || "-",
+        goToScreen: targetScreenId, // Устанавливаем в значение экрана, к которому ведет связь
         openMiniApp: data.data.openMiniApp || "-",
         command: data.data.command || "-",
         commandParam: data.data.commandParam || "-",
@@ -77,7 +83,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       });
       setParamsList([]);
     }
-  }, [data]);
+  }, [data, allEdges]);
 
   const handleParamAdd = () => {
     setParamsList([...paramsList, { param: "", value: "" }]);
@@ -109,8 +115,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
     // Если была выбрана нода для перехода, управляем связями
     if (formData.goToScreen && formData.goToScreen !== "-") {
       // Удаляем все существующие связи от этой ноды
-      const edgesToRemove = allEdges.filter(edge => edge.source === data.id);
-      edgesToRemove.forEach(edge => {
+      const edgesToRemove = allEdges.filter((edge) => edge.source === data.id);
+      edgesToRemove.forEach((edge) => {
         dispatch(removeEdge(edge.id));
       });
 
@@ -147,16 +153,6 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
     { label: "Команда 3", value: "Команда 3" },
     { label: "Команда 4", value: "Команда 4" },
     { label: "Команда 5", value: "Команда 5" },
-  ];
-
-  // Опции для выпадающих списков
-  const screenOptions = [
-    { label: "Без перехода", value: "-" },
-    { label: "Экран 1", value: "Экран 1" },
-    { label: "Экран 2", value: "Экран 2" },
-    { label: "Экран 3", value: "Экран 3" },
-    { label: "Экран 4", value: "Экран 4" },
-    { label: "Экран 5", value: "Экран 5" },
   ];
 
   const miniAppOptions = [
