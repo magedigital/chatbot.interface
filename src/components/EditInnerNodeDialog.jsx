@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
@@ -6,12 +7,29 @@ import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
+import { removeEdge, addEdge } from "../store/nodesSlice";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
+  const dispatch = useDispatch();
+  const allEdges = useSelector(state => state.nodes.edges);
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
+
+  // Получаем все экраны из store (кроме стартового)
+  const allScreens = useSelector(state =>
+    state.nodes.nodes.filter(node => node.type === 'screenGroupNode' && !node.data.isStartScreen)
+  );
+
+  // Создаем опции для выпадающих списков экранов
+  const screenOptions = [
+    { label: "Без перехода", value: "-" },
+    ...allScreens.map(screen => ({
+      label: screen.data.label,
+      value: screen.id
+    }))
+  ];
 
   const [formData, setFormData] = useState({
     sendMessage: "",
@@ -87,6 +105,32 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         label,
       },
     };
+
+    // Если была выбрана нода для перехода, управляем связями
+    if (formData.goToScreen && formData.goToScreen !== "-") {
+      // Удаляем все существующие связи от этой ноды
+      const edgesToRemove = allEdges.filter(edge => edge.source === data.id);
+      edgesToRemove.forEach(edge => {
+        dispatch(removeEdge(edge.id));
+      });
+
+      // Создаем новую связь к выбранному экрану
+      const newEdge = {
+        id: `edge-${data.id}-${formData.goToScreen}`,
+        source: data.id,
+        target: formData.goToScreen,
+        style: {
+          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+        },
+        markerEnd: { type: "arrowclosed" },
+        deletable: true,
+        reconnectable: true,
+        updatable: true,
+      };
+
+      dispatch(addEdge(newEdge));
+    }
+
     onSave(updatedData);
     onHide();
   };
