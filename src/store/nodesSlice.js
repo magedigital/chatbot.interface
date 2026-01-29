@@ -122,7 +122,7 @@ const nodesSlice = createSlice({
       const { groupId } = action.payload;
 
       // Создаем новую ноду
-      const newNode = createNodeInGroup(groupId, false, state.nodes);
+      const newNode = createNodeInGroup(groupId, state.nodes);
 
       // Добавляем новую ноду
       state.nodes.push(newNode);
@@ -148,12 +148,6 @@ const nodesSlice = createSlice({
       state.nodes.push(newGroupNode);
 
       const groupId = newGroupNode.id;
-
-      // Создаем новую ноду
-      const newNode = createNodeInGroup(groupId, true, state.nodes);
-
-      // Добавляем новую ноду
-      state.nodes.push(newNode);
 
       // Обновляем размеры группы
       state.nodes = updateGroupNodeDimensions(state.nodes, groupId);

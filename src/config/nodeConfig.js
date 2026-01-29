@@ -27,6 +27,8 @@ export const GROUP = {
   ],
   handleBackgroundColor: "#fff",
   handleBorderColor: "#fff",
+  defaultName: "Экран",
+  mainName: "Стартовый экран",
 };
 
 // Параметры для внутренних нод
@@ -49,4 +51,5 @@ export const NODE = {
   defaultNodeColor: "rgb(99, 102, 241)",
   handleBackgroundColor: "#fff",
   handleBorderColor: "#fff",
+  defaultName: "Кнопка",
 };

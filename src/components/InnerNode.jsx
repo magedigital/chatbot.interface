@@ -53,7 +53,6 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
       label: "Удалить",
       icon: "pi pi-trash",
       command: handleDelete,
-      disabled: data.isDefault,
     },
   ];
 

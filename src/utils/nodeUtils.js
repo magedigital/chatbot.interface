@@ -10,7 +10,7 @@ import { GROUP, NODE } from "../config/nodeConfig";
  * @param {Array} nodes - массив существующих нод
  * @returns {Object} - новая нода
  */
-export const createNodeInGroup = (groupId, isDefault, nodes) => {
+export const createNodeInGroup = (groupId, nodes) => {
   // Подсчитываем количество нод в группе
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
@@ -39,14 +39,12 @@ export const createNodeInGroup = (groupId, isDefault, nodes) => {
     width,
     height,
     data: {
-      label: isDefault ? "По умолчанию" : `Node ${nodeCount}`,
-      color: isDefault ? NODE.defaultNodeColor : selectedColor,
-      isDefault,
+      label: NODE.defaultName + ` ${nodeCount + 1}`,
+      color: selectedColor,
     },
     parentNode: groupId,
     selectable: false,
     extent: "parent",
-    // draggable: !isDefault,
   };
 
   return newNode;
@@ -84,6 +82,8 @@ export const createScreenGroup = (
   const width = GROUP.width;
   const height = getGroupNodeHeight(0);
 
+  const isStartScreen = groupCount === 0;
+
   const newGroupNode = {
     id: groupId,
     type: "screenGroupNode",
@@ -93,12 +93,15 @@ export const createScreenGroup = (
     data: {
       width,
       height,
-      label: `Screen Group ${groupCount + 1}`,
+      label: isStartScreen
+        ? GROUP.mainName
+        : GROUP.defaultName + ` ${groupCount + 1}`,
       style: {
         backgroundColor: selectedColor,
         border: GROUP.border + "px solid " + GROUP.borderColor,
         borderRadius: GROUP.borderRadius,
       },
+      isStartScreen,
     },
     selectable: false,
     zIndex: maxZIndex,
