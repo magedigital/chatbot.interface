@@ -360,9 +360,7 @@ function App() {
               },
               (error) => {
                 console.error("Ошибка при чтении файла:", error);
-                alert(
-                  "Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.",
-                );
+                toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.', life: 3000});
               },
             );
           }
@@ -373,7 +371,7 @@ function App() {
         // Действие отменено, ничего не делаем
       },
     });
-  }, [dispatch]);
+  }, [dispatch, toast]);
 
   // Функция для сохранения данных на сервер
   const handleSaveData = useCallback(async () => {
