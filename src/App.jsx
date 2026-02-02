@@ -359,11 +359,22 @@ function App() {
                 }
 
                 // Показываем уведомление об успешной загрузке
-                toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно загружены из файла!', life: 3000});
+                toast.current.show({
+                  severity: "success",
+                  summary: "Успешно",
+                  detail: "Данные успешно загружены из файла!",
+                  life: 3000,
+                });
               },
               (error) => {
                 console.error("Ошибка при чтении файла:", error);
-                toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.', life: 3000});
+                toast.current.show({
+                  severity: "error",
+                  summary: "Ошибка",
+                  detail:
+                    "Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.",
+                  life: 3000,
+                });
               },
             );
           }
@@ -389,10 +400,20 @@ function App() {
       const response = await sendDataToServer(configState.saveUrl, dataToSend);
 
       console.log("Данные успешно сохранены:", response.data);
-      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно сохранены на сервере!', life: 3000});
+      toast.current.show({
+        severity: "success",
+        summary: "Успешно",
+        detail: "Данные успешно сохранены на сервере!",
+        life: 3000,
+      });
     } catch (error) {
       console.error("Ошибка при сохранении данных:", error);
-      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при сохранении данных на сервере.', life: 3000});
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: "Произошла ошибка при сохранении данных на сервере.",
+        life: 3000,
+      });
     }
   }, [nodes, edges, toast]);
 
@@ -412,10 +433,20 @@ function App() {
       );
 
       console.log("Данные успешно опубликованы:", response.data);
-      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно опубликованы на сервере!', life: 3000});
+      toast.current.show({
+        severity: "success",
+        summary: "Успешно",
+        detail: "Данные успешно опубликованы на сервере!",
+        life: 3000,
+      });
     } catch (error) {
       console.error("Ошибка при публикации данных:", error);
-      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при публикации данных на сервере.', life: 3000});
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: "Произошла ошибка при публикации данных на сервере.",
+        life: 3000,
+      });
     }
   }, [nodes, edges, toast]);
 
@@ -435,7 +466,7 @@ function App() {
         }}
       >
         <DialogManager />
-        <Toast ref={toast} position="bottom-right" />
+        <Toast ref={toast} position="bottom-center" />
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}

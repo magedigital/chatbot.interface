@@ -87,3 +87,30 @@ export const readDataFromFile = (file, onLoad, onError) => {
 
   reader.readAsText(file);
 };
+
+/**
+ * Функция для отправки данных на сервер
+ * @param {string} url - URL для отправки данных
+ * @param {Object} data - данные для отправки
+ * @param {string} token - токен аутентификации (опционально)
+ * @returns {Promise} - промис с результатом запроса
+ */
+export const sendDataToServer = async (url, data, token = null) => {
+  try {
+    // Имитируем импорт axios внутри функции
+    const axios = (await import('axios')).default;
+
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await axios.post(url, data, { headers });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

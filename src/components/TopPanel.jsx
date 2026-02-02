@@ -10,6 +10,8 @@ const TopPanel = ({
   onLayoutRectPacking,
   onExportData,
   onImportData,
+  onSaveData,
+  onPublishData,
 }) => {
   const menu = useRef(null);
 
@@ -57,6 +59,20 @@ const TopPanel = ({
         icon="pi pi-plus"
         onClick={() => onAddScreen()}
         className="p-button p-component"
+        style={{ marginRight: "10px" }}
+      />
+      <Button
+        label="Сохранить"
+        icon="pi pi-save"
+        onClick={() => onSaveData()}
+        className="p-button p-button-secondary"
+        style={{ marginRight: "10px" }}
+      />
+      <Button
+        label="Опубликовать"
+        icon="pi pi-cloud-upload"
+        onClick={() => onPublishData()}
+        className="p-button p-button-warning"
         style={{ marginRight: "10px" }}
       />
       <Button
