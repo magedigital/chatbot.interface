@@ -103,8 +103,9 @@ export const createScreenGroup = (
       },
       isStartScreen,
     },
-    selectable: false,
+    selectable: isStartScreen,
     zIndex: maxZIndex,
+    draggable: !isStartScreen,
   };
 
   return newGroupNode;

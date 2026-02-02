@@ -64,6 +64,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
       label: "Удалить",
       icon: "pi pi-trash",
       command: handleDelete,
+      disabled: data.isStartScreen,
     },
   ];
 
