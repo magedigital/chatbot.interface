@@ -9,6 +9,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
 
+import "quill/dist/quill.snow.css";
+
 import { Editor } from "primereact/editor";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
@@ -217,16 +219,19 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           Сообщение после нажатия
         </label>
 
-        <div className="ql-container ql-snow" style={{borderRadius: '6px'}}>
-          <Editor
-            id="message"
-            value={formData.sendMessage}
-            onChange={(e) =>
-              setFormData({ ...formData, sendMessage: e.target.value })
-            }
-            placeholder="Сообщение"
-            className="ql-editor w-full"
-          />
+        <div className="ql-container ql-snow" style={{borderRadius: '6px', border: '1px solid #ced4da'}}>
+          <div className="ql-editor" style={{ minHeight: '100px' }}>
+            <Editor
+              id="message"
+              value={formData.sendMessage}
+              onChange={(e) =>
+                setFormData({ ...formData, sendMessage: e.target.value })
+              }
+              placeholder="Сообщение"
+              className="w-full"
+              style={{ height: '100%', outline: 'none', padding: '0.5rem' }}
+            />
+          </div>
         </div>
       </div>
 
