@@ -6,6 +6,7 @@ import { Dropdown } from "primereact/dropdown";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
 
@@ -190,6 +191,25 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       />
     </div>
   );
+  const toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // Жирный, курсив, подчеркнутый, зачеркнутый
+    ["blockquote"], // Цитата (Quote)
+    [{ font: ["serif", "monospace", "sans-serif"] }], // Выбор шрифта, включая Monospace
+    ["link"], // Создать ссылку
+  ];
+
+  const header = (
+    <div id="toolbar">
+      {/* Группы кнопок */}
+
+      <button className="ql-bold" aria-label="Bold"></button>
+      <button className="ql-italic" aria-label="Italic"></button>
+      <button className="ql-underline" aria-label="Underline"></button>
+      <button className="ql-strike" aria-label="Strikethrough"></button>
+      <button className="ql-blockquote" aria-label="Quote"></button>
+      <button className="ql-link" aria-label="Create link"></button>
+    </div>
+  );
 
   return (
     <Dialog
@@ -215,27 +235,45 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       </div>
 
       <div className="field mb-3">
-        <label htmlFor="message" className="block font-bold mb-2">
+        <label htmlFor="sendMessage" className="block font-bold mb-2">
           Сообщение после нажатия
         </label>
 
-        <div className="ql-container ql-snow" style={{borderRadius: '6px', border: '2px solid #ced4da'}}>
-          <div className="ql-editor" style={{ minHeight: '100px' }}>
-            <Editor
-              id="message"
-              value={formData.sendMessage}
-              onChange={(e) =>
-                setFormData({ ...formData, sendMessage: e.target.value })
-              }
-              placeholder="Сообщение"
-              className="w-full"
-              style={{ height: '100%', outline: 'none', padding: '0.5rem' }}
-            />
-          </div>
-        </div>
+        {/* <InputTextarea
+          id="sendMessage"
+          value={formData.sendMessage}
+          onChange={(e) =>
+            setFormData({ ...formData, sendMessage: e.target.value })
+          }
+          placeholder="Сообщение"
+          rows={3}
+          className="w-full"
+        /> */}
+
+        <Editor
+          id="message"
+          value={formData.sendMessage}
+          onTextChange={(e) =>
+            setFormData({ ...formData, sendMessage: e.htmlValue })
+          }
+          // placeholder="Сообщение"
+          className="w-full"
+          theme="snow"
+          // showHeader={true}
+          style={{ height: "320px" }}
+          headerTemplate={header}
+          ptOptions={toolbarOptions}
+        />
       </div>
 
-      <Accordion activeIndex={-1} className="mb-4">
+      <Accordion
+        activeIndex={
+          formData.visibleForStatus != "-" || formData.hiddenForStatus != "-"
+            ? 0
+            : -1
+        }
+        className="mb-4"
+      >
         <AccordionTab header="Видимость кнопки">
           <div className="w-full">
             <div className="field mb-3">
@@ -281,7 +319,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           activeIndex={activeTab}
           onTabChange={(e) => setActiveTab(e.index)}
         >
-          <TabPanel header="Перейти к другому экрану">
+          <TabPanel header={
+            <div className="flex align-items-center gap-2">
+              Перейти к другому экрану
+              <Badge value={formData.goToScreen !== '-' ? 1 : 0} severity={formData.goToScreen !== '-' ? "info" : "secondary"} />
+            </div>
+          }>
             <div className="field mb-3">
               <label htmlFor="selectScreen" className="block font-bold mb-2">
                 Выбрать экран
@@ -298,7 +341,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             </div>
           </TabPanel>
 
-          <TabPanel header="Открыть MiniApp">
+          <TabPanel header={
+            <div className="flex align-items-center gap-2">
+              Открыть MiniApp
+              <Badge value={formData.openMiniApp !== '-' ? 1 : 0} severity={formData.openMiniApp !== '-' ? "info" : "secondary"} />
+            </div>
+          }>
             <div className="field mb-3">
               <label htmlFor="selectMiniApp" className="block font-bold mb-2">
                 Выбрать MiniApp
@@ -315,7 +363,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             </div>
           </TabPanel>
 
-          <TabPanel header="Вызвать команду">
+          <TabPanel header={
+            <div className="flex align-items-center gap-2">
+              Вызвать команду
+              <Badge value={formData.command !== '-' ? 1 : 0} severity={formData.command !== '-' ? "info" : "secondary"} />
+            </div>
+          }>
             <div className="field mb-3">
               <label htmlFor="selectCommand" className="block font-bold mb-2">
                 Выбрать команду
