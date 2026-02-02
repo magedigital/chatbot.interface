@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
-
-import { Accordion, AccordionTab } from "primereact/accordion";
+import { Fieldset } from "primereact/fieldset";
 
 const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
@@ -160,129 +158,131 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         />
       </div>
 
-      <div className="field mb-3">
-        <label className="block font-bold mb-2">Реакция по умолчанию:</label>
-
+      <Fieldset legend="Реакция по умолчанию">
         <div className="field mb-3">
-          <label htmlFor="defaultMessage" className="block font-bold mb-2">
-            Сообщение
-          </label>
-          <InputTextarea
-            id="defaultMessage"
-            value={formData.defaultMessage}
-            onChange={(e) =>
-              setFormData({ ...formData, defaultMessage: e.target.value })
-            }
-            placeholder="Сообщение"
-            rows={3}
-            className="w-full"
-          />
-        </div>
+          <div className="field mb-3">
+            <label htmlFor="defaultMessage" className="block font-bold mb-2">
+              Сообщение
+            </label>
+            <InputTextarea
+              id="defaultMessage"
+              value={formData.defaultMessage}
+              onChange={(e) =>
+                setFormData({ ...formData, defaultMessage: e.target.value })
+              }
+              placeholder="Сообщение"
+              rows={3}
+              className="w-full"
+            />
+          </div>
 
-        {!data?.data?.isStartScreen && (
-          <>
-            <div className="field mb-3">
-              <label htmlFor="selectCommand" className="block font-bold mb-2">
-                Выбрать команду
-              </label>
-              <Dropdown
-                id="selectCommand"
-                value={formData.command}
-                options={commandOptions}
-                onChange={(e) => setFormData({ ...formData, command: e.value })}
-                className="w-full"
-              />
-            </div>
-            {formData.command !== "-" && (
-              <>
-                <div className="field mb-3">
-                  <label
-                    htmlFor="setUserStatus"
-                    className="block font-bold mb-2"
-                  >
-                    Параметры команды:
-                  </label>
-                  {/* Список параметров команды */}
-                  {paramsList.map((param, index) => (
-                    <div
-                      key={index}
-                      className="field flex flex-row align-items-center gap-2"
-                    >
-                      <div className="w-full flex flex-column md:flex-row align-items-start md:align-items-center gap-2">
-                        <InputText
-                          value={param.param}
-                          onChange={(e) =>
-                            handleParamChange(index, "param", e.target.value)
-                          }
-                          placeholder="Параметр"
-                          className="w-full flex-1"
-                        />
-                        <InputText
-                          value={param.value}
-                          onChange={(e) =>
-                            handleParamChange(index, "value", e.target.value)
-                          }
-                          placeholder="Значение"
-                          className="w-full flex-1"
-                        />
-                      </div>
-                      <Button
-                        icon="pi pi-times"
-                        onClick={() => handleParamRemove(index)}
-                        className="p-button-outlined p-button-danger flex-none"
-                      />
-                    </div>
-                  ))}
-                  <Button
-                    icon="pi pi-plus"
-                    onClick={handleParamAdd}
-                    className="p-button-outlined w-full"
-                  />
-                </div>
-                <div className="w-full mt-4">
+          {!data?.data?.isStartScreen && (
+            <>
+              <div className="field mb-3">
+                <label htmlFor="selectCommand" className="block font-bold mb-2">
+                  Выбрать команду
+                </label>
+                <Dropdown
+                  id="selectCommand"
+                  value={formData.command}
+                  options={commandOptions}
+                  onChange={(e) =>
+                    setFormData({ ...formData, command: e.value })
+                  }
+                  className="w-full"
+                />
+              </div>
+              {formData.command !== "-" && (
+                <>
                   <div className="field mb-3">
                     <label
                       htmlFor="setUserStatus"
                       className="block font-bold mb-2"
                     >
-                      Установить статус пользователя:
+                      Параметры команды:
                     </label>
-                    <Dropdown
-                      id="setUserStatus"
-                      value={formData.setUserStatus}
-                      options={userStatusOptions}
-                      onChange={(e) =>
-                        setFormData({ ...formData, setUserStatus: e.value })
-                      }
-                      className="w-full"
+                    {/* Список параметров команды */}
+                    {paramsList.map((param, index) => (
+                      <div
+                        key={index}
+                        className="field flex flex-row align-items-center gap-2"
+                      >
+                        <div className="w-full flex flex-column md:flex-row align-items-start md:align-items-center gap-2">
+                          <InputText
+                            value={param.param}
+                            onChange={(e) =>
+                              handleParamChange(index, "param", e.target.value)
+                            }
+                            placeholder="Параметр"
+                            className="w-full flex-1"
+                          />
+                          <InputText
+                            value={param.value}
+                            onChange={(e) =>
+                              handleParamChange(index, "value", e.target.value)
+                            }
+                            placeholder="Значение"
+                            className="w-full flex-1"
+                          />
+                        </div>
+                        <Button
+                          icon="pi pi-times"
+                          onClick={() => handleParamRemove(index)}
+                          className="p-button-outlined p-button-danger flex-none"
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      icon="pi pi-plus"
+                      onClick={handleParamAdd}
+                      className="p-button-outlined w-full"
                     />
                   </div>
-                </div>
+                  <div className="w-full mt-4">
+                    <div className="field mb-3">
+                      <label
+                        htmlFor="setUserStatus"
+                        className="block font-bold mb-2"
+                      >
+                        Установить статус пользователя:
+                      </label>
+                      <Dropdown
+                        id="setUserStatus"
+                        value={formData.setUserStatus}
+                        options={userStatusOptions}
+                        onChange={(e) =>
+                          setFormData({ ...formData, setUserStatus: e.value })
+                        }
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
 
-                <div className="w-full">
-                  <div className="field mb-3">
-                    <label
-                      htmlFor="unsetUserStatus"
-                      className="block font-bold mb-2"
-                    >
-                      Снять статус пользователя:
-                    </label>
-                    <Dropdown
-                      id="unsetUserStatus"
-                      value={formData.unsetUserStatus}
-                      options={userStatusOptions}
-                      onChange={(e) =>
-                        setFormData({ ...formData, unsetUserStatus: e.value })
-                      }
-                      className="w-full"
-                    />
+                  <div className="w-full">
+                    <div className="field mb-3">
+                      <label
+                        htmlFor="unsetUserStatus"
+                        className="block font-bold mb-2"
+                      >
+                        Снять статус пользователя:
+                      </label>
+                      <Dropdown
+                        id="unsetUserStatus"
+                        value={formData.unsetUserStatus}
+                        options={userStatusOptions}
+                        onChange={(e) =>
+                          setFormData({ ...formData, unsetUserStatus: e.value })
+                        }
+                        className="w-full"
+                      />
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </Fieldset>
     </Dialog>
   );
 };

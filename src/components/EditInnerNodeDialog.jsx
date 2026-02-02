@@ -9,6 +9,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
 
+import { Editor } from "primereact/editor";
+
 import { Accordion, AccordionTab } from "primereact/accordion";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
@@ -214,6 +216,18 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         <label htmlFor="message" className="block font-bold mb-2">
           Сообщение после нажатия
         </label>
+
+        <Editor
+          id="message"
+          value={formData.sendMessage}
+          onChange={(e) =>
+            setFormData({ ...formData, sendMessage: e.target.value })
+          }
+          placeholder="Сообщение"
+          rows={3}
+          className="w-full"
+        />
+
         <InputTextarea
           id="message"
           value={formData.sendMessage}
