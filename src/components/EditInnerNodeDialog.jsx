@@ -224,18 +224,6 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             setFormData({ ...formData, sendMessage: e.target.value })
           }
           placeholder="Сообщение"
-          rows={3}
-          className="w-full"
-        />
-
-        <InputTextarea
-          id="message"
-          value={formData.sendMessage}
-          onChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.target.value })
-          }
-          placeholder="Сообщение"
-          rows={3}
           className="w-full"
         />
       </div>
