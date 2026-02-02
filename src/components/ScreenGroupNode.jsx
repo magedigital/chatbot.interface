@@ -144,25 +144,26 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
         />
       </div>
       <Menu ref={menu} model={menuItems} popup />
-
-      <div
-        style={{
-          position: "absolute",
-          left: (GROUP.width - NODE.width) / 2,
-          bottom: GROUP.verticalPadding,
-          width: NODE.width,
-          height: GROUP.groupControlsHeight,
-        }}
-      >
-        <Button
-          icon="pi pi-plus"
-          onClick={handleClick}
-          size="small"
+      {!data.isStartScreen && (
+        <div
           style={{
-            width: "100%",
+            position: "absolute",
+            left: (GROUP.width - NODE.width) / 2,
+            bottom: GROUP.verticalPadding,
+            width: NODE.width,
+            height: GROUP.groupControlsHeight,
           }}
-        />
-      </div>
+        >
+          <Button
+            icon="pi pi-plus"
+            onClick={handleClick}
+            size="small"
+            style={{
+              width: "100%",
+            }}
+          />
+        </div>
+      )}
 
       {/* Контейнер для дочерних нод */}
       {children}

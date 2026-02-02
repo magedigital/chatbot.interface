@@ -176,7 +176,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
             />
           </div>
 
-          {!data?.data?.isStartScreen && (
+          {data?.data && !data?.data?.isStartScreen && (
             <>
               <div className="field mb-3">
                 <label htmlFor="selectCommand" className="block font-bold mb-2">

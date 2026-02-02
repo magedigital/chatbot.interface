@@ -6,6 +6,7 @@ import {
   updateGroupNodeDimensions,
 } from "../utils/nodeUtils";
 import { MarkerType } from "reactflow";
+import { NODE } from "../config/nodeConfig";
 
 const initialState = {
   nodes: [],
@@ -156,6 +157,25 @@ const nodesSlice = createSlice({
       state.nodes = arrangeNodePositions(state.nodes, groupId);
 
       action.payload = groupId;
+
+      if (newGroupNode.data.isStartScreen) {
+        // Создаем новую ноду
+        const newNode = createNodeInGroup(groupId, state.nodes);
+
+        newNode.data.label = NODE.mainName;
+        newNode.data.isStartScreenNode = true;
+        newNode.draggable = false;
+        newNode.selectable = true;
+
+        // Добавляем новую ноду
+        state.nodes.push(newNode);
+
+        // Обновляем размеры группы
+        state.nodes = updateGroupNodeDimensions(state.nodes, groupId);
+
+        // Вызываем внешнюю функцию для выстраивания позиций нод в группе
+        state.nodes = arrangeNodePositions(state.nodes, groupId);
+      }
     },
 
     editScreenGroupNode: (state, action) => {

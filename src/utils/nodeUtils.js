@@ -41,6 +41,7 @@ export const createNodeInGroup = (groupId, nodes) => {
     data: {
       label: NODE.defaultName + ` ${nodeCount + 1}`,
       color: selectedColor,
+      isStartScreenNode: false,
     },
     parentNode: groupId,
     selectable: false,
@@ -111,7 +112,7 @@ export const createScreenGroup = (
   return newGroupNode;
 };
 
-export const getGroupNodeHeight = (nodeCount) => {
+export const getGroupNodeHeight = (nodeCount, isStartScreen) => {
   return (
     GROUP.border * 2 +
     GROUP.topHeight +
@@ -119,9 +120,10 @@ export const getGroupNodeHeight = (nodeCount) => {
     (nodeCount > 0 ? NODE.groupVerticalPadding * 2 : 0) +
     nodeCount * NODE.height +
     nodeCount * (NODE.groupVerticalSpacing - 1) +
-    GROUP.controlsHeight +
-    (nodeCount > 0 ? GROUP.verticalSpacing : 0) +
-    GROUP.verticalSpacing
+    (isStartScreen
+      ? 0
+      : GROUP.controlsHeight +
+        (nodeCount > 0 ? GROUP.verticalSpacing : 0 + GROUP.verticalSpacing))
   );
 };
 
@@ -139,7 +141,10 @@ export const updateGroupNodeDimensions = (nodes, groupId) => {
 
   const updatedNodes = [...nodes];
   const groupNodeIndex = updatedNodes.findIndex((n) => n.id === groupId);
-  const height = getGroupNodeHeight(groupChildren.length);
+  const height = getGroupNodeHeight(
+    groupChildren.length,
+    groupNode?.data?.isStartScreen,
+  );
   if (groupNodeIndex !== -1) {
     updatedNodes[groupNodeIndex] = {
       ...updatedNodes[groupNodeIndex],

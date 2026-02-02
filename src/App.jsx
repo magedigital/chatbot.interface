@@ -499,6 +499,7 @@ function App() {
             onEdgeUpdateStart={onEdgeUpdateStart}
             onEdgeUpdateEnd={onEdgeUpdateEnd}
             nodeTypes={nodeTypes}
+            zoomOnDoubleClick={false}
           >
             <Controls />
             <MiniMap />

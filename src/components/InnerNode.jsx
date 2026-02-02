@@ -53,6 +53,7 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
       label: "Удалить",
       icon: "pi pi-trash",
       command: handleDelete,
+      disabled: data.isStartScreenNode,
     },
   ];
 
@@ -107,6 +108,7 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
             display: "flex",
             flex: 1,
             alignItems: "center",
+            pointerEvents: "all",
           }}
           onDoubleClick={handleEdit}
         >

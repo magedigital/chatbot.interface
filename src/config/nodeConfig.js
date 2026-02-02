@@ -52,4 +52,5 @@ export const NODE = {
   handleBackgroundColor: "#fff",
   handleBorderColor: "#fff",
   defaultName: "Кнопка",
+  mainName: "Старт",
 };
