@@ -38,27 +38,52 @@ export const exportAppData = (nodes, edges, additionalData = {}) => {
 export const saveDataToFile = (data, filename = 'bot-data-export.json') => {
   // Преобразуем данные в строку JSON с форматированием
   const jsonString = JSON.stringify(data, null, 2);
-  
+
   // Создаем Blob с данными
   const blob = new Blob([jsonString], { type: 'application/json' });
-  
+
   // Создаем URL для скачивания
   const url = URL.createObjectURL(blob);
-  
+
   // Создаем временный элемент ссылки для скачивания
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
-  
+
   // Добавляем ссылку во временный контейнер
   document.body.appendChild(link);
-  
+
   // Имитируем клик по ссылке для запуска скачивания
   link.click();
-  
+
   // Удаляем ссылку после скачивания
   document.body.removeChild(link);
-  
+
   // Освобождаем URL
   URL.revokeObjectURL(url);
+};
+
+/**
+ * Функция для чтения данных из JSON-файла
+ * @param {File} file - выбранный файл
+ * @param {Function} onLoad - callback при успешной загрузке
+ * @param {Function} onError - callback при ошибке
+ */
+export const readDataFromFile = (file, onLoad, onError) => {
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    try {
+      const data = JSON.parse(event.target.result);
+      onLoad(data);
+    } catch (error) {
+      onError(error);
+    }
+  };
+
+  reader.onerror = (error) => {
+    onError(error);
+  };
+
+  reader.readAsText(file);
 };

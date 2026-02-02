@@ -12,7 +12,7 @@ import {
   addScreenGroupNode,
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
-import { exportAppData, saveDataToFile } from "./utils/dataUtils";
+import { exportAppData, saveDataToFile, readDataFromFile } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
 // import "primereact/resources/themes/lara-light-indigo/theme.css";
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -316,6 +316,47 @@ function App() {
     saveDataToFile(exportData, 'bot-construct-data.json');
   }, [nodes, edges]);
 
+  // Функция для импорта данных приложения
+  const handleImportData = useCallback(() => {
+    confirmDialog({
+      message: "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
+      header: "Подтверждение импорта",
+      icon: "pi pi-download",
+      acceptClassName: "p-button-success",
+      accept: () => {
+        // Создаем скрытый input для выбора файла
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.json';
+        fileInput.onchange = (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            readDataFromFile(
+              file,
+              (data) => {
+                // Загружаем данные в состояние Redux
+                if (data.nodes) {
+                  dispatch(setNodes(data.nodes));
+                }
+                if (data.edges) {
+                  dispatch(setEdges(data.edges));
+                }
+              },
+              (error) => {
+                console.error('Ошибка при чтении файла:', error);
+                alert('Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.');
+              }
+            );
+          }
+        };
+        fileInput.click();
+      },
+      reject: () => {
+        // Действие отменено, ничего не делаем
+      },
+    });
+  }, [dispatch]);
+
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <PrimeReactProvider
@@ -339,6 +380,7 @@ function App() {
           onLayoutHorizontal={handleLayoutHorizontal}
           onLayoutRectPacking={handleLayoutRectPacking}
           onExportData={handleExportData}
+          onImportData={handleImportData}
         />
         <div
           style={{
