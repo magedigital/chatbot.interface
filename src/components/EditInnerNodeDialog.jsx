@@ -217,15 +217,17 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           Сообщение после нажатия
         </label>
 
-        <Editor
-          id="message"
-          value={formData.sendMessage}
-          onChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.target.value })
-          }
-          placeholder="Сообщение"
-          className="w-full"
-        />
+        <div className="ql-container ql-snow" style={{borderRadius: '6px'}}>
+          <Editor
+            id="message"
+            value={formData.sendMessage}
+            onChange={(e) =>
+              setFormData({ ...formData, sendMessage: e.target.value })
+            }
+            placeholder="Сообщение"
+            className="ql-editor w-full"
+          />
+        </div>
       </div>
 
       <Accordion activeIndex={-1} className="mb-4">
