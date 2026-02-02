@@ -219,7 +219,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           Сообщение после нажатия
         </label>
 
-        <div className="ql-container ql-snow" style={{borderRadius: '6px', border: '1px solid #ced4da'}}>
+        <div className="ql-container ql-snow" style={{borderRadius: '6px', border: '2px solid #ced4da'}}>
           <div className="ql-editor" style={{ minHeight: '100px' }}>
             <Editor
               id="message"
