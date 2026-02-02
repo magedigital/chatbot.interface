@@ -357,6 +357,9 @@ function App() {
                 if (data.edges) {
                   dispatch(setEdges(data.edges));
                 }
+
+                // Показываем уведомление об успешной загрузке
+                toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно загружены из файла!', life: 3000});
               },
               (error) => {
                 console.error("Ошибка при чтении файла:", error);
