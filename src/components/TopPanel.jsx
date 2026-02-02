@@ -8,6 +8,7 @@ const TopPanel = ({
   onLayoutVertical,
   onLayoutHorizontal,
   onLayoutRectPacking,
+  onExportData,
 }) => {
   const menu = useRef(null);
 
@@ -55,6 +56,13 @@ const TopPanel = ({
         icon="pi pi-plus"
         onClick={() => onAddScreen()}
         className="p-button p-component"
+        style={{ marginRight: "10px" }}
+      />
+      <Button
+        label="Экспорт"
+        icon="pi pi-upload"
+        onClick={() => onExportData()}
+        className="p-button p-button-info"
         style={{ marginRight: "10px" }}
       />
       <Button

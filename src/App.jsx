@@ -12,6 +12,7 @@ import {
   addScreenGroupNode,
 } from "./store/nodesSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
+import { exportAppData, saveDataToFile } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
 // import "primereact/resources/themes/lara-light-indigo/theme.css";
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -306,6 +307,15 @@ function App() {
     });
   }, [dispatch]);
 
+  // Функция для экспорта данных приложения
+  const handleExportData = useCallback(() => {
+    // Подготовка данных для экспорта
+    const exportData = exportAppData(nodes, edges);
+
+    // Сохранение данных в файл
+    saveDataToFile(exportData, 'bot-construct-data.json');
+  }, [nodes, edges]);
+
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <PrimeReactProvider
@@ -328,6 +338,7 @@ function App() {
           onLayoutVertical={handleLayoutVertical}
           onLayoutHorizontal={handleLayoutHorizontal}
           onLayoutRectPacking={handleLayoutRectPacking}
+          onExportData={handleExportData}
         />
         <div
           style={{
