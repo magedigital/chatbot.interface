@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { store } from "./store/store.js";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import { Toast } from "primereact/toast";
 import {
   setNodes,
   setEdges,
@@ -13,7 +16,12 @@ import {
 } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
-import { exportAppData, saveDataToFile, readDataFromFile } from "./utils/dataUtils";
+import {
+  exportAppData,
+  saveDataToFile,
+  readDataFromFile,
+  sendDataToServer,
+} from "./utils/dataUtils";
 import "reactflow/dist/style.css";
 // import "primereact/resources/themes/lara-light-indigo/theme.css";
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -38,6 +46,7 @@ const initialEdges = [];
 
 function App() {
   const dispatch = useDispatch();
+  const toast = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -48,11 +57,7 @@ function App() {
 
     // Загрузка конфигурации из глобального объекта
     if (window.config) {
-      dispatch(updateConfig({
-        loadUrl: window.config.loadUrl || '',
-        saveUrl: window.config.saveUrl || '',
-        publishUrl: window.config.publishUrl || '',
-      }));
+      dispatch(updateConfig(window.config));
     }
   }, [dispatch]);
 
@@ -323,21 +328,22 @@ function App() {
     const exportData = exportAppData(nodes, edges);
 
     // Сохранение данных в файл
-    saveDataToFile(exportData, 'bot-construct-data.json');
+    saveDataToFile(exportData, "bot-construct-data.json");
   }, [nodes, edges]);
 
   // Функция для импорта данных приложения
   const handleImportData = useCallback(() => {
     confirmDialog({
-      message: "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
+      message:
+        "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
       header: "Подтверждение импорта",
       icon: "pi pi-download",
-      acceptClassName: "p-button-success",
+      acceptClassName: "p-button-danger",
       accept: () => {
         // Создаем скрытый input для выбора файла
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.json';
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".json";
         fileInput.onchange = (event) => {
           const file = event.target.files[0];
           if (file) {
@@ -353,9 +359,11 @@ function App() {
                 }
               },
               (error) => {
-                console.error('Ошибка при чтении файла:', error);
-                alert('Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.');
-              }
+                console.error("Ошибка при чтении файла:", error);
+                alert(
+                  "Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.",
+                );
+              },
             );
           }
         };
@@ -366,6 +374,49 @@ function App() {
       },
     });
   }, [dispatch]);
+
+  // Функция для сохранения данных на сервер
+  const handleSaveData = useCallback(async () => {
+    try {
+      // Получаем конфигурацию из store
+      const configState = store.getState().config;
+
+      // Подготовка данных для отправки
+      const dataToSend = exportAppData(nodes, edges);
+
+      // Отправка данных на сервер
+      const response = await sendDataToServer(configState.saveUrl, dataToSend);
+
+      console.log("Данные успешно сохранены:", response.data);
+      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно сохранены на сервере!', life: 3000});
+    } catch (error) {
+      console.error("Ошибка при сохранении данных:", error);
+      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при сохранении данных на сервере.', life: 3000});
+    }
+  }, [nodes, edges, toast]);
+
+  // Функция для публикации данных на сервер
+  const handlePublishData = useCallback(async () => {
+    try {
+      // Получаем конфигурацию из store
+      const configState = store.getState().config;
+
+      // Подготовка данных для отправки
+      const dataToSend = exportAppData(nodes, edges);
+
+      // Отправка данных на сервер
+      const response = await sendDataToServer(
+        configState.publishUrl,
+        dataToSend,
+      );
+
+      console.log("Данные успешно опубликованы:", response.data);
+      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно опубликованы на сервере!', life: 3000});
+    } catch (error) {
+      console.error("Ошибка при публикации данных:", error);
+      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при публикации данных на сервере.', life: 3000});
+    }
+  }, [nodes, edges, toast]);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
@@ -383,6 +434,7 @@ function App() {
         }}
       >
         <DialogManager />
+        <Toast ref={toast} position="bottom-right" />
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}
@@ -391,6 +443,8 @@ function App() {
           onLayoutRectPacking={handleLayoutRectPacking}
           onExportData={handleExportData}
           onImportData={handleImportData}
+          onSaveData={handleSaveData}
+          onPublishData={handlePublishData}
         />
         <div
           style={{
