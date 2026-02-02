@@ -11,6 +11,7 @@ import {
   clearAllScreenGroups,
   addScreenGroupNode,
 } from "./store/nodesSlice";
+import { updateConfig } from "./store/configSlice";
 import { getLayoutedElements } from "./utils/layoutUtils";
 import { exportAppData, saveDataToFile, readDataFromFile } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
@@ -44,6 +45,15 @@ function App() {
     dispatch(setNodes(initialNodes));
     dispatch(setEdges(initialEdges));
     addLocale("ru", locales["ru"]);
+
+    // Загрузка конфигурации из глобального объекта
+    if (window.config) {
+      dispatch(updateConfig({
+        loadUrl: window.config.loadUrl || '',
+        saveUrl: window.config.saveUrl || '',
+        publishUrl: window.config.publishUrl || '',
+      }));
+    }
   }, [dispatch]);
 
   // Регистрация пользовательских типов нод
