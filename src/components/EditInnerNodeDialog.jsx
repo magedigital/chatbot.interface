@@ -319,12 +319,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           activeIndex={activeTab}
           onTabChange={(e) => setActiveTab(e.index)}
         >
-          <TabPanel header={
-            <div className="flex align-items-center gap-2">
-              Перейти к другому экрану
-              <Badge value={formData.goToScreen !== '-' ? 1 : 0} severity={formData.goToScreen !== '-' ? "info" : "secondary"} />
-            </div>
-          }>
+          <TabPanel
+            header={
+              <div className="flex align-items-center gap-2">
+                Перейти к другому экрану
+                {formData.goToScreen !== "-" && <Badge severity="danger" />}
+              </div>
+            }
+          >
             <div className="field mb-3">
               <label htmlFor="selectScreen" className="block font-bold mb-2">
                 Выбрать экран
@@ -341,12 +343,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             </div>
           </TabPanel>
 
-          <TabPanel header={
-            <div className="flex align-items-center gap-2">
-              Открыть MiniApp
-              <Badge value={formData.openMiniApp !== '-' ? 1 : 0} severity={formData.openMiniApp !== '-' ? "info" : "secondary"} />
-            </div>
-          }>
+          <TabPanel
+            header={
+              <div className="flex align-items-center gap-2">
+                Открыть MiniApp
+                {formData.openMiniApp !== "-" && <Badge severity="danger" />}
+              </div>
+            }
+          >
             <div className="field mb-3">
               <label htmlFor="selectMiniApp" className="block font-bold mb-2">
                 Выбрать MiniApp
@@ -363,12 +367,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             </div>
           </TabPanel>
 
-          <TabPanel header={
-            <div className="flex align-items-center gap-2">
-              Вызвать команду
-              <Badge value={formData.command !== '-' ? 1 : 0} severity={formData.command !== '-' ? "info" : "secondary"} />
-            </div>
-          }>
+          <TabPanel
+            header={
+              <div className="flex align-items-center gap-2">
+                Вызвать команду
+                {formData.command !== "-" && <Badge severity="danger" />}
+              </div>
+            }
+          >
             <div className="field mb-3">
               <label htmlFor="selectCommand" className="block font-bold mb-2">
                 Выбрать команду
