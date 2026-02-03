@@ -5,7 +5,6 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
-import { InputTextarea } from "primereact/inputtextarea";
 import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
@@ -210,7 +209,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       visible={visible}
       onHide={onHide}
       footer={footer}
-      className="max-w-max w-screen"
+      className="w-screen"
+      style={{ maxWidth: "45rem" }}
       modal
       closable={true}
       baseZIndex={UI.editDialogZIndex}
@@ -231,17 +231,6 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         <label htmlFor="sendMessage" className="block font-bold mb-2">
           Сообщение после нажатия
         </label>
-
-        {/* <InputTextarea
-          id="sendMessage"
-          value={formData.sendMessage}
-          onChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.target.value })
-          }
-          placeholder="Сообщение"
-          rows={3}
-          className="w-full"
-        /> */}
 
         <Editor
           id="message"

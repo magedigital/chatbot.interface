@@ -7,6 +7,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
 import { Fieldset } from "primereact/fieldset";
 
+import { Editor } from "primereact/editor";
+
 const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
@@ -119,13 +121,25 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
     </div>
   );
 
+  const header = (
+    <div id="toolbar">
+      <button className="ql-bold" aria-label=":Жирный"></button>
+      <button className="ql-italic" aria-label="Наклонный"></button>
+      <button className="ql-underline" aria-label="Подчеркнутый"></button>
+      <button className="ql-strike" aria-label="Зачеркнутый"></button>
+      <button className="ql-blockquote" aria-label="Цитата"></button>
+      <button className="ql-link" aria-label="Ссылка"></button>
+    </div>
+  );
+
   return (
     <Dialog
       header="Редактировать экран"
       visible={visible}
       onHide={onHide}
       footer={footer}
-      className="max-w-max w-screen"
+      className="w-screen"
+      style={{ maxWidth: "45rem" }}
       modal
       closable={true}
       baseZIndex={UI.editDialogZIndex}
@@ -146,15 +160,21 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         <label htmlFor="message" className="block font-bold mb-2">
           Сообщение при входе в экран
         </label>
-        <InputTextarea
+        <Editor
           id="message"
           value={formData.sendMessage}
-          onChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.target.value })
+          onTextChange={(e) =>
+            setFormData({ ...formData, sendMessage: e.htmlValue })
           }
-          placeholder="Сообщение"
-          rows={3}
           className="w-full"
+          theme="snow"
+          style={{ height: "320px" }}
+          headerTemplate={header}
+          modules={{
+            clipboard: {
+              matchVisual: false,
+            },
+          }}
         />
       </div>
 
@@ -164,15 +184,22 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
             <label htmlFor="defaultMessage" className="block font-bold mb-2">
               Сообщение
             </label>
-            <InputTextarea
+
+            <Editor
               id="defaultMessage"
               value={formData.defaultMessage}
-              onChange={(e) =>
-                setFormData({ ...formData, defaultMessage: e.target.value })
+              onTextChange={(e) =>
+                setFormData({ ...formData, defaultMessage: e.htmlValue })
               }
-              placeholder="Сообщение"
-              rows={3}
               className="w-full"
+              theme="snow"
+              style={{ height: "320px" }}
+              headerTemplate={header}
+              modules={{
+                clipboard: {
+                  matchVisual: false,
+                },
+              }}
             />
           </div>
 
