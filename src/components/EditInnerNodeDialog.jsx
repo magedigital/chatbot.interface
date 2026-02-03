@@ -282,6 +282,10 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             // Настройка для кастомизации диалога ссылки
             clipboard: {
               matchVisual: false
+            },
+            // Настройка позиционирования всплывающих окон
+            'link-tooltip': {
+              position: 'fixed'
             }
           }}
         />

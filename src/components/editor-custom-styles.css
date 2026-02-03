@@ -6,6 +6,8 @@
   border-radius: 6px !important;
   color: var(--text-color) !important;
   min-width: 250px !important;
+  position: fixed !important; /* Изменение позиционирования, чтобы избежать клиппинга */
+  z-index: 1000002 !important; /* Увеличенный z-index для отображения поверх других элементов */
 }
 
 .ql-tooltip input {
