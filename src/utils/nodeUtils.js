@@ -19,7 +19,7 @@ export const createNodeInGroup = (groupId, nodes) => {
   const colorIndex = nodeCount % NODE.colors.length;
   const selectedColor = NODE.colors[colorIndex];
 
-  const newNodeId = `${groupId}-node-${nodeCount + 1}`;
+  const newNodeId = groupId + NODE.uidSuffix + (nodeCount + 1);
 
   const width = NODE.width;
   const height = NODE.height;
@@ -66,7 +66,7 @@ export const createScreenGroup = (
   const groupCount = existingNodes.filter(
     (n) => n.type === "screenGroupNode",
   ).length;
-  const groupId = `screen-group-${Date.now()}`;
+  const groupId = GROUP.uidPrefix + Date.now();
 
   // Рассчитываем координаты с учетом количества существующих групп
   const x = GROUP.initialX + groupCount * offsetX;
