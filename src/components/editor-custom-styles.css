@@ -104,9 +104,14 @@
   border-color: var(--primary-color) !important;
 }
 
-.ql-tooltip a.ql-action::after {
+.ql-tooltip.ql-editing a.ql-action::after {
   border-right: 0 !important;
   content: "Сохранить" !important;
+}
+
+.ql-tooltip a.ql-action::after {
+  border-right: 0 !important;
+  content: "Изменить" !important;
 }
 
 /* Кнопка удаления */
@@ -129,4 +134,42 @@
 .ql-tooltip a.ql-preview {
   background-color: var(--secondary-color) !important;
   color: var(--text-color) !important;
+}
+
+.ql-toolbar {
+  background-color: var(--surface-ground) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--border-radius) !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  width: 100% !important;
+  height: 3rem !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box !important;
+  line-height: 1.5 !important;
+  font-family: var(--font-family) !important;
+  font-feature-settings: var(--font-feature-settings, normal) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 0.75rem !important;
+  outline-color: transparent !important;
+  margin: 0 !important;
+}
+
+.ql-container {
+  border: 1px solid var(--surface-border) !important;
+  background-color: var(--surface-ground) !important;
+  border-color: var(--surface-border) !important;
+  border-radius: var(--border-radius) !important;
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
+  border-top: 0px !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box !important;
+  line-height: 1.5 !important;
+  font-family: var(--font-family) !important;
+  font-feature-settings: var(--font-feature-settings, normal) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 0.75rem !important;
+  outline-color: transparent !important;
+  margin: 0 !important;
 }

@@ -192,23 +192,15 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
       />
     </div>
   );
-  const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"], // Жирный, курсив, подчеркнутый, зачеркнутый
-    ["blockquote"], // Цитата (Quote)
-    [{ font: ["serif", "monospace", "sans-serif"] }], // Выбор шрифта, включая Monospace
-    ["link"], // Создать ссылку
-  ];
 
   const header = (
     <div id="toolbar">
-      {/* Группы кнопок */}
-
-      <button className="ql-bold" aria-label="Bold"></button>
-      <button className="ql-italic" aria-label="Italic"></button>
-      <button className="ql-underline" aria-label="Underline"></button>
-      <button className="ql-strike" aria-label="Strikethrough"></button>
-      <button className="ql-blockquote" aria-label="Quote"></button>
-      <button className="ql-link" aria-label="Create link"></button>
+      <button className="ql-bold" aria-label=":Жирный"></button>
+      <button className="ql-italic" aria-label="Наклонный"></button>
+      <button className="ql-underline" aria-label="Подчеркнутый"></button>
+      <button className="ql-strike" aria-label="Зачеркнутый"></button>
+      <button className="ql-blockquote" aria-label="Цитата"></button>
+      <button className="ql-link" aria-label="Ссылка"></button>
     </div>
   );
 
@@ -257,18 +249,14 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           onTextChange={(e) =>
             setFormData({ ...formData, sendMessage: e.htmlValue })
           }
-          // placeholder="Сообщение"
           className="w-full"
           theme="snow"
-          // showHeader={true}
           style={{ height: "320px" }}
           headerTemplate={header}
-          ptOptions={toolbarOptions}
           modules={{
-            // Настройка для кастомизации диалога ссылки
             clipboard: {
-              matchVisual: false
-            }
+              matchVisual: false,
+            },
           }}
         />
       </div>
