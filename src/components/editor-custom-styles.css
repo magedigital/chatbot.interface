@@ -1,58 +1,132 @@
 /* Стили для кастомизации всплывающего окна ссылки в QuillJS */
 .ql-tooltip {
   background-color: var(--surface-card) !important;
-  border: 1px solid var(--surface-border) !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   border-radius: 6px !important;
   color: var(--text-color) !important;
-  min-width: 250px !important;
   z-index: 1000002 !important; /* Z-index для отображения поверх других элементов */
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-}
-
-.ql-tooltip input {
-  background-color: var(--surface-ground) !important;
+  padding: 1.5rem !important;
+  border-radius: 6px !important;
+  box-shadow:
+    0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 9px 46px 8px rgba(0, 0, 0, 0.12) !important;
   border: 1px solid var(--surface-border) !important;
-  border-radius: 4px !important;
-  padding: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
-  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem !important;
+}
+
+/* Заголовок диалога */
+.ql-tooltip::before {
+  content: "Введите URL ссылки:" !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-weight: 700 !important;
+  font-family: var(--font-family) !important;
+  font-feature-settings: var(--font-feature-settings, normal) !important;
   color: var(--text-color) !important;
+  font-size: 1rem !important;
 }
 
+/* Контейнер для ввода */
+.ql-tooltip .ql-hidden {
+  display: none !important;
+}
+
+/* Поле ввода */
+.ql-tooltip input[type="text"] {
+  background-color: var(--surface-ground) !important;
+  border-color: var(--surface-border) !important;
+  border-radius: var(--border-radius) !important;
+  width: 100% !important;
+  height: 3rem !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box !important;
+  line-height: 1.5 !important;
+  font-family: var(--font-family) !important;
+  font-feature-settings: var(--font-feature-settings, normal) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 0.75rem !important;
+  appearance: none !important;
+  outline-color: transparent !important;
+  margin: 0 !important;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Кнопки */
 .ql-tooltip a {
-  color: var(--primary-color) !important;
-  text-decoration: none !important;
-  margin-right: 1rem !important;
-  padding: 0.5rem 1rem !important;
-  border-radius: 4px !important;
+  box-sizing: border-box !important;
+  font-weight: 700 !important;
+  font-family: var(--font-family) !important;
+  font-feature-settings: var(--font-feature-settings, normal) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  color: #030712 !important;
+  background: #60a5fa !important;
+  border: 1px solid #60a5fa !important;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1rem !important;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s !important;
+  border-radius: 6px !important;
   cursor: pointer !important;
+  user-select: none !important;
+  align-items: center !important;
+  vertical-align: bottom !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  position: relative !important;
 }
 
-.ql-tooltip a.ql-preview {
-  background-color: var(--surface-hover) !important;
+.ql-tooltip a:not(:disabled):hover {
+  background: #93c5fd !important;
+  color: #030712 !important;
+  border-color: #93c5fd !important;
 }
 
+/* Кнопка действия (подтвердить) */
 .ql-tooltip a.ql-action {
   background-color: var(--primary-color) !important;
   color: var(--primary-color-text) !important;
+  border-color: var(--primary-color) !important;
 }
 
+.ql-tooltip a.ql-action::after {
+  border-right: 0 !important;
+  content: "Сохранить" !important;
+}
+
+/* Кнопка удаления */
 .ql-tooltip a.ql-remove {
-  background-color: #dc3545 !important;
-  color: white !important;
+  background-color: var(--red-500) !important;
+  color: var(--text-color) !important;
+  border-color: var(--red-300) !important;
 }
 
-.ql-tooltip a:hover {
-  opacity: 0.9 !important;
+.ql-tooltip a.ql-remove::before {
+  content: "Удалить" !important;
 }
 
-.ql-tooltip::before {
-  content: "Введите URL ссылки:" !important;
-  display: block !important;
-  margin-bottom: 0.5rem !important;
-  font-weight: bold !important;
+.ql-tooltip a.ql-remove:hover {
+  background-color: var(--red-400) !important;
+  color: var(--red-900) !important;
+}
+
+/* Кнопка превью */
+.ql-tooltip a.ql-preview {
+  background-color: var(--secondary-color) !important;
+  color: var(--text-color) !important;
 }
