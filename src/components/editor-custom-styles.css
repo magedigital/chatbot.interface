@@ -1,0 +1,53 @@
+/* Стили для кастомизации всплывающего окна ссылки в QuillJS */
+.ql-tooltip {
+  background-color: var(--surface-card) !important;
+  border: 1px solid var(--surface-border) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 6px !important;
+  color: var(--text-color) !important;
+  min-width: 250px !important;
+}
+
+.ql-tooltip input {
+  background-color: var(--surface-ground) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: 4px !important;
+  padding: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  width: 100% !important;
+  color: var(--text-color) !important;
+}
+
+.ql-tooltip a {
+  color: var(--primary-color) !important;
+  text-decoration: none !important;
+  margin-right: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+.ql-tooltip a.ql-preview {
+  background-color: var(--surface-hover) !important;
+}
+
+.ql-tooltip a.ql-action {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ql-tooltip a.ql-remove {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.ql-tooltip a:hover {
+  opacity: 0.9 !important;
+}
+
+.ql-tooltip::before {
+  content: "Введите URL ссылки:" !important;
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: bold !important;
+}
