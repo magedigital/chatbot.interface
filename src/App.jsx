@@ -56,7 +56,7 @@ const initialEdges = [];
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
-  const reactFlowInstance = useReactFlow();
+  const reactFlowInstance = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -257,12 +257,15 @@ function App() {
     const result = dispatch(addScreenGroupNode());
     const groupId = result.payload;
 
-    if (groupId && reactFlowInstance.fitView) {
-      reactFlowInstance.fitView({
-        nodes: [{ id: groupId }],
-        duration: 500,
-      });
-    }
+    // После добавления новой группы, ждем обновления состояния и переходим к ней
+    setTimeout(() => {
+      if (groupId && reactFlowInstance.current && reactFlowInstance.current.fitView) {
+        reactFlowInstance.current.fitView({
+          nodes: [{ id: groupId }],
+          duration: 500,
+        });
+      }
+    }, 100); // Небольшая задержка для обновления состояния
   }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
