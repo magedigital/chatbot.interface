@@ -21,6 +21,7 @@ import {
   saveDataToFile,
   readDataFromFile,
   sendDataToServer,
+  loadDataFromServer,
 } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
 // import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -60,6 +61,22 @@ function App() {
     // Загрузка конфигурации из глобального объекта
     if (window.config) {
       dispatch(updateConfig(window.config));
+
+      // Загрузка данных с сервера, если указан loadUrl
+      if (window.config.loadUrl) {
+        loadDataFromServer(window.config.loadUrl)
+          .then((data) => {
+            if (data.nodes) {
+              dispatch(setNodes(data.nodes));
+            }
+            if (data.edges) {
+              dispatch(setEdges(data.edges));
+            }
+          })
+          .catch((error) => {
+            console.error('Ошибка при загрузке данных с сервера:', error);
+          });
+      }
     }
   }, [dispatch]);
 

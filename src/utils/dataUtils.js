@@ -89,6 +89,32 @@ export const readDataFromFile = (file, onLoad, onError) => {
 };
 
 /**
+ * Функция для загрузки данных с сервера
+ * @param {string} url - URL для загрузки данных
+ * @param {string} token - токен аутентификации (опционально)
+ * @returns {Promise} - промис с результатом запроса
+ */
+export const loadDataFromServer = async (url, token = null) => {
+  try {
+    // Имитируем импорт axios внутри функции
+    const axios = (await import('axios')).default;
+
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await axios.get(url, { headers });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * Функция для отправки данных на сервер
  * @param {string} url - URL для отправки данных
  * @param {Object} data - данные для отправки
