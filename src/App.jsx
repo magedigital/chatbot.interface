@@ -253,9 +253,26 @@ function App() {
 
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(async () => {
-    // Диспатчим действие и получаем ID новой группы
+    // Получаем текущее количество групп до добавления новой
+    const previousGroupCount = nodes.filter(n => n.type === 'screenGroupNode').length;
+
     dispatch(addScreenGroupNode());
-  }, [dispatch, nodes]);
+
+    // После добавления новой группы, ждем обновления состояния и переходим к ней
+    setTimeout(() => {
+      const newGroups = nodes.filter(n => n.type === 'screenGroupNode');
+      if (newGroups.length > previousGroupCount && reactFlowInstance.current) {
+        const lastAddedGroup = newGroups[newGroups.length - 1];
+        if (lastAddedGroup) {
+          // Используем fitView для перехода к новой ноде
+          reactFlowInstance.current.fitView({
+            nodes: [lastAddedGroup],
+            duration: 500
+          });
+        }
+      }
+    }, 100); // Небольшая задержка для обновления состояния
+  }, [dispatch, nodes, reactFlowInstance]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
