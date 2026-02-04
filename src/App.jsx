@@ -55,6 +55,7 @@ const initialEdges = [];
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
+  const reactFlowInstance = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -272,7 +273,7 @@ function App() {
         }
       }
     }, 100); // Небольшая задержка для обновления состояния
-  }, [dispatch, nodes, reactFlowInstance]);
+  }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
