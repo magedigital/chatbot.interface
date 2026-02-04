@@ -261,10 +261,17 @@ function App() {
         if (layoutedNodes && layoutedEdges) {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
+
+          // После обновления нод вызываем fitView
+          setTimeout(() => {
+            if (reactFlowRef.current && reactFlowRef.current.fitView) {
+              reactFlowRef.current.fitView();
+            }
+          }, 100);
         }
       },
     );
-  }, [nodes, edges, dispatch]);
+  }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического горизонтального размещения нод с использованием ELK
   const handleLayoutHorizontal = useCallback(() => {
@@ -280,10 +287,17 @@ function App() {
         if (layoutedNodes && layoutedEdges) {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
+
+          // После обновления нод вызываем fitView
+          setTimeout(() => {
+            if (reactFlowRef.current && reactFlowRef.current.fitView) {
+              reactFlowRef.current.fitView();
+            }
+          }, 100);
         }
       },
     );
-  }, [nodes, edges, dispatch]);
+  }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического размещения нод по алгоритму rectpacking
   const handleLayoutRectPacking = useCallback(() => {
@@ -299,10 +313,17 @@ function App() {
         if (layoutedNodes && layoutedEdges) {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
+
+          // После обновления нод вызываем fitView
+          setTimeout(() => {
+            if (reactFlowRef.current && reactFlowRef.current.fitView) {
+              reactFlowRef.current.fitView();
+            }
+          }, 100);
         }
       },
     );
-  }, [nodes, edges, dispatch]);
+  }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {

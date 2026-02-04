@@ -29,7 +29,7 @@ const ReactFlowComponent = forwardRef(
     const dispatch = useDispatch();
     const reactFlowInstance = useReactFlow();
 
-    // Экспортируем метод для добавления экрана через ref
+    // Экспортируем методы для взаимодействия с ReactFlow через ref
     useImperativeHandle(ref, () => ({
       addScreenAndNavigate: () => {
         const result = dispatch(addScreenGroupNode());
@@ -49,6 +49,9 @@ const ReactFlowComponent = forwardRef(
           );
         }
         return groupNode.id;
+      },
+      fitView: () => {
+        reactFlowInstance.fitView();
       },
     }));
 
