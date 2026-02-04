@@ -32,36 +32,6 @@ const ReactFlowComponent = forwardRef(
     const dispatch = useDispatch();
     const reactFlowInstance = useReactFlow();
 
-    // Функция для автоматического вертикального размещения нод с использованием ELK
-    const layoutVertical = (currentNodes, currentEdges) => {
-      const options = {
-        ...elkOptions,
-        "elk.direction": "DOWN",
-      };
-
-      return getLayoutedElements(currentNodes, currentEdges, options);
-    };
-
-    // Функция для автоматического горизонтального размещения нод с использованием ELK
-    const layoutHorizontal = (currentNodes, currentEdges) => {
-      const options = {
-        ...elkOptions,
-        "elk.direction": "RIGHT",
-      };
-
-      return getLayoutedElements(currentNodes, currentEdges, options);
-    };
-
-    // Функция для автоматического размещения нод по алгоритму rectpacking
-    const layoutRectPacking = (currentNodes, currentEdges) => {
-      const options = {
-        ...elkOptions,
-        "elk.algorithm": "rectpacking",
-      };
-
-      return getLayoutedElements(currentNodes, currentEdges, options);
-    };
-
     // Экспортируем методы для взаимодействия с ReactFlow через ref
     useImperativeHandle(ref, () => ({
       addScreenAndNavigate: () => {
@@ -83,17 +53,28 @@ const ReactFlowComponent = forwardRef(
         }
         return groupNode.id;
       },
-      fitView: () => {
-        reactFlowInstance.fitView();
-      },
-      layoutVertical: (currentNodes, currentEdges) => {
-        return layoutVertical(currentNodes, currentEdges);
-      },
-      layoutHorizontal: (currentNodes, currentEdges) => {
-        return layoutHorizontal(currentNodes, currentEdges);
-      },
-      layoutRectPacking: (currentNodes, currentEdges) => {
-        return layoutRectPacking(currentNodes, currentEdges);
+      layout: async (currentNodes, currentEdges, layoutOptions) => {
+        const options = {
+          ...elkOptions,
+          ...layoutOptions,
+        };
+
+        const { nodes: layoutedNodes, edges: layoutedEdges } =
+          await getLayoutedElements(currentNodes, currentEdges, options);
+
+        if (layoutedNodes && layoutedEdges) {
+          dispatch(setNodes(layoutedNodes));
+          dispatch(setEdges(layoutedEdges));
+          setTimeout(() => {
+            if (ref.current && ref.current.fitView) {
+              ref.current.fitView({
+                duration: 2000,
+                ease: "smooth",
+                padding: 3,
+              });
+            }
+          }, 100);
+        }
       },
     }));
 

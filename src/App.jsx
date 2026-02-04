@@ -14,7 +14,6 @@ import {
   updateNodePositionsInGroup,
   removeEdge,
   clearAllScreenGroups,
-  addScreenGroupNode,
 } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
 import {
@@ -246,67 +245,28 @@ function App() {
     [dispatch],
   );
 
+  // Функция для добавления новой группы экрана
+  const handleAddScreen = useCallback(() => {
+    if (reactFlowRef.current && reactFlowRef.current.addScreenAndNavigate) {
+      reactFlowRef.current.addScreenAndNavigate();
+    }
+  }, []);
+
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
-    if (reactFlowRef.current && reactFlowRef.current.layoutVertical) {
-      reactFlowRef.current.layoutVertical(nodes, edges).then(
-        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-          if (layoutedNodes && layoutedEdges) {
-            dispatch(setNodes(layoutedNodes));
-            dispatch(setEdges(layoutedEdges));
-
-            // После обновления нод вызываем fitView
-            setTimeout(() => {
-              if (reactFlowRef.current && reactFlowRef.current.fitView) {
-                reactFlowRef.current.fitView();
-              }
-            }, 100);
-          }
-        }
-      );
-    }
+    reactFlowRef.current.layout(nodes, edges, { "elk.direction": "DOWN" });
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического горизонтального размещения нод с использованием ELK
   const handleLayoutHorizontal = useCallback(() => {
-    if (reactFlowRef.current && reactFlowRef.current.layoutHorizontal) {
-      reactFlowRef.current.layoutHorizontal(nodes, edges).then(
-        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-          if (layoutedNodes && layoutedEdges) {
-            dispatch(setNodes(layoutedNodes));
-            dispatch(setEdges(layoutedEdges));
-
-            // После обновления нод вызываем fitView
-            setTimeout(() => {
-              if (reactFlowRef.current && reactFlowRef.current.fitView) {
-                reactFlowRef.current.fitView();
-              }
-            }, 100);
-          }
-        }
-      );
-    }
+    reactFlowRef.current.layout(nodes, edges, { "elk.direction": "RIGHT" });
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического размещения нод по алгоритму rectpacking
   const handleLayoutRectPacking = useCallback(() => {
-    if (reactFlowRef.current && reactFlowRef.current.layoutRectPacking) {
-      reactFlowRef.current.layoutRectPacking(nodes, edges).then(
-        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-          if (layoutedNodes && layoutedEdges) {
-            dispatch(setNodes(layoutedNodes));
-            dispatch(setEdges(layoutedEdges));
-
-            // После обновления нод вызываем fitView
-            setTimeout(() => {
-              if (reactFlowRef.current && reactFlowRef.current.fitView) {
-                reactFlowRef.current.fitView();
-              }
-            }, 100);
-          }
-        }
-      );
-    }
+    reactFlowRef.current.layout(nodes, edges, {
+      "elk.algorithm": "rectpacking",
+    });
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для очистки всех групп
@@ -453,13 +413,6 @@ function App() {
       });
     }
   }, [nodes, edges, toast]);
-
-  // Функция для добавления новой группы экрана
-  const handleAddScreen = useCallback(() => {
-    if (reactFlowRef.current && reactFlowRef.current.addScreenAndNavigate) {
-      reactFlowRef.current.addScreenAndNavigate();
-    }
-  }, []);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
