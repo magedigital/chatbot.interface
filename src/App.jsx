@@ -29,6 +29,9 @@ import "primereact/resources/themes/lara-dark-blue/theme.css";
 // import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+
+import "./css/quill-editor-custom-styles.css";
+
 import { confirmDialog } from "primereact/confirmdialog";
 import { addLocale, PrimeReactProvider } from "primereact/api";
 
@@ -47,6 +50,7 @@ const initialEdges = [];
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
+  const reactFlowInstance = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -244,9 +248,20 @@ function App() {
   );
 
   // Функция для добавления новой группы экрана
-  const handleAddScreen = useCallback(() => {
-    dispatch(addScreenGroupNode());
-  }, [dispatch]);
+  const handleAddScreen = useCallback(async () => {
+    // Диспатчим действие и получаем ID новой группы
+    const result = await dispatch(addScreenGroupNode());
+
+    // После добавления новой группы, переходим к ней
+    setTimeout(() => {
+      if (result.payload && reactFlowInstance.current) {
+        const newGroup = nodes.find(n => n.id === result.payload);
+        if (newGroup) {
+          reactFlowInstance.current.fitView({ nodes: [newGroup], duration: 500 });
+        }
+      }
+    }, 100); // Небольшая задержка для обновления состояния
+  }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
@@ -487,6 +502,7 @@ function App() {
           }}
         >
           <ReactFlow
+            ref={reactFlowInstance}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
@@ -500,6 +516,7 @@ function App() {
             onEdgeUpdateEnd={onEdgeUpdateEnd}
             nodeTypes={nodeTypes}
             zoomOnDoubleClick={false}
+            fitView={true}
           >
             <Controls />
             <MiniMap />
