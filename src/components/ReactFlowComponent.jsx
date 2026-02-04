@@ -74,6 +74,15 @@ const ReactFlowComponent = forwardRef(
           }, 100);
         }
       },
+      fit: async () => {
+        setTimeout(() => {
+          reactFlowInstance.fitView({
+            duration: 500,
+            ease: "smooth",
+            padding: 0.1,
+          });
+        }, 100);
+      },
     }));
 
     return (

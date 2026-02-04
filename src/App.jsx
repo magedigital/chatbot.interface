@@ -57,7 +57,6 @@ function App() {
     dispatch(setNodes(initialNodes));
     dispatch(setEdges(initialEdges));
     addLocale("ru", locales["ru"]);
-
     // Загрузка конфигурации из глобального объекта
     if (window.config) {
       dispatch(updateConfig(window.config));
@@ -72,9 +71,16 @@ function App() {
             if (data.edges) {
               dispatch(setEdges(data.edges));
             }
+            reactFlowRef.current.fit();
           })
           .catch((error) => {
-            console.error('Ошибка при загрузке данных с сервера:', error);
+            console.error("Ошибка при загрузке данных с сервера:", error);
+            toast.current.show({
+              severity: "error",
+              summary: "Ошибка",
+              detail: "Произошла ошибка при загрузке данных с сервера.",
+              life: 3000,
+            });
           });
       }
     }
