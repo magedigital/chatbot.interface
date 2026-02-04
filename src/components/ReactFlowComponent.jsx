@@ -66,13 +66,11 @@ const ReactFlowComponent = forwardRef(
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
           setTimeout(() => {
-            if (ref.current && ref.current.fitView) {
-              ref.current.fitView({
-                duration: 2000,
-                ease: "smooth",
-                padding: 3,
-              });
-            }
+            reactFlowInstance.fitView({
+              duration: 500,
+              ease: "smooth",
+              padding: 0.1,
+            });
           }, 100);
         }
       },
