@@ -2,13 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { store } from "./store/store.js";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  ReactFlowProvider,
-  useReactFlow,
-} from "reactflow";
+import { ReactFlowProvider } from "reactflow";
+import ReactFlowComponent from "./components/ReactFlowComponent";
 
 import { Toast } from "primereact/toast";
 import {
@@ -56,7 +51,7 @@ const initialEdges = [];
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
-  const reactFlowInstance = useRef(null);
+  const reactFlowRef = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -77,7 +72,7 @@ function App() {
       innerNode: InnerNode,
       screenGroupNode: ScreenGroupNode,
     }),
-    [],
+    []
   );
 
   const onConnect = useCallback(
@@ -104,15 +99,16 @@ function App() {
 
       dispatch(addEdgeAction(newEdge));
     },
-    [dispatch, edges],
+    [dispatch, edges]
   );
+
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
       // Используем Redux действие для обновления позиций нод в группе
       dispatch(updateNodePositionsInGroup({ node }));
     },
-    [dispatch],
+    [dispatch]
   );
 
   // Обработчик начала перетаскивания ноды - устанавливаем z-index для отображения поверх других нод
@@ -155,7 +151,7 @@ function App() {
 
           // Обновляем z-index для всех внутренних нод в той же группе
           const siblingNodes = nodes.filter(
-            (n) => n.parentNode === node.parentNode,
+            (n) => n.parentNode === node.parentNode
           );
           siblingNodes.forEach((siblingNode) => {
             const updatedSiblingNode = {
@@ -174,7 +170,7 @@ function App() {
         dispatch(updateNode(updatedNode));
       }
     },
-    [nodes, dispatch],
+    [nodes, dispatch]
   );
 
   // Функция для обновления нод
@@ -193,7 +189,7 @@ function App() {
         }
       });
     },
-    [nodes, dispatch],
+    [nodes, dispatch]
   );
 
   // Функция для обновления связей
@@ -201,7 +197,7 @@ function App() {
     (changes) => {
       // В данном случае, изменения связей обрабатываются через onConnect
     },
-    [dispatch],
+    [dispatch]
   );
 
   // Обработчик двойного клика по ребру - удаление ребра
@@ -209,7 +205,7 @@ function App() {
     (event, edge) => {
       dispatch(removeEdge(edge.id));
     },
-    [dispatch],
+    [dispatch]
   );
 
   // Обработчик обновления ребра
@@ -233,7 +229,7 @@ function App() {
 
       dispatch(addEdgeAction(updatedEdge));
     },
-    [dispatch],
+    [dispatch]
   );
 
   // Обработчик начала обновления ребра
@@ -249,24 +245,8 @@ function App() {
         dispatch(removeEdge(edge.id));
       }
     },
-    [dispatch],
+    [dispatch]
   );
-
-  // Функция для добавления новой группы экрана
-  const handleAddScreen = useCallback(() => {
-    const result = dispatch(addScreenGroupNode());
-    const groupId = result.payload;
-
-    // После добавления новой группы, ждем обновления состояния и переходим к ней
-    setTimeout(() => {
-      if (groupId && reactFlowInstance.current && reactFlowInstance.current.fitView) {
-        reactFlowInstance.current.fitView({
-          nodes: [{ id: groupId }],
-          duration: 500,
-        });
-      }
-    }, 100); // Небольшая задержка для обновления состояния
-  }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
@@ -283,7 +263,7 @@ function App() {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
         }
-      },
+      }
     );
   }, [nodes, edges, dispatch]);
 
@@ -302,7 +282,7 @@ function App() {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
         }
-      },
+      }
     );
   }, [nodes, edges, dispatch]);
 
@@ -321,7 +301,7 @@ function App() {
           dispatch(setNodes(layoutedNodes));
           dispatch(setEdges(layoutedEdges));
         }
-      },
+      }
     );
   }, [nodes, edges, dispatch]);
 
@@ -346,24 +326,23 @@ function App() {
   const handleExportData = useCallback(() => {
     // Подготовка данных для экспорта
     const exportData = exportAppData(nodes, edges);
-
+    
     // Сохранение данных в файл
-    saveDataToFile(exportData, "bot-construct-data.json");
+    saveDataToFile(exportData, 'bot-construct-data.json');
   }, [nodes, edges]);
 
   // Функция для импорта данных приложения
   const handleImportData = useCallback(() => {
     confirmDialog({
-      message:
-        "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
+      message: "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
       header: "Подтверждение импорта",
       icon: "pi pi-download",
-      acceptClassName: "p-button-danger",
+      acceptClassName: "p-button-success",
       accept: () => {
         // Создаем скрытый input для выбора файла
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.accept = ".json";
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.json';
         fileInput.onchange = (event) => {
           const file = event.target.files[0];
           if (file) {
@@ -377,25 +356,14 @@ function App() {
                 if (data.edges) {
                   dispatch(setEdges(data.edges));
                 }
-
+                
                 // Показываем уведомление об успешной загрузке
-                toast.current.show({
-                  severity: "success",
-                  summary: "Успешно",
-                  detail: "Данные успешно загружены из файла!",
-                  life: 3000,
-                });
+                toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно загружены из файла!', life: 3000});
               },
               (error) => {
-                console.error("Ошибка при чтении файла:", error);
-                toast.current.show({
-                  severity: "error",
-                  summary: "Ошибка",
-                  detail:
-                    "Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.",
-                  life: 3000,
-                });
-              },
+                console.error('Ошибка при чтении файла:', error);
+                toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.', life: 3000});
+              }
             );
           }
         };
@@ -412,28 +380,18 @@ function App() {
     try {
       // Получаем конфигурацию из store
       const configState = store.getState().config;
-
+      
       // Подготовка данных для отправки
       const dataToSend = exportAppData(nodes, edges);
-
+      
       // Отправка данных на сервер
       const response = await sendDataToServer(configState.saveUrl, dataToSend);
-
-      console.log("Данные успешно сохранены:", response.data);
-      toast.current.show({
-        severity: "success",
-        summary: "Успешно",
-        detail: "Данные успешно сохранены на сервере!",
-        life: 3000,
-      });
+      
+      console.log('Данные успешно сохранены:', response.data);
+      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно сохранены на сервере!', life: 3000});
     } catch (error) {
-      console.error("Ошибка при сохранении данных:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Ошибка",
-        detail: "Произошла ошибка при сохранении данных на сервере.",
-        life: 3000,
-      });
+      console.error('Ошибка при сохранении данных:', error);
+      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при сохранении данных на сервере.', life: 3000});
     }
   }, [nodes, edges, toast]);
 
@@ -442,33 +400,27 @@ function App() {
     try {
       // Получаем конфигурацию из store
       const configState = store.getState().config;
-
+      
       // Подготовка данных для отправки
       const dataToSend = exportAppData(nodes, edges);
-
+      
       // Отправка данных на сервер
-      const response = await sendDataToServer(
-        configState.publishUrl,
-        dataToSend,
-      );
-
-      console.log("Данные успешно опубликованы:", response.data);
-      toast.current.show({
-        severity: "success",
-        summary: "Успешно",
-        detail: "Данные успешно опубликованы на сервере!",
-        life: 3000,
-      });
+      const response = await sendDataToServer(configState.publishUrl, dataToSend);
+      
+      console.log('Данные успешно опубликованы:', response.data);
+      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно опубликованы на сервере!', life: 3000});
     } catch (error) {
-      console.error("Ошибка при публикации данных:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Ошибка",
-        detail: "Произошла ошибка при публикации данных на сервере.",
-        life: 3000,
-      });
+      console.error('Ошибка при публикации данных:', error);
+      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при публикации данных на сервере.', life: 3000});
     }
   }, [nodes, edges, toast]);
+
+  // Функция для добавления новой группы экрана
+  const handleAddScreen = useCallback(() => {
+    if (reactFlowRef.current && reactFlowRef.current.addScreenAndNavigate) {
+      reactFlowRef.current.addScreenAndNavigate();
+    }
+  }, []);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
@@ -486,7 +438,7 @@ function App() {
         }}
       >
         <DialogManager />
-        <Toast ref={toast} position="bottom-center" />
+        <Toast ref={toast} position="bottom-right" />
         <TopPanel
           onAddScreen={handleAddScreen}
           onClearAllGroups={handleClearAllGroups}
@@ -507,32 +459,21 @@ function App() {
           }}
         >
           <ReactFlowProvider>
-            <ReactFlow
-              ref={reactFlowInstance}
-              nodes={nodes}
-              edges={edges}
+            <ReactFlowComponent
+              ref={reactFlowRef}
+              onNodeDragStart={onNodeDragStart}
+              onNodeDragStop={onNodeDragStop}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
-              onNodeDragStart={onNodeDragStart}
-              onNodeDragStop={onNodeDragStop}
               onEdgeDoubleClick={onEdgeDoubleClick}
               onEdgeUpdate={onEdgeUpdate}
               onEdgeUpdateStart={onEdgeUpdateStart}
               onEdgeUpdateEnd={onEdgeUpdateEnd}
+              nodes={nodes}
+              edges={edges}
               nodeTypes={nodeTypes}
-              zoomOnDoubleClick={false}
-            >
-              <Controls />
-              <MiniMap />
-              <Background
-                variant="dots"
-                gap={20}
-                size={1}
-                color="#E9B1A3"
-                style={{ backgroundColor: "#2F435A" }}
-              />
-            </ReactFlow>
+            />
           </ReactFlowProvider>
         </div>
       </PrimeReactProvider>
