@@ -7,6 +7,7 @@ import ReactFlow, {
   Controls,
   Background,
   ReactFlowProvider,
+  useReactFlow,
 } from "reactflow";
 
 import { Toast } from "primereact/toast";
@@ -55,7 +56,7 @@ const initialEdges = [];
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
-  const reactFlowInstance = useRef(null);
+  const reactFlowInstance = useReactFlow();
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -105,7 +106,6 @@ function App() {
     },
     [dispatch, edges],
   );
-
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
@@ -253,26 +253,16 @@ function App() {
   );
 
   // Функция для добавления новой группы экрана
-  const handleAddScreen = useCallback(async () => {
-    // Получаем текущее количество групп до добавления новой
-    const previousGroupCount = nodes.filter(n => n.type === 'screenGroupNode').length;
+  const handleAddScreen = useCallback(() => {
+    const result = dispatch(addScreenGroupNode());
+    const groupId = result.payload;
 
-    dispatch(addScreenGroupNode());
-
-    // После добавления новой группы, ждем обновления состояния и переходим к ней
-    setTimeout(() => {
-      const newGroups = nodes.filter(n => n.type === 'screenGroupNode');
-      if (newGroups.length > previousGroupCount && reactFlowInstance.current) {
-        const lastAddedGroup = newGroups[newGroups.length - 1];
-        if (lastAddedGroup) {
-          // Используем fitView для перехода к новой ноде
-          reactFlowInstance.current.fitView({
-            nodes: [lastAddedGroup],
-            duration: 500
-          });
-        }
-      }
-    }, 100); // Небольшая задержка для обновления состояния
+    if (groupId && reactFlowInstance.fitView) {
+      reactFlowInstance.fitView({
+        nodes: [{ id: groupId }],
+        duration: 500,
+      });
+    }
   }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
@@ -515,6 +505,7 @@ function App() {
         >
           <ReactFlowProvider>
             <ReactFlow
+              ref={reactFlowInstance}
               nodes={nodes}
               edges={edges}
               onNodesChange={onNodesChange}
