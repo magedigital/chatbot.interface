@@ -3,7 +3,6 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { InputTextarea } from "primereact/inputtextarea";
 import { UI } from "../config/uiConfig";
 import { Fieldset } from "primereact/fieldset";
 

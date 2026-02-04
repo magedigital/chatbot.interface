@@ -11,7 +11,6 @@ import { editInnerNode, removeInnerNode } from "../store/nodesSlice";
 const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
-  const menuBtn = useRef(null);
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
@@ -129,7 +128,6 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
           </div>
         </div>
         <Button
-          ref={menuBtn}
           icon="pi pi-ellipsis-v"
           className="p-button-text p-button-plain"
           size="small"

@@ -15,7 +15,6 @@ import { GROUP, NODE } from "../config/nodeConfig";
 const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   const dispatch = useDispatch();
   const menu = useRef(null);
-  const menuBtn = useRef(null);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -131,7 +130,6 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           </div>
         </div>
         <Button
-          ref={menuBtn}
           icon="pi pi-ellipsis-v"
           className="p-button-text p-button-plain"
           size="small"

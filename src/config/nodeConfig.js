@@ -29,7 +29,8 @@ export const GROUP = {
   handleBorderColor: "#fff",
   defaultName: "Экран",
   mainName: "Стартовый экран",
-  uidPrefix: "screen-node-",
+  uidPrefix: "uid-",
+  mainUid: "ROOT",
 };
 
 // Параметры для внутренних нод

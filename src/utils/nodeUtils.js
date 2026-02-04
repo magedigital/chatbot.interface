@@ -8,24 +8,17 @@ import { GROUP, NODE } from "../config/nodeConfig";
  * Функция для создания новой ноды в группе
  * @param {string} groupId - ID группы
  * @param {Array} nodes - массив существующих нод
- * @returns {Object} - новая нода
  */
 export const createNodeInGroup = (groupId, nodes) => {
   // Подсчитываем количество нод в группе
   const groupNodes = nodes.filter((n) => n.parentNode === groupId);
   const nodeCount = groupNodes.length;
 
-  // Выбираем цвет последовательно по индексу
-  const colorIndex = nodeCount % NODE.colors.length;
-  const selectedColor = NODE.colors[colorIndex];
-
-  const newNodeId = groupId + NODE.uidSuffix + (nodeCount + 1);
-
   const width = NODE.width;
   const height = NODE.height;
 
   const newNode = {
-    id: newNodeId,
+    id: groupId + NODE.uidSuffix + (nodeCount + 1),
     type: "innerNode",
     position: {
       x: (GROUP.width - NODE.width) / 2,
@@ -40,7 +33,7 @@ export const createNodeInGroup = (groupId, nodes) => {
     height,
     data: {
       label: NODE.defaultName + ` ${nodeCount + 1}`,
-      color: selectedColor,
+      color: NODE.colors[nodeCount % NODE.colors.length],
       isStartScreenNode: false,
     },
     parentNode: groupId,
@@ -53,42 +46,23 @@ export const createNodeInGroup = (groupId, nodes) => {
 
 /**
  * Функция для создания новой группы экрана
- * @param {Array} existingNodes - массив существующих нод
- * @param {number} offsetX - смещение по X для новой группы
- * @param {number} offsetY - смещение по Y для новой группы
- * @returns {Object} - новая группа нод
+ * @param {Array} nodes - массив существующих нод
  */
-export const createScreenGroup = (
-  existingNodes,
-  offsetX = GROUP.offsetX,
-  offsetY = GROUP.offsetY,
-) => {
-  const groupCount = existingNodes.filter(
-    (n) => n.type === "screenGroupNode",
-  ).length;
-  const groupId = GROUP.uidPrefix + Date.now();
-
-  // Рассчитываем координаты с учетом количества существующих групп
-  const x = GROUP.initialX + groupCount * offsetX;
-  const y = GROUP.initialY + groupCount * offsetY;
-
-  const colorIndex = groupCount % GROUP.colors.length;
-  const selectedColor = GROUP.colors[colorIndex];
-
-  const maxZIndex = existingNodes.reduce((max, n) => {
-    const zIndex = n.zIndex || 0;
-    return zIndex > max ? zIndex : max;
-  }, 0);
-
-  const width = GROUP.width;
-  const height = getGroupNodeHeight(0);
+export const createScreenGroup = (nodes) => {
+  const groupCount = nodes.filter((n) => n.type === "screenGroupNode").length;
 
   const isStartScreen = groupCount === 0;
 
-  const newGroupNode = {
-    id: groupId,
+  const width = GROUP.width;
+  const height = getGroupNodeHeight(0, isStartScreen);
+
+  return {
+    id: isStartScreen ? GROUP.mainUid : GROUP.uidPrefix + Date.now(),
     type: "screenGroupNode",
-    position: { x, y },
+    position: {
+      x: GROUP.initialX + groupCount * GROUP.offsetX,
+      y: GROUP.initialY + groupCount * GROUP.offsetY,
+    },
     width,
     height,
     data: {
@@ -98,18 +72,19 @@ export const createScreenGroup = (
         ? GROUP.mainName
         : GROUP.defaultName + ` ${groupCount + 1}`,
       style: {
-        backgroundColor: selectedColor,
+        backgroundColor: GROUP.colors[groupCount % GROUP.colors.length],
         border: GROUP.border + "px solid " + GROUP.borderColor,
         borderRadius: GROUP.borderRadius,
       },
       isStartScreen,
     },
     selectable: isStartScreen,
-    zIndex: maxZIndex,
+    zIndex: nodes.reduce((max, n) => {
+      const zIndex = n.zIndex || 0;
+      return zIndex > max ? zIndex : max;
+    }, 0),
     draggable: !isStartScreen,
   };
-
-  return newGroupNode;
 };
 
 export const getGroupNodeHeight = (nodeCount, isStartScreen) => {

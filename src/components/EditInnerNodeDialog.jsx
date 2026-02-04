@@ -8,10 +8,6 @@ import { Button } from "primereact/button";
 import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
-
-import "quill/dist/quill.snow.css";
-import "../css/quill-editor-custom-styles.css";
-
 import { Editor } from "primereact/editor";
 
 import { Accordion, AccordionTab } from "primereact/accordion";

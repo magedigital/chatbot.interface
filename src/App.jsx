@@ -2,7 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { store } from "./store/store.js";
-import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  ReactFlowProvider,
+} from "reactflow";
+
 import { Toast } from "primereact/toast";
 import {
   setNodes,
@@ -44,13 +50,11 @@ import DialogManager from "./components/DialogManager";
 import * as locales from "./locales/ru.json";
 
 const initialNodes = [];
-
 const initialEdges = [];
 
 function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
-  const reactFlowInstance = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -250,17 +254,7 @@ function App() {
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(async () => {
     // Диспатчим действие и получаем ID новой группы
-    const result = await dispatch(addScreenGroupNode());
-
-    // После добавления новой группы, переходим к ней
-    setTimeout(() => {
-      if (result.payload && reactFlowInstance.current) {
-        const newGroup = nodes.find(n => n.id === result.payload);
-        if (newGroup) {
-          reactFlowInstance.current.fitView({ nodes: [newGroup], duration: 500 });
-        }
-      }
-    }, 100); // Небольшая задержка для обновления состояния
+    dispatch(addScreenGroupNode());
   }, [dispatch, nodes]);
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
@@ -501,33 +495,33 @@ function App() {
             top: "60px",
           }}
         >
-          <ReactFlow
-            ref={reactFlowInstance}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodeDragStart={onNodeDragStart}
-            onNodeDragStop={onNodeDragStop}
-            onEdgeDoubleClick={onEdgeDoubleClick}
-            onEdgeUpdate={onEdgeUpdate}
-            onEdgeUpdateStart={onEdgeUpdateStart}
-            onEdgeUpdateEnd={onEdgeUpdateEnd}
-            nodeTypes={nodeTypes}
-            zoomOnDoubleClick={false}
-            fitView={true}
-          >
-            <Controls />
-            <MiniMap />
-            <Background
-              variant="dots"
-              gap={20}
-              size={1}
-              color="#E9B1A3"
-              style={{ backgroundColor: "#2F435A" }}
-            />
-          </ReactFlow>
+          <ReactFlowProvider>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onNodeDragStart={onNodeDragStart}
+              onNodeDragStop={onNodeDragStop}
+              onEdgeDoubleClick={onEdgeDoubleClick}
+              onEdgeUpdate={onEdgeUpdate}
+              onEdgeUpdateStart={onEdgeUpdateStart}
+              onEdgeUpdateEnd={onEdgeUpdateEnd}
+              nodeTypes={nodeTypes}
+              zoomOnDoubleClick={false}
+            >
+              <Controls />
+              <MiniMap />
+              <Background
+                variant="dots"
+                gap={20}
+                size={1}
+                color="#E9B1A3"
+                style={{ backgroundColor: "#2F435A" }}
+              />
+            </ReactFlow>
+          </ReactFlowProvider>
         </div>
       </PrimeReactProvider>
     </div>
