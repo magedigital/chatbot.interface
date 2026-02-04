@@ -156,7 +156,7 @@ const nodesSlice = createSlice({
       // Вызываем внешнюю функцию для выстраивания позиций нод в группе
       state.nodes = arrangeNodePositions(state.nodes, groupId);
 
-      action.payload = groupId;
+      action.payload = newGroupNode;
 
       if (newGroupNode.data.isStartScreen) {
         // Создаем новую ноду
