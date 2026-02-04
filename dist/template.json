@@ -1,0 +1,180 @@
+{
+  "nodes": [
+    {
+      "id": "ROOT",
+      "type": "screenGroupNode",
+      "position": {
+        "x": 20,
+        "y": 45
+      },
+      "width": 230,
+      "height": 163,
+      "data": {
+        "width": 230,
+        "height": 163,
+        "label": "Стартовый экран",
+        "style": {
+          "backgroundColor": "rgba(156, 147, 229, 0.8)",
+          "border": "2px solid rgba(255, 255, 255, 0.4)",
+          "borderRadius": 8
+        },
+        "isStartScreen": true
+      },
+      "selectable": true,
+      "zIndex": 0,
+      "draggable": false
+    },
+    {
+      "id": "ROOT-button-1",
+      "type": "innerNode",
+      "position": {
+        "x": 25,
+        "y": 80
+      },
+      "width": 180,
+      "height": 50,
+      "data": {
+        "label": "Старт",
+        "color": "#fdc576",
+        "isStartScreenNode": true
+      },
+      "parentNode": "ROOT",
+      "selectable": true,
+      "extent": "parent",
+      "draggable": false
+    },
+    {
+      "id": "uid-1770212444929",
+      "type": "screenGroupNode",
+      "position": {
+        "x": 350,
+        "y": 20
+      },
+      "width": 230,
+      "height": 213,
+      "data": {
+        "width": 230,
+        "height": 213,
+        "label": "Экран 2",
+        "style": {
+          "backgroundColor": "rgba(199, 163, 210, 0.8)",
+          "border": "2px solid rgba(255, 255, 255, 0.4)",
+          "borderRadius": 8
+        },
+        "isStartScreen": false
+      },
+      "selectable": false,
+      "zIndex": 3,
+      "draggable": true,
+      "positionAbsolute": {
+        "x": 398.8622754491018,
+        "y": -26.01796407185629
+      },
+      "selected": false
+    },
+    {
+      "id": "uid-1770212445893",
+      "type": "screenGroupNode",
+      "position": {
+        "x": 680,
+        "y": 20
+      },
+      "width": 230,
+      "height": 213,
+      "data": {
+        "width": 230,
+        "height": 213,
+        "label": "Экран 3",
+        "style": {
+          "backgroundColor": "rgba(186, 140, 190, 0.8)",
+          "border": "2px solid rgba(255, 255, 255, 0.4)",
+          "borderRadius": 8
+        },
+        "isStartScreen": false
+      },
+      "selectable": false,
+      "zIndex": 5,
+      "draggable": true,
+      "positionAbsolute": {
+        "x": 379.31137724550894,
+        "y": 196.82634730538922
+      },
+      "selected": false
+    },
+    {
+      "id": "uid-1770212444929-button-1",
+      "type": "innerNode",
+      "position": {
+        "x": 25,
+        "y": 80
+      },
+      "width": 180,
+      "height": 50,
+      "data": {
+        "label": "Кнопка 1",
+        "color": "#fdc576",
+        "isStartScreenNode": false
+      },
+      "parentNode": "uid-1770212444929",
+      "selectable": false,
+      "extent": "parent"
+    },
+    {
+      "id": "uid-1770212445893-button-1",
+      "type": "innerNode",
+      "position": {
+        "x": 25,
+        "y": 80
+      },
+      "width": 180,
+      "height": 50,
+      "data": {
+        "label": "Кнопка 1",
+        "color": "#fdc576",
+        "isStartScreenNode": false
+      },
+      "parentNode": "uid-1770212445893",
+      "selectable": false,
+      "extent": "parent",
+      "zIndex": 5
+    }
+  ],
+  "edges": [
+    {
+      "source": "ROOT-button-1",
+      "sourceHandle": null,
+      "target": "uid-1770212444929",
+      "targetHandle": null,
+      "id": "edge-ROOT-button-1-uid-1770212444929",
+      "style": {
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "deletable": true,
+      "reconnectable": true,
+      "updatable": true
+    },
+    {
+      "source": "uid-1770212444929-button-1",
+      "sourceHandle": null,
+      "target": "uid-1770212445893",
+      "targetHandle": null,
+      "id": "edge-uid-1770212444929-button-1-uid-1770212445893",
+      "style": {
+        "strokeWidth": 3
+      },
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "deletable": true,
+      "reconnectable": true,
+      "updatable": true
+    }
+  ],
+  "metadata": {
+    "exportedAt": "2026-02-04T13:41:24.905Z",
+    "version": "1.0.0"
+  }
+}
