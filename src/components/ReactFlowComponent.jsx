@@ -7,6 +7,9 @@ import ReactFlow, {
 } from "reactflow";
 import { useDispatch } from "react-redux";
 import { addScreenGroupNode } from "../store/nodesSlice";
+import { getLayoutedElements } from "../utils/layoutUtils";
+import { elkOptions } from "../config/layoutConfig";
+import { setNodes, setEdges } from "../store/nodesSlice";
 
 const ReactFlowComponent = forwardRef(
   (
@@ -28,6 +31,36 @@ const ReactFlowComponent = forwardRef(
   ) => {
     const dispatch = useDispatch();
     const reactFlowInstance = useReactFlow();
+
+    // Функция для автоматического вертикального размещения нод с использованием ELK
+    const layoutVertical = (currentNodes, currentEdges) => {
+      const options = {
+        ...elkOptions,
+        "elk.direction": "DOWN",
+      };
+
+      return getLayoutedElements(currentNodes, currentEdges, options);
+    };
+
+    // Функция для автоматического горизонтального размещения нод с использованием ELK
+    const layoutHorizontal = (currentNodes, currentEdges) => {
+      const options = {
+        ...elkOptions,
+        "elk.direction": "RIGHT",
+      };
+
+      return getLayoutedElements(currentNodes, currentEdges, options);
+    };
+
+    // Функция для автоматического размещения нод по алгоритму rectpacking
+    const layoutRectPacking = (currentNodes, currentEdges) => {
+      const options = {
+        ...elkOptions,
+        "elk.algorithm": "rectpacking",
+      };
+
+      return getLayoutedElements(currentNodes, currentEdges, options);
+    };
 
     // Экспортируем методы для взаимодействия с ReactFlow через ref
     useImperativeHandle(ref, () => ({
@@ -52,6 +85,15 @@ const ReactFlowComponent = forwardRef(
       },
       fitView: () => {
         reactFlowInstance.fitView();
+      },
+      layoutVertical: (currentNodes, currentEdges) => {
+        return layoutVertical(currentNodes, currentEdges);
+      },
+      layoutHorizontal: (currentNodes, currentEdges) => {
+        return layoutHorizontal(currentNodes, currentEdges);
+      },
+      layoutRectPacking: (currentNodes, currentEdges) => {
+        return layoutRectPacking(currentNodes, currentEdges);
       },
     }));
 

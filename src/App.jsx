@@ -14,9 +14,9 @@ import {
   updateNodePositionsInGroup,
   removeEdge,
   clearAllScreenGroups,
+  addScreenGroupNode,
 } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
-import { getLayoutedElements } from "./utils/layoutUtils";
 import {
   exportAppData,
   saveDataToFile,
@@ -39,7 +39,6 @@ import { addLocale, PrimeReactProvider } from "primereact/api";
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopPanel from "./components/TopPanel";
-import { elkOptions } from "./config/layoutConfig";
 import DialogManager from "./components/DialogManager";
 
 import * as locales from "./locales/ru.json";
@@ -249,80 +248,65 @@ function App() {
 
   // Функция для автоматического вертикального размещения нод с использованием ELK
   const handleLayoutVertical = useCallback(() => {
-    // Опции для ELK с вертикальным направлением
-    const options = {
-      ...elkOptions,
-      "elk.direction": "DOWN",
-    };
+    if (reactFlowRef.current && reactFlowRef.current.layoutVertical) {
+      reactFlowRef.current.layoutVertical(nodes, edges).then(
+        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          if (layoutedNodes && layoutedEdges) {
+            dispatch(setNodes(layoutedNodes));
+            dispatch(setEdges(layoutedEdges));
 
-    // Применяем размещение к текущим нодам и связям
-    getLayoutedElements(nodes, edges, options).then(
-      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-        if (layoutedNodes && layoutedEdges) {
-          dispatch(setNodes(layoutedNodes));
-          dispatch(setEdges(layoutedEdges));
-
-          // После обновления нод вызываем fitView
-          setTimeout(() => {
-            if (reactFlowRef.current && reactFlowRef.current.fitView) {
-              reactFlowRef.current.fitView();
-            }
-          }, 100);
+            // После обновления нод вызываем fitView
+            setTimeout(() => {
+              if (reactFlowRef.current && reactFlowRef.current.fitView) {
+                reactFlowRef.current.fitView();
+              }
+            }, 100);
+          }
         }
-      },
-    );
+      );
+    }
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического горизонтального размещения нод с использованием ELK
   const handleLayoutHorizontal = useCallback(() => {
-    // Опции для ELK с горизонтальным направлением
-    const options = {
-      ...elkOptions,
-      "elk.direction": "RIGHT",
-    };
+    if (reactFlowRef.current && reactFlowRef.current.layoutHorizontal) {
+      reactFlowRef.current.layoutHorizontal(nodes, edges).then(
+        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          if (layoutedNodes && layoutedEdges) {
+            dispatch(setNodes(layoutedNodes));
+            dispatch(setEdges(layoutedEdges));
 
-    // Применяем размещение к текущим нодам и связям
-    getLayoutedElements(nodes, edges, options).then(
-      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-        if (layoutedNodes && layoutedEdges) {
-          dispatch(setNodes(layoutedNodes));
-          dispatch(setEdges(layoutedEdges));
-
-          // После обновления нод вызываем fitView
-          setTimeout(() => {
-            if (reactFlowRef.current && reactFlowRef.current.fitView) {
-              reactFlowRef.current.fitView();
-            }
-          }, 100);
+            // После обновления нод вызываем fitView
+            setTimeout(() => {
+              if (reactFlowRef.current && reactFlowRef.current.fitView) {
+                reactFlowRef.current.fitView();
+              }
+            }, 100);
+          }
         }
-      },
-    );
+      );
+    }
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для автоматического размещения нод по алгоритму rectpacking
   const handleLayoutRectPacking = useCallback(() => {
-    // Опции для ELK с алгоритмом rectpacking
-    const options = {
-      ...elkOptions,
-      "elk.algorithm": "rectpacking",
-    };
+    if (reactFlowRef.current && reactFlowRef.current.layoutRectPacking) {
+      reactFlowRef.current.layoutRectPacking(nodes, edges).then(
+        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          if (layoutedNodes && layoutedEdges) {
+            dispatch(setNodes(layoutedNodes));
+            dispatch(setEdges(layoutedEdges));
 
-    // Применяем размещение к текущим нодам и связям
-    getLayoutedElements(nodes, edges, options).then(
-      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-        if (layoutedNodes && layoutedEdges) {
-          dispatch(setNodes(layoutedNodes));
-          dispatch(setEdges(layoutedEdges));
-
-          // После обновления нод вызываем fitView
-          setTimeout(() => {
-            if (reactFlowRef.current && reactFlowRef.current.fitView) {
-              reactFlowRef.current.fitView();
-            }
-          }, 100);
+            // После обновления нод вызываем fitView
+            setTimeout(() => {
+              if (reactFlowRef.current && reactFlowRef.current.fitView) {
+                reactFlowRef.current.fitView();
+              }
+            }, 100);
+          }
         }
-      },
-    );
+      );
+    }
   }, [nodes, edges, dispatch, reactFlowRef]);
 
   // Функция для очистки всех групп
