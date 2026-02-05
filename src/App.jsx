@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { store } from "./store/store.js";
@@ -45,6 +51,7 @@ import * as locales from "./locales/ru.json";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { UI } from "./config/uiConfig.js";
+import { Skeleton } from "primereact/skeleton";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -55,6 +62,8 @@ function App() {
   const reactFlowRef = useRef(null);
   const menubarRef = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
+
+  const [canShow, setCanShow] = useState(false);
 
   // Инициализация начальных данных
   useEffect(() => {
@@ -76,6 +85,7 @@ function App() {
               dispatch(setEdges(data.edges));
             }
             reactFlowRef.current.fit(0);
+            setCanShow(true);
           })
           .catch((error) => {
             console.error("Ошибка при загрузке данных с сервера:", error);
@@ -85,6 +95,7 @@ function App() {
               detail: "Произошла ошибка при загрузке данных с сервера.",
               life: 3000,
             });
+            setCanShow(true);
           });
       }
     }
@@ -454,133 +465,152 @@ function App() {
   }, [nodes, edges, toast]);
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <PrimeReactProvider
-        value={{
-          locale: "ru",
-          hideOverlaysOnDocumentScrolling: true,
-          zIndex: {
-            modal: 1000001, // dialog, sidebar
-            overlay: 1000001, // dropdown, overlaypanel
-            menu: 1000010, // overlay menus
-            tooltip: 1000020, // tooltip
-            toast: 1000030, // toast
-          },
+    <div style={{ backgroundColor: "var(--surface-50)" }}>
+      {!canShow && (
+        <div className="absolute flex flex-column gap-1 w-screen h-screen p-1">
+          <Skeleton width="100%" height={UI.topMenuHeight}></Skeleton>
+          <Skeleton width="100%" height="100%"></Skeleton>
+        </div>
+      )}
+      <div
+        className={
+          "relative w-screen h-screen transition-opacity transition-delay-300 transition-duration-1000" +
+          (canShow ? " opacity-100" : " opacity-0")
+        }
+        style={{
+          transition: "opacity",
+          transitionDelay: "300ms",
+          transitionDuration: "1000ms",
         }}
       >
-        <DialogManager />
-        <Toast ref={toast} position="bottom-right" />
-        <Menubar
-          ref={menubarRef}
-          className="absolute w-full shadow-4 min-w-max"
-          style={{ zIndex: UI.topMenuZIndex, height: UI.topMenuHeight }}
-          model={[
-            {
-              label: "Добавить экран",
-              icon: "pi pi-plus",
-              command: () => handleAddScreen(),
+        <PrimeReactProvider
+          value={{
+            locale: "ru",
+            hideOverlaysOnDocumentScrolling: true,
+            zIndex: {
+              modal: 1000001, // dialog, sidebar
+              overlay: 1000001, // dropdown, overlaypanel
+              menu: 1000010, // overlay menus
+              tooltip: 1000020, // tooltip
+              toast: 1000030, // toast
             },
-            {
-              label: "Флоу",
-              icon: "pi pi-file-export",
-              items: [
-                {
-                  label: "Экспорт",
-                  icon: "pi pi-upload",
-                  command: () => handleExportData(),
-                },
-                {
-                  label: "Импорт",
-                  icon: "pi pi-download",
-                  command: () => handleImportData(),
-                },
-                {
-                  separator: true,
-                },
-                {
-                  label: "Очистить",
-                  icon: "pi pi-trash",
-                  command: () => handleClearAllGroups(),
-                },
-              ],
-            },
-            {
-              label: "Расположить",
-              icon: "pi pi-sort-alt",
-              items: [
-                {
-                  label: "Вертикально",
-                  icon: "pi pi-sort-alt",
-                  command: () => handleLayoutVertical(),
-                },
-                {
-                  label: "Горизонтально",
-                  icon: "pi pi-arrow-right-arrow-left",
-                  command: () => handleLayoutHorizontal(),
-                },
-                {
-                  label: "По порядку",
-                  icon: "pi pi-th-large",
-                  command: () => handleLayoutRectPacking(),
-                },
-              ],
-            },
-          ]}
-          end={
-            <ButtonGroup>
-              <Button
-                onClick={() => handleSaveData()}
-                size="small"
-                icon="pi pi-save"
-                severity="primary"
-                aria-label="Сохранить"
-              >
-                <span className="p-button-text hidden sm:inline ml-2">
-                  Сохранить
-                </span>
-              </Button>
-              <Button
-                onClick={() => handlePublishData()}
-                size="small"
-                icon="pi pi-cloud-upload"
-                severity="contrast"
-                aria-label="Сохранить"
-              >
-                <span className="hidden sm:inline ml-2 font-bold">
-                  Опубликовать
-                </span>
-              </Button>
-            </ButtonGroup>
-          }
-        />
-        <div
-          style={{
-            width: "100%",
-            height: `calc(100% - ${UI.topMenuHeight}px)`,
-            position: "absolute",
-            top: UI.topMenuHeight,
-            left: 0,
+            cssLayer: true,
           }}
         >
-          <ReactFlowProvider>
-            <ReactFlowComponent
-              ref={reactFlowRef}
-              onNodeDragStart={onNodeDragStart}
-              onNodeDragStop={onNodeDragStop}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onEdgeDoubleClick={onEdgeDoubleClick}
-              onEdgeUpdate={onEdgeUpdate}
-              onEdgeUpdateStart={onEdgeUpdateStart}
-              onEdgeUpdateEnd={onEdgeUpdateEnd}
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-            />
-          </ReactFlowProvider>
-        </div>
-      </PrimeReactProvider>
+          <DialogManager />
+          <Toast ref={toast} position="bottom-right" />
+          <Menubar
+            ref={menubarRef}
+            className="absolute w-full shadow-4 min-w-max"
+            style={{ zIndex: UI.topMenuZIndex, height: UI.topMenuHeight }}
+            model={[
+              {
+                label: "Добавить экран",
+                icon: "pi pi-plus",
+                command: () => handleAddScreen(),
+              },
+              {
+                label: "Флоу",
+                icon: "pi pi-file-export",
+                items: [
+                  {
+                    label: "Экспорт",
+                    icon: "pi pi-upload",
+                    command: () => handleExportData(),
+                  },
+                  {
+                    label: "Импорт",
+                    icon: "pi pi-download",
+                    command: () => handleImportData(),
+                  },
+                  {
+                    separator: true,
+                  },
+                  {
+                    label: "Очистить",
+                    icon: "pi pi-trash",
+                    command: () => handleClearAllGroups(),
+                  },
+                ],
+              },
+              {
+                label: "Расположить",
+                icon: "pi pi-sort-alt",
+                items: [
+                  {
+                    label: "Вертикально",
+                    icon: "pi pi-sort-alt",
+                    command: () => handleLayoutVertical(),
+                  },
+                  {
+                    label: "Горизонтально",
+                    icon: "pi pi-arrow-right-arrow-left",
+                    command: () => handleLayoutHorizontal(),
+                  },
+                  {
+                    label: "По порядку",
+                    icon: "pi pi-th-large",
+                    command: () => handleLayoutRectPacking(),
+                  },
+                ],
+              },
+            ]}
+            end={
+              <ButtonGroup>
+                <Button
+                  onClick={() => handleSaveData()}
+                  size="small"
+                  icon="pi pi-save"
+                  severity="primary"
+                  aria-label="Сохранить"
+                >
+                  <span className="p-button-text hidden sm:inline ml-2">
+                    Сохранить
+                  </span>
+                </Button>
+                <Button
+                  onClick={() => handlePublishData()}
+                  size="small"
+                  icon="pi pi-cloud-upload"
+                  severity="contrast"
+                  aria-label="Сохранить"
+                >
+                  <span className="hidden sm:inline ml-2 font-bold">
+                    Опубликовать
+                  </span>
+                </Button>
+              </ButtonGroup>
+            }
+          />
+          <div
+            style={{
+              width: "100%",
+              height: `calc(100% - ${UI.topMenuHeight}px)`,
+              position: "absolute",
+              top: UI.topMenuHeight,
+              left: 0,
+            }}
+          >
+            <ReactFlowProvider>
+              <ReactFlowComponent
+                ref={reactFlowRef}
+                onNodeDragStart={onNodeDragStart}
+                onNodeDragStop={onNodeDragStop}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onEdgeDoubleClick={onEdgeDoubleClick}
+                onEdgeUpdate={onEdgeUpdate}
+                onEdgeUpdateStart={onEdgeUpdateStart}
+                onEdgeUpdateEnd={onEdgeUpdateEnd}
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+              />
+            </ReactFlowProvider>
+          </div>
+        </PrimeReactProvider>
+      </div>
     </div>
   );
 }
