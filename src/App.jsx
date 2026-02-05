@@ -406,35 +406,46 @@ function App() {
 
   // Функция для публикации данных на сервер
   const handlePublishData = useCallback(async () => {
-    try {
-      // Получаем конфигурацию из store
-      const configState = store.getState().config;
+    confirmDialog({
+      message: "Вы действительно хотите опубликовать данные? Это заменит текущие данные на сервере.",
+      header: "Подтверждение публикации",
+      icon: "pi pi-cloud-upload",
+      acceptClassName: "p-button-warning",
+      accept: async () => {
+        try {
+          // Получаем конфигурацию из store
+          const configState = store.getState().config;
 
-      // Подготовка данных для отправки
-      const dataToSend = exportAppData(nodes, edges);
+          // Подготовка данных для отправки
+          const dataToSend = exportAppData(nodes, edges);
 
-      // Отправка данных на сервер
-      const response = await sendDataToServer(
-        configState.publishUrl,
-        dataToSend,
-      );
+          // Отправка данных на сервер
+          const response = await sendDataToServer(
+            configState.publishUrl,
+            dataToSend,
+          );
 
-      console.log("Данные успешно опубликованы:", response.data);
-      toast.current.show({
-        severity: "success",
-        summary: "Успешно",
-        detail: "Данные успешно опубликованы на сервере!",
-        life: 3000,
-      });
-    } catch (error) {
-      console.error("Ошибка при публикации данных:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Ошибка",
-        detail: "Произошла ошибка при публикации данных на сервере.",
-        life: 3000,
-      });
-    }
+          console.log("Данные успешно опубликованы:", response.data);
+          toast.current.show({
+            severity: "success",
+            summary: "Успешно",
+            detail: "Данные успешно опубликованы на сервере!",
+            life: 3000,
+          });
+        } catch (error) {
+          console.error("Ошибка при публикации данных:", error);
+          toast.current.show({
+            severity: "error",
+            summary: "Ошибка",
+            detail: "Произошла ошибка при публикации данных на сервере.",
+            life: 3000,
+          });
+        }
+      },
+      reject: () => {
+        // Действие отменено, ничего не делаем
+      },
+    });
   }, [nodes, edges, toast]);
 
   return (
