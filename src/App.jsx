@@ -35,10 +35,10 @@ import "./css/quill-editor-custom-styles.css";
 
 import { confirmDialog } from "primereact/confirmdialog";
 import { addLocale, PrimeReactProvider } from "primereact/api";
+import { Menubar } from "primereact/menubar";
 
 import InnerNode from "./components/InnerNode";
 import ScreenGroupNode from "./components/ScreenGroupNode";
-import TopPanel from "./components/TopPanel";
 import DialogManager from "./components/DialogManager";
 
 import * as locales from "./locales/ru.json";
@@ -465,16 +465,76 @@ function App() {
       >
         <DialogManager />
         <Toast ref={toast} position="bottom-right" />
-        <TopPanel
-          onAddScreen={handleAddScreen}
-          onClearAllGroups={handleClearAllGroups}
-          onLayoutVertical={handleLayoutVertical}
-          onLayoutHorizontal={handleLayoutHorizontal}
-          onLayoutRectPacking={handleLayoutRectPacking}
-          onExportData={handleExportData}
-          onImportData={handleImportData}
-          onSaveData={handleSaveData}
-          onPublishData={handlePublishData}
+        <Menubar
+          model={[
+            {
+              label: "Добавить экран",
+              icon: "pi pi-plus",
+              command: () => handleAddScreen(),
+            },
+            {
+              label: "Флоу",
+              icon: "pi pi-file-export",
+              items: [
+                {
+                  label: "Экспорт",
+                  icon: "pi pi-upload",
+                  command: () => handleExportData(),
+                },
+                {
+                  label: "Импорт",
+                  icon: "pi pi-download",
+                  command: () => handleImportData(),
+                },
+                {
+                  separator: true,
+                },
+                {
+                  label: "Очистить",
+                  icon: "pi pi-trash",
+                  command: () => handleClearAllGroups(),
+                },
+              ],
+            },
+            {
+              label: "Расположить",
+              icon: "pi pi-sort-alt",
+              items: [
+                {
+                  label: "Расположить вертикально",
+                  icon: "pi pi-sort-alt",
+                  command: () => handleLayoutVertical(),
+                },
+                {
+                  label: "Расположить горизонтально",
+                  icon: "pi pi-arrow-right-arrow-left",
+                  command: () => handleLayoutHorizontal(),
+                },
+                {
+                  label: "Расположить по порядку",
+                  icon: "pi pi-th-large",
+                  command: () => handleLayoutRectPacking(),
+                },
+              ],
+            },
+          ]}
+          end={
+            <div>
+              <button
+                className="p-button p-component p-button-secondary"
+                onClick={() => handleSaveData()}
+                style={{ marginRight: "0.5rem" }}
+              >
+                <span className="p-button-label">Сохранить</span>
+              </button>
+              <button
+                className="p-button p-component p-button-warning"
+                onClick={() => handlePublishData()}
+              >
+                <span className="p-button-label">Опубликовать</span>
+              </button>
+            </div>
+          }
         />
         <div
           style={{
