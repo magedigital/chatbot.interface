@@ -329,7 +329,7 @@ function App() {
         "Вы действительно хотите импортировать данные? Это заменит текущие ноды и связи.",
       header: "Подтверждение импорта",
       icon: "pi pi-download",
-      acceptClassName: "p-button-success",
+      acceptClassName: "p-button-danger",
       accept: () => {
         // Создаем скрытый input для выбора файла
         const fileInput = document.createElement("input");
@@ -531,15 +531,25 @@ function App() {
               <Button
                 onClick={() => handleSaveData()}
                 size="small"
-                label="Сохранить"
+                icon="pi pi-save"
                 severity="primary"
-              />
+                aria-label="Сохранить"
+              >
+                <span className="p-button-text hidden sm:inline ml-2">
+                  Сохранить
+                </span>
+              </Button>
               <Button
                 onClick={() => handlePublishData()}
                 size="small"
-                label="Опубликовать"
+                icon="pi pi-cloud-upload"
                 severity="contrast"
-              />
+                aria-label="Сохранить"
+              >
+                <span className="hidden sm:inline ml-2 font-bold">
+                  Опубликовать
+                </span>
+              </Button>
             </ButtonGroup>
           }
         />
