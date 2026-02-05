@@ -42,6 +42,9 @@ import ScreenGroupNode from "./components/ScreenGroupNode";
 import DialogManager from "./components/DialogManager";
 
 import * as locales from "./locales/ru.json";
+import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
+import { UI } from "./config/uiConfig.js";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -50,6 +53,7 @@ function App() {
   const dispatch = useDispatch();
   const toast = useRef(null);
   const reactFlowRef = useRef(null);
+  const menubarRef = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   // Инициализация начальных данных
@@ -71,7 +75,7 @@ function App() {
             if (data.edges) {
               dispatch(setEdges(data.edges));
             }
-            reactFlowRef.current.fit();
+            reactFlowRef.current.fit(0);
           })
           .catch((error) => {
             console.error("Ошибка при загрузке данных с сервера:", error);
@@ -407,7 +411,8 @@ function App() {
   // Функция для публикации данных на сервер
   const handlePublishData = useCallback(async () => {
     confirmDialog({
-      message: "Вы действительно хотите опубликовать данные? Это заменит текущие данные на сервере.",
+      message:
+        "Вы действительно хотите опубликовать данные? Это заменит текущие данные на сервере.",
       header: "Подтверждение публикации",
       icon: "pi pi-cloud-upload",
       acceptClassName: "p-button-warning",
@@ -466,6 +471,9 @@ function App() {
         <DialogManager />
         <Toast ref={toast} position="bottom-right" />
         <Menubar
+          ref={menubarRef}
+          className="absolute w-full shadow-4 min-w-max"
+          style={{ zIndex: UI.topMenuZIndex, height: UI.topMenuHeight }}
           model={[
             {
               label: "Добавить экран",
@@ -501,17 +509,17 @@ function App() {
               icon: "pi pi-sort-alt",
               items: [
                 {
-                  label: "Расположить вертикально",
+                  label: "Вертикально",
                   icon: "pi pi-sort-alt",
                   command: () => handleLayoutVertical(),
                 },
                 {
-                  label: "Расположить горизонтально",
+                  label: "Горизонтально",
                   icon: "pi pi-arrow-right-arrow-left",
                   command: () => handleLayoutHorizontal(),
                 },
                 {
-                  label: "Расположить по порядку",
+                  label: "По порядку",
                   icon: "pi pi-th-large",
                   command: () => handleLayoutRectPacking(),
                 },
@@ -519,29 +527,29 @@ function App() {
             },
           ]}
           end={
-            <div>
-              <button
-                className="p-button p-component p-button-secondary"
+            <ButtonGroup>
+              <Button
                 onClick={() => handleSaveData()}
-                style={{ marginRight: "0.5rem" }}
-              >
-                <span className="p-button-label">Сохранить</span>
-              </button>
-              <button
-                className="p-button p-component p-button-warning"
+                size="small"
+                label="Сохранить"
+                severity="primary"
+              />
+              <Button
                 onClick={() => handlePublishData()}
-              >
-                <span className="p-button-label">Опубликовать</span>
-              </button>
-            </div>
+                size="small"
+                label="Опубликовать"
+                severity="contrast"
+              />
+            </ButtonGroup>
           }
         />
         <div
           style={{
             width: "100%",
-            height: "calc(100% - 60px)",
-            position: "relative",
-            top: "60px",
+            height: `calc(100% - ${UI.topMenuHeight}px)`,
+            position: "absolute",
+            top: UI.topMenuHeight,
+            left: 0,
           }}
         >
           <ReactFlowProvider>
