@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import {
-  editInnerNode,
-  editScreenGroupNode,
-  updateNodeData,
-} from "../store/nodesSlice";
+import { updateNodeData } from "../store/nodesSlice";
+import { editInnerNode, editScreenGroupNode } from "../store/editorSlice";
 import EditScreenDialog from "./EditScreenDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
 import { UI } from "../config/uiConfig";
@@ -30,8 +27,8 @@ const DialogManager = () => {
   };
 
   const { editScreenDialog, editInnerNodeDialog } = useSelector((state) => ({
-    editScreenDialog: state.nodes?.present?.dialogs?.editScreenDialog || null,
-    editInnerNodeDialog: state.nodes?.present?.dialogs?.editInnerNodeDialog || null,
+    editScreenDialog: state.editor?.editScreenDialog || null,
+    editInnerNodeDialog: state.editor?.editInnerNodeDialog || null,
   }));
 
   return (

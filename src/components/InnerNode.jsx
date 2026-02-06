@@ -5,7 +5,8 @@ import { Menu } from "primereact/menu";
 import { NODE } from "../config/nodeConfig";
 import { useDispatch } from "react-redux";
 import { confirmDialog } from "primereact/confirmdialog";
-import { editInnerNode, removeInnerNode } from "../store/nodesSlice";
+import { removeInnerNode } from "../store/nodesSlice";
+import { editInnerNode } from "../store/editorSlice";
 
 // Компонент вложенной ноды с уникальным ID
 const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
@@ -18,7 +19,7 @@ const InnerNode = ({ data, id, parentNode, onDeleteNode }) => {
   };
 
   const handleEdit = () => {
-    dispatch(editInnerNode({ nodeId: id }));
+    dispatch(editInnerNode({ id, data }));
   };
 
   const handleDelete = useCallback(() => {

@@ -12,10 +12,10 @@ import { NODE } from "../config/nodeConfig";
 const initialState = {
   nodes: [],
   edges: [],
-  dialogs: {
-    editScreenDialog: null,
-    editInnerNodeDialog: null,
-  },
+  // dialogs: {
+  //   editScreenDialog: null,
+  //   editInnerNodeDialog: null,
+  // },
 };
 
 const nodesSlice = createSlice({
@@ -179,38 +179,6 @@ const nodesSlice = createSlice({
       }
     },
 
-    editScreenGroupNode: (state, action) => {
-      if (!action.payload) {
-        state.dialogs.editScreenDialog = null;
-      } else {
-        const index = state.nodes.findIndex(
-          (node) => node.id === action.payload.groupId,
-        );
-        if (index !== -1) {
-          state.dialogs.editScreenDialog = {
-            id: state.nodes[index].id,
-            data: state.nodes[index].data,
-          };
-        }
-      }
-    },
-
-    editInnerNode: (state, action) => {
-      if (!action.payload) {
-        state.dialogs.editInnerNodeDialog = null;
-      } else {
-        const index = state.nodes.findIndex(
-          (node) => node.id === action.payload.nodeId,
-        );
-        if (index !== -1) {
-          state.dialogs.editInnerNodeDialog = {
-            id: state.nodes[index].id,
-            data: state.nodes[index].data,
-          };
-        }
-      }
-    },
-
     // Редюсер для очистки всех групп экранов
     clearAllScreenGroups: (state) => {
       // Находим все группы экранов (ноды типа 'screenGroupNode')
@@ -248,10 +216,6 @@ export const {
   removeGroupNode,
   removeInnerNode,
   addScreenGroupNode,
-  editScreenGroupNode,
-  editInnerNode,
-  undo,
-  redo,
 } = nodesSlice.actions;
 
 // Create undoable reducer

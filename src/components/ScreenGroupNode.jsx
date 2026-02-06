@@ -1,10 +1,7 @@
 import React, { useRef, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import {
-  addNodeToGroup,
-  removeGroupNode,
-  editScreenGroupNode,
-} from "../store/nodesSlice";
+import { addNodeToGroup, removeGroupNode } from "../store/nodesSlice";
+import { editScreenGroupNode } from "../store/editorSlice";
 import { Handle, Position } from "reactflow";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -20,7 +17,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
     e.stopPropagation();
 
     // Используем Redux действие для добавления ноды в группу
-    dispatch(addNodeToGroup({ groupId: id }));
+    dispatch(addNodeToGroup({ id, data }));
   };
 
   const handleMenuToggle = (e) => {
@@ -29,7 +26,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
   };
 
   const handleEdit = () => {
-    dispatch(editScreenGroupNode({ groupId: id }));
+    dispatch(editScreenGroupNode({ id, data }));
   };
 
   const handleDelete = useCallback(() => {

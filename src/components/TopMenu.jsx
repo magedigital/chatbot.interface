@@ -224,9 +224,14 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
 
   return (
     <Menubar
-      className="absolute w-full shadow-4 min-w-max"
+      className="absolute w-full shadow-4 min-w-max gap-1"
       style={{ zIndex: UI.topMenuZIndex, height: UI.topMenuHeight }}
       model={[
+        {
+          label: "Добавить экран",
+          icon: "pi pi-plus",
+          command: () => handleAddScreen(),
+        },
         {
           label: "Редактировать",
           icon: "pi pi-pencil",
@@ -239,16 +244,11 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
             },
             {
               label: "Вернуть",
-              icon: "pi pi-redo",
+              icon: "pi pi-refresh",
               command: () => handleRedo(),
               disabled: future.length === 0,
             },
           ],
-        },
-        {
-          label: "Добавить экран",
-          icon: "pi pi-plus",
-          command: () => handleAddScreen(),
         },
         {
           label: "Флоу",
@@ -304,12 +304,14 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
             icon="pi pi-save"
             severity="primary"
             aria-label="Сохранить"
+            className="h-3rem"
           >
-            <span className="p-button-text hidden sm:inline ml-2">
+            <span className="p-button-text hidden xl:inline ml-2">
               Сохранить
             </span>
           </Button>
           <Button
+            className="h-3rem"
             onClick={() => handlePublishData()}
             size="small"
             icon="pi pi-cloud-upload"
