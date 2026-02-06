@@ -1,18 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ReactFlowProvider } from "reactflow";
 import ReactFlowComponent from "./components/ReactFlowComponent";
 
 import { Toast } from "primereact/toast";
-import {
-  setNodes,
-  setEdges,
-  addEdge as addEdgeAction,
-  updateNode,
-  updateNodePositionsInGroup,
-  removeEdge,
-} from "./store/nodesSlice";
+import { setNodes, setEdges } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
 import { loadDataFromServer } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
@@ -27,8 +20,6 @@ import "./css/quill-editor-custom-styles.css";
 
 import { addLocale, PrimeReactProvider } from "primereact/api";
 
-import InnerNode from "./components/InnerNode";
-import ScreenGroupNode from "./components/ScreenGroupNode";
 import TopMenu from "./components/TopMenu";
 import DialogManager from "./components/DialogManager";
 
@@ -43,8 +34,6 @@ function App() {
   const dispatch = useDispatch();
   const toastRef = useRef(null);
   const reactFlowRef = useRef(null);
-  const { nodes, edges } = useSelector((state) => state.nodes);
-
   const [canShow, setCanShow] = useState(false);
 
   // Инициализация начальных данных
@@ -82,17 +71,6 @@ function App() {
       }
     }
   }, [dispatch]);
-
-  // Регистрация пользовательских типов нод
-  const nodeTypes = useMemo(
-    () => ({
-      innerNode: InnerNode,
-      screenGroupNode: ScreenGroupNode,
-    }),
-    [],
-  );
-
-
 
   return (
     <div style={{ backgroundColor: "var(--surface-50)" }}>
@@ -140,12 +118,7 @@ function App() {
             }}
           >
             <ReactFlowProvider>
-              <ReactFlowComponent
-                ref={reactFlowRef}
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={nodeTypes}
-              />
+              <ReactFlowComponent ref={reactFlowRef} />
             </ReactFlowProvider>
           </div>
         </PrimeReactProvider>

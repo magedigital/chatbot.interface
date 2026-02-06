@@ -1,13 +1,40 @@
-import React, { useCallback, forwardRef, useImperativeHandle } from "react";
-import ReactFlow, { MiniMap, Controls, Background, useReactFlow } from "reactflow";
+import React, {
+  useCallback,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  useReactFlow,
+} from "reactflow";
 import { useDispatch, useSelector } from "react-redux";
-import { addScreenGroupNode, updateNodePositionsInGroup, removeEdge, addEdge as addEdgeAction, updateNode } from "../store/nodesSlice";
-import { Button } from "primereact/button";
+import {
+  addScreenGroupNode,
+  updateNodePositionsInGroup,
+  removeEdge,
+  addEdge as addEdgeAction,
+  updateNode,
+} from "../store/nodesSlice";
 
-const ReactFlowComponent = forwardRef(({ nodes: propsNodes, edges: propsEdges, nodeTypes }, ref) => {
+import InnerNode from "./InnerNode";
+import ScreenGroupNode from "./ ScreenGroupNode";
+
+const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const reactFlowInstance = useReactFlow();
   const { nodes, edges } = useSelector((state) => state.nodes);
+
+  // Регистрация пользовательских типов нод
+  const nodeTypes = useMemo(
+    () => ({
+      innerNode: InnerNode,
+      screenGroupNode: ScreenGroupNode,
+    }),
+    [],
+  );
 
   // Экспортируем методы для взаимодействия с ReactFlow через ref
   useImperativeHandle(ref, () => ({
@@ -157,14 +184,6 @@ const ReactFlowComponent = forwardRef(({ nodes: propsNodes, edges: propsEdges, n
     [nodes, dispatch],
   );
 
-  // Функция для обновления связей
-  const onEdgesChange = useCallback(
-    (changes) => {
-      // В данном случае, изменения связей обрабатываются через onConnect
-    },
-    [dispatch],
-  );
-
   // Обработчик двойного клика по ребру - удаление ребра
   const onEdgeDoubleClick = useCallback(
     (event, edge) => {
@@ -197,11 +216,6 @@ const ReactFlowComponent = forwardRef(({ nodes: propsNodes, edges: propsEdges, n
     [dispatch],
   );
 
-  // Обработчик начала обновления ребра
-  const onEdgeUpdateStart = useCallback((event, edge, handleType) => {
-    // Начало перетаскивания ребра
-  }, []);
-
   // Обработчик окончания обновления ребра
   const onEdgeUpdateEnd = useCallback(
     (event, edge, handleType) => {
@@ -217,7 +231,7 @@ const ReactFlowComponent = forwardRef(({ nodes: propsNodes, edges: propsEdges, n
   const onConnect = useCallback(
     (params) => {
       // Проверяем, есть ли уже соединение от этого источника
-      const existingEdge = propsEdges.find((edge) => edge.source === params.source);
+      const existingEdge = edges.find((edge) => edge.source === params.source);
       if (existingEdge) {
         // Если есть, удаляем старое соединение
         dispatch(removeEdge(existingEdge.id));
@@ -238,22 +252,22 @@ const ReactFlowComponent = forwardRef(({ nodes: propsNodes, edges: propsEdges, n
 
       dispatch(addEdgeAction(newEdge));
     },
-    [dispatch, propsEdges]
+    [dispatch, edges],
   );
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <ReactFlow
-        nodes={propsNodes}
-        edges={propsEdges}
+        nodes={nodes}
+        edges={edges}
         onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        // onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
         onEdgeDoubleClick={onEdgeDoubleClick}
         onEdgeUpdate={onEdgeUpdate}
-        onEdgeUpdateStart={onEdgeUpdateStart}
+        // onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
         nodeTypes={nodeTypes}
         zoomOnDoubleClick={false}
