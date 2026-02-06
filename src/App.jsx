@@ -1,13 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { store } from "./store/store.js";
 import { ReactFlowProvider } from "reactflow";
 import ReactFlowComponent from "./components/ReactFlowComponent";
 
@@ -19,16 +12,9 @@ import {
   updateNode,
   updateNodePositionsInGroup,
   removeEdge,
-  clearAllScreenGroups,
 } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
-import {
-  exportAppData,
-  saveDataToFile,
-  readDataFromFile,
-  sendDataToServer,
-  loadDataFromServer,
-} from "./utils/dataUtils";
+import { loadDataFromServer } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
 // import "primereact/resources/themes/lara-light-indigo/theme.css";
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -39,7 +25,6 @@ import "primeicons/primeicons.css";
 
 import "./css/quill-editor-custom-styles.css";
 
-import { confirmDialog } from "primereact/confirmdialog";
 import { addLocale, PrimeReactProvider } from "primereact/api";
 
 import InnerNode from "./components/InnerNode";
@@ -56,9 +41,8 @@ const initialEdges = [];
 
 function App() {
   const dispatch = useDispatch();
-  const toast = useRef(null);
+  const toastRef = useRef(null);
   const reactFlowRef = useRef(null);
-  const menubarRef = useRef(null);
   const { nodes, edges } = useSelector((state) => state.nodes);
 
   const [canShow, setCanShow] = useState(false);
@@ -87,7 +71,7 @@ function App() {
           })
           .catch((error) => {
             console.error("Ошибка при загрузке данных с сервера:", error);
-            toast.current.show({
+            toastRef.current.show({
               severity: "error",
               summary: "Ошибка",
               detail: "Произошла ошибка при загрузке данных с сервера.",
@@ -281,7 +265,6 @@ function App() {
     [dispatch],
   );
 
-
   return (
     <div style={{ backgroundColor: "var(--surface-50)" }}>
       {!canShow && (
@@ -316,8 +299,8 @@ function App() {
           }}
         >
           <DialogManager />
-          <Toast ref={toast} position="bottom-right" />
-          <TopMenu reactFlowRef={reactFlowRef} toast={toast} />
+          <Toast ref={toastRef} position="bottom-right" />
+          <TopMenu reactFlowRef={reactFlowRef} toastRef={toastRef} />
           <div
             style={{
               width: "100%",

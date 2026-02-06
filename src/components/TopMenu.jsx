@@ -6,11 +6,16 @@ import { ButtonGroup } from "primereact/buttongroup";
 import { UI } from "../config/uiConfig.js";
 import { useSelector, useDispatch } from "react-redux";
 import { setNodes, setEdges, clearAllScreenGroups } from "../store/nodesSlice";
-import { exportAppData, saveDataToFile, readDataFromFile, sendDataToServer } from "../utils/dataUtils";
+import {
+  exportAppData,
+  saveDataToFile,
+  readDataFromFile,
+  sendDataToServer,
+} from "../utils/dataUtils";
 import { store } from "../store/store.js";
 import { Toast } from "primereact/toast";
 
-const TopMenu = ({ reactFlowRef, toast }) => {
+const TopMenu = ({ reactFlowRef, toastRef }) => {
   const dispatch = useDispatch();
   const { nodes, edges } = useSelector((state) => state.nodes);
 
@@ -25,7 +30,7 @@ const TopMenu = ({ reactFlowRef, toast }) => {
   const handleExportData = useCallback(() => {
     // Подготовка данных для экспорта
     const exportData = exportAppData(nodes, edges);
-    
+
     // Сохранение данных в файл
     saveDataToFile(exportData, "bot-construct-data.json");
   }, [nodes, edges]);
@@ -56,13 +61,24 @@ const TopMenu = ({ reactFlowRef, toast }) => {
                 if (data.edges) {
                   dispatch(setEdges(data.edges));
                 }
-                
+
                 // Показываем уведомление об успешной загрузке
-                toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно загружены из файла!', life: 3000});
+                toastRef.current.show({
+                  severity: "success",
+                  summary: "Успешно",
+                  detail: "Данные успешно загружены из файла!",
+                  life: 3000,
+                });
               },
               (error) => {
                 console.error("Ошибка при чтении файла:", error);
-                toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.', life: 3000});
+                toastRef.current.show({
+                  severity: "error",
+                  summary: "Ошибка",
+                  detail:
+                    "Произошла ошибка при чтении файла. Пожалуйста, проверьте формат файла.",
+                  life: 3000,
+                });
               },
             );
           }
@@ -73,7 +89,7 @@ const TopMenu = ({ reactFlowRef, toast }) => {
         // Действие отменено, ничего не делаем
       },
     });
-  }, [dispatch, toast]);
+  }, [dispatch, toastRef]);
 
   // Функция для очистки всех групп
   const handleClearAllGroups = useCallback(() => {
@@ -120,20 +136,30 @@ const TopMenu = ({ reactFlowRef, toast }) => {
     try {
       // Получаем конфигурацию из store
       const configState = store.getState().config;
-      
+
       // Подготовка данных для отправки
       const dataToSend = exportAppData(nodes, edges);
-      
+
       // Отправка данных на сервер
       const response = await sendDataToServer(configState.saveUrl, dataToSend);
-      
-      console.log('Данные успешно сохранены:', response.data);
-      toast.current.show({severity:'success', summary: 'Успешно', detail:'Данные успешно сохранены на сервере!', life: 3000});
+
+      console.log("Данные успешно сохранены:", response.data);
+      toastRef.current.show({
+        severity: "success",
+        summary: "Успешно",
+        detail: "Данные успешно сохранены на сервере!",
+        life: 3000,
+      });
     } catch (error) {
-      console.error('Ошибка при сохранении данных:', error);
-      toast.current.show({severity:'error', summary: 'Ошибка', detail:'Произошла ошибка при сохранении данных на сервере.', life: 3000});
+      console.error("Ошибка при сохранении данных:", error);
+      toastRef.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: "Произошла ошибка при сохранении данных на сервере.",
+        life: 3000,
+      });
     }
-  }, [nodes, edges, toast]);
+  }, [nodes, edges, toastRef]);
 
   // Функция для публикации данных на сервер
   const handlePublishData = useCallback(async () => {
@@ -158,7 +184,7 @@ const TopMenu = ({ reactFlowRef, toast }) => {
           );
 
           console.log("Данные успешно опубликованы:", response.data);
-          toast.current.show({
+          toastRef.current.show({
             severity: "success",
             summary: "Успешно",
             detail: "Данные успешно опубликованы на сервере!",
@@ -166,7 +192,7 @@ const TopMenu = ({ reactFlowRef, toast }) => {
           });
         } catch (error) {
           console.error("Ошибка при публикации данных:", error);
-          toast.current.show({
+          toastRef.current.show({
             severity: "error",
             summary: "Ошибка",
             detail: "Произошла ошибка при публикации данных на сервере.",
@@ -178,7 +204,7 @@ const TopMenu = ({ reactFlowRef, toast }) => {
         // Действие отменено, ничего не делаем
       },
     });
-  }, [nodes, edges, toast]);
+  }, [nodes, edges, toastRef]);
 
   return (
     <Menubar
