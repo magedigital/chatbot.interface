@@ -17,7 +17,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
     e.stopPropagation();
 
     // Используем Redux действие для добавления ноды в группу
-    dispatch(addNodeToGroup({ id, data }));
+    dispatch(addNodeToGroup({ groupId: id }));
   };
 
   const handleMenuToggle = (e) => {

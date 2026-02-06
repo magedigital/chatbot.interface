@@ -123,6 +123,8 @@ const nodesSlice = createSlice({
     addNodeToGroup: (state, action) => {
       const { groupId } = action.payload;
 
+      console.log(groupId);
+
       // Создаем новую ноду
       const newNode = createNodeInGroup(groupId, state.nodes);
 
