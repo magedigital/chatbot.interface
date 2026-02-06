@@ -5,13 +5,7 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { UI } from "../config/uiConfig.js";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setNodes,
-  setEdges,
-  clearAllScreenGroups,
-  undo,
-  redo,
-} from "../store/nodesSlice";
+import { setNodes, setEdges, clearAllScreenGroups } from "../store/nodesSlice";
 import {
   exportAppData,
   saveDataToFile,
@@ -21,6 +15,7 @@ import {
 import { store } from "../store/store.js";
 import { Toast } from "primereact/toast";
 
+import { ActionCreators as UndoActionCreators } from "redux-undo";
 
 const TopMenu = ({ reactFlowRef, toastRef }) => {
   const dispatch = useDispatch();
@@ -219,12 +214,12 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
 
   // Функция для отмены последнего действия
   const handleUndo = useCallback(() => {
-    dispatch(undo());
+    dispatch(UndoActionCreators.undo());
   }, [dispatch]);
 
   // Функция для повтора отмененного действия
   const handleRedo = useCallback(() => {
-    dispatch(redo());
+    dispatch(UndoActionCreators.redo());
   }, [dispatch]);
 
   return (
