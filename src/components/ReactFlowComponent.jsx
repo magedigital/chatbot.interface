@@ -20,7 +20,7 @@ import {
 } from "../store/nodesSlice";
 
 import InnerNode from "./InnerNode";
-import ScreenGroupNode from "./ ScreenGroupNode";
+import ScreenGroupNode from "./ScreenGroupNode";
 
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
