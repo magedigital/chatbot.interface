@@ -27,6 +27,8 @@ import * as locales from "./locales/ru.json";
 import { UI } from "./config/uiConfig.js";
 import { Skeleton } from "primereact/skeleton";
 
+import { ActionCreators as UndoActionCreators } from "redux-undo";
+
 const initialNodes = [];
 const initialEdges = [];
 
@@ -57,6 +59,7 @@ function App() {
             }
             reactFlowRef.current.fit(0);
             setCanShow(true);
+            dispatch(UndoActionCreators.clearHistory());
           })
           .catch((error) => {
             console.error("Ошибка при загрузке данных с сервера:", error);
