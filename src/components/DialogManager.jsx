@@ -30,8 +30,8 @@ const DialogManager = () => {
   };
 
   const { editScreenDialog, editInnerNodeDialog } = useSelector((state) => ({
-    editScreenDialog: state.nodes?.dialogs?.editScreenDialog || null,
-    editInnerNodeDialog: state.nodes?.dialogs?.editInnerNodeDialog || null,
+    editScreenDialog: state.nodes?.present?.dialogs?.editScreenDialog || null,
+    editInnerNodeDialog: state.nodes?.present?.dialogs?.editInnerNodeDialog || null,
   }));
 
   return (

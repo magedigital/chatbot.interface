@@ -25,7 +25,7 @@ import ScreenGroupNode from "./ScreenGroupNode";
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const reactFlowInstance = useReactFlow();
-  const { nodes, edges } = useSelector((state) => state.nodes);
+  const { present: { nodes, edges } } = useSelector((state) => state.nodes);
 
   // Регистрация пользовательских типов нод
   const nodeTypes = useMemo(

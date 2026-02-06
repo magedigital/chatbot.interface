@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import undoable, { includeAction } from "redux-undo";
 import {
   arrangeNodePositions,
   createNodeInGroup,
@@ -249,6 +250,29 @@ export const {
   addScreenGroupNode,
   editScreenGroupNode,
   editInnerNode,
+  undo,
+  redo,
 } = nodesSlice.actions;
 
-export default nodesSlice.reducer;
+// Create undoable reducer
+const undoableNodesReducer = undoable(nodesSlice.reducer, {
+  limit: 100, // максимальное количество шагов отмены
+  filter: includeAction([
+    "nodes/addNode",
+    "nodes/removeNode",
+    "nodes/updateNode",
+    "nodes/updateNodeData",
+    "nodes/addEdge",
+    "nodes/removeEdge",
+    "nodes/addNodeToGroup",
+    "nodes/removeGroupNode",
+    "nodes/removeInnerNode",
+    "nodes/addScreenGroupNode",
+    "nodes/clearAllScreenGroups",
+    "nodes/setNodes",
+    "nodes/setEdges",
+  ]),
+});
+
+export { nodesSlice };
+export default undoableNodesReducer;

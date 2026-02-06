@@ -5,7 +5,13 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { UI } from "../config/uiConfig.js";
 import { useSelector, useDispatch } from "react-redux";
-import { setNodes, setEdges, clearAllScreenGroups } from "../store/nodesSlice";
+import {
+  setNodes,
+  setEdges,
+  clearAllScreenGroups,
+  undo,
+  redo,
+} from "../store/nodesSlice";
 import {
   exportAppData,
   saveDataToFile,
@@ -15,9 +21,14 @@ import {
 import { store } from "../store/store.js";
 import { Toast } from "primereact/toast";
 
+
 const TopMenu = ({ reactFlowRef, toastRef }) => {
   const dispatch = useDispatch();
-  const { nodes, edges } = useSelector((state) => state.nodes);
+  const {
+    present: { nodes, edges },
+    past,
+    future,
+  } = useSelector((state) => state.nodes);
 
   // Функция для добавления новой группы экрана
   const handleAddScreen = useCallback(() => {
@@ -206,11 +217,39 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
     });
   }, [nodes, edges, toastRef]);
 
+  // Функция для отмены последнего действия
+  const handleUndo = useCallback(() => {
+    dispatch(undo());
+  }, [dispatch]);
+
+  // Функция для повтора отмененного действия
+  const handleRedo = useCallback(() => {
+    dispatch(redo());
+  }, [dispatch]);
+
   return (
     <Menubar
       className="absolute w-full shadow-4 min-w-max"
       style={{ zIndex: UI.topMenuZIndex, height: UI.topMenuHeight }}
       model={[
+        {
+          label: "Редактировать",
+          icon: "pi pi-pencil",
+          items: [
+            {
+              label: "Отменить",
+              icon: "pi pi-undo",
+              command: () => handleUndo(),
+              disabled: past.length === 0,
+            },
+            {
+              label: "Вернуть",
+              icon: "pi pi-redo",
+              command: () => handleRedo(),
+              disabled: future.length === 0,
+            },
+          ],
+        },
         {
           label: "Добавить экран",
           icon: "pi pi-plus",

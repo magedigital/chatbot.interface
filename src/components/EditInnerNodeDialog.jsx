@@ -14,13 +14,13 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   const dispatch = useDispatch();
-  const allEdges = useSelector((state) => state.nodes.edges);
+  const allEdges = useSelector((state) => state.nodes.present.edges);
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
 
   // Получаем все экраны из store (кроме стартового)
   const allScreens = useSelector((state) =>
-    state.nodes.nodes.filter((node) => node.type === "screenGroupNode"),
+    state.nodes.present.nodes.filter((node) => node.type === "screenGroupNode"),
   );
 
   // Создаем опции для выпадающих списков экранов
