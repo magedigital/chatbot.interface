@@ -3,6 +3,7 @@ import React, {
   useMemo,
   forwardRef,
   useImperativeHandle,
+  useRef,
 } from "react";
 import ReactFlow, {
   MiniMap,
@@ -17,15 +18,20 @@ import {
   removeEdge,
   addEdge as addEdgeAction,
   updateNode,
+  updateNodePosition,
 } from "../store/nodesSlice";
 
 import InnerNode from "./InnerNode";
 import ScreenGroupNode from "./ScreenGroupNode";
 
+// var timeoutID;
+
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const reactFlowInstance = useReactFlow();
-  const { present: { nodes, edges } } = useSelector((state) => state.nodes);
+  const {
+    present: { nodes, edges },
+  } = useSelector((state) => state.nodes);
 
   // Регистрация пользовательских типов нод
   const nodeTypes = useMemo(
@@ -35,6 +41,8 @@ const ReactFlowComponent = forwardRef((props, ref) => {
     }),
     [],
   );
+
+  const timeoutID = useRef(null);
 
   // Экспортируем методы для взаимодействия с ReactFlow через ref
   useImperativeHandle(ref, () => ({
@@ -97,6 +105,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
+      if (timeoutID.current) clearTimeout(timeoutID.current);
       // Используем Redux действие для обновления позиций нод в группе
       dispatch(updateNodePositionsInGroup({ node }));
     },
@@ -106,6 +115,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Обработчик начала перетаскивания ноды - устанавливаем z-index для отображения поверх других нод
   const onNodeDragStart = useCallback(
     (event, node) => {
+      if (timeoutID.current) clearTimeout(timeoutID.current);
       // Находим максимальный z-index среди всех нод
       const maxZIndex = nodes.reduce((max, n) => {
         const zIndex = n.zIndex || 0;
@@ -170,13 +180,13 @@ const ReactFlowComponent = forwardRef((props, ref) => {
     (changes) => {
       changes.forEach((change) => {
         if (change.type === "position" && change.position) {
-          const node = nodes.find((n) => n.id === change.id);
-          if (node) {
-            const updatedNode = {
-              ...node,
-              position: change.position,
-            };
-            dispatch(updateNode(updatedNode));
+          if (change.dragging) {
+            if (timeoutID.current) clearTimeout(timeoutID.current);
+            timeoutID.current = setTimeout(() => {
+              dispatch(updateNodePosition(change));
+            }, 3);
+          } else {
+            dispatch(updateNodePosition(change));
           }
         }
       });

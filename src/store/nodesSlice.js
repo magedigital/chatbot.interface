@@ -6,7 +6,7 @@ import {
   createScreenGroup,
   updateGroupNodeDimensions,
 } from "../utils/nodeUtils";
-import { MarkerType } from "reactflow";
+import { MarkerType, Position } from "reactflow";
 import { NODE } from "../config/nodeConfig";
 
 const initialState = {
@@ -103,6 +103,17 @@ const nodesSlice = createSlice({
         };
       }
     },
+    updateNodePosition: (state, action) => {
+      const index = state.nodes.findIndex(
+        (node) => node.id === action.payload.id,
+      );
+      if (index !== -1) {
+        state.nodes[index] = {
+          ...state.nodes[index],
+          position: action.payload.position,
+        };
+      }
+    },
     addEdge: (state, action) => {
       const newEdge = {
         ...action.payload,
@@ -123,8 +134,6 @@ const nodesSlice = createSlice({
     addNodeToGroup: (state, action) => {
       const { groupId } = action.payload;
 
-      console.log(groupId);
-
       // Создаем новую ноду
       const newNode = createNodeInGroup(groupId, state.nodes);
 
@@ -140,7 +149,7 @@ const nodesSlice = createSlice({
     updateNodePositionsInGroup: (state, action) => {
       const { node } = action.payload;
       // Проверяем, есть ли у ноды родительская группа
-      if (node.parentNode) {
+      if (node?.parentNode) {
         // Вызываем внешнюю функцию для выстраивания позиций нод в группе
         state.nodes = arrangeNodePositions(state.nodes, node.parentNode);
       }
@@ -210,6 +219,7 @@ export const {
   removeNode,
   updateNode,
   updateNodeData,
+  updateNodePosition,
   addEdge,
   removeEdge,
   addNodeToGroup,
@@ -228,6 +238,7 @@ const undoableNodesReducer = undoable(nodesSlice.reducer, {
     "nodes/removeNode",
     "nodes/updateNode",
     "nodes/updateNodeData",
+    "nodes/updateNodePosition",
     "nodes/addEdge",
     "nodes/removeEdge",
     "nodes/addNodeToGroup",
