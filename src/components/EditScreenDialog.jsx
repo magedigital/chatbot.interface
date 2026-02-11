@@ -18,6 +18,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
     setUserStatus: "-",
     unsetUserStatus: "-",
     sendImage: null,
+    defaultImage: null,
   });
 
   const [paramsList, setParamsList] = useState([]);
@@ -35,6 +36,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         setUserStatus: data.data.setUserStatus || "-",
         unsetUserStatus: data.data.unsetUserStatus || "-",
         sendImage: data.data.sendImage || null,
+        defaultImage: data.data.defaultImage || null,
       });
       setParamsList(data.data.paramsList || []);
     } else {
@@ -48,6 +50,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         setUserStatus: "-",
         unsetUserStatus: "-",
         sendImage: null,
+        defaultImage: null,
       });
       setParamsList([]);
     }
@@ -87,18 +90,36 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
     onHide();
   };
 
-  const customBase64Uploader = async (event) => {
-    // convert file to base64 encoded
-    const file = event.files[0];
-    const reader = new FileReader();
-    let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
+  const handleUpload = (prop) => {
+    // Создаем скрытый input для выбора файла
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*"; // Принимаем только изображения
+    fileInput.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Проверяем размер файла (1000 КБ = 1000 * 1024 байт)
+        if (file.size > 1000 * 1024) {
+          alert(
+            "Размер файла превышает 1000 КБ. Пожалуйста, выберите файл меньшего размера.",
+          );
+          return;
+        }
 
-    reader.readAsDataURL(blob);
+        const reader = new FileReader();
 
-    reader.onloadend = function () {
-      const sendImage = reader.result;
-      setFormData({ ...formData, sendImage });
+        reader.onloadend = function () {
+          setFormData({ ...formData, [prop]: reader.result });
+        };
+
+        reader.readAsDataURL(file);
+      }
     };
+    fileInput.click(); // Открываем диалог выбора файла
+  };
+
+  const handleClearUpload = (prop) => {
+    setFormData({ ...formData, [prop]: null });
   };
 
   // Опции для выпадающих списков
@@ -194,38 +215,26 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
               }}
             />
           </div>
+
           <div className="flex-none flex flex-column gap-3">
-            <Button 
-              id="sendImageButton" 
-              outlined 
-              icon="pi pi-image" 
-              onClick={() => {
-                // Создаем скрытый input для выбора файла
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*'; // Принимаем только изображения
-                fileInput.onchange = (event) => {
-                  const file = event.target.files[0];
-                  if (file) {
-                    // Проверяем размер файла (1000 КБ = 1000 * 1024 байт)
-                    if (file.size > 1000 * 1024) {
-                      alert('Размер файла превышает 1000 КБ. Пожалуйста, выберите файл меньшего размера.');
-                      return;
-                    }
-                    
-                    const reader = new FileReader();
-                    
-                    reader.onloadend = function() {
-                      setFormData({ ...formData, sendImage: reader.result });
-                    };
-                    
-                    reader.readAsDataURL(file);
-                  }
-                };
-                fileInput.click(); // Открываем диалог выбора файла
-              }} 
-            />
-            <Image id="sendImage" src={formData.sendImage} />
+            <div className="flex flex-row gap-2">
+              <Button
+                outlined
+                icon="pi pi-image"
+                onClick={() => handleUpload("sendImage")}
+              />
+              {formData.sendImage && (
+                <Button
+                  outlined
+                  icon="pi pi-trash"
+                  severity="danger"
+                  onClick={() => handleClearUpload("sendImage")}
+                />
+              )}
+            </div>
+            {formData.sendImage && (
+              <Image src={formData.sendImage} width="106px" />
+            )}
           </div>
         </div>
       </div>
@@ -236,23 +245,46 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
             <label htmlFor="defaultMessage" className="block font-bold mb-2">
               Сообщение
             </label>
-
-            <Editor
-              id="defaultMessage"
-              value={formData.defaultMessage}
-              onTextChange={(e) =>
-                setFormData({ ...formData, defaultMessage: e.htmlValue })
-              }
-              className="w-full"
-              theme="snow"
-              style={{ height: "320px" }}
-              headerTemplate={header}
-              modules={{
-                clipboard: {
-                  matchVisual: false,
-                },
-              }}
-            />
+            <div className="flex flex-row gap-3">
+              <div className="flex-grow-1">
+                <Editor
+                  id="defaultMessage"
+                  value={formData.defaultMessage}
+                  onTextChange={(e) =>
+                    setFormData({ ...formData, defaultMessage: e.htmlValue })
+                  }
+                  className="w-full"
+                  theme="snow"
+                  style={{ height: "320px" }}
+                  headerTemplate={header}
+                  modules={{
+                    clipboard: {
+                      matchVisual: false,
+                    },
+                  }}
+                />
+              </div>
+              <div className="flex-none flex flex-column gap-3">
+                <div className="flex flex-row gap-2">
+                  <Button
+                    outlined
+                    icon="pi pi-image"
+                    onClick={() => handleUpload("defaultImage")}
+                  />
+                  {formData.defaultImage && (
+                    <Button
+                      outlined
+                      icon="pi pi-trash"
+                      severity="danger"
+                      onClick={() => handleClearUpload("defaultImage")}
+                    />
+                  )}
+                </div>
+                {formData.defaultImage && (
+                  <Image src={formData.defaultImage} width="106px" />
+                )}
+              </div>
+            </div>
           </div>
 
           {data?.data && !data?.data?.isStartScreen && (

@@ -9,6 +9,7 @@ import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
 import { Editor } from "primereact/editor";
+import { Image } from "primereact/image";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
 
@@ -145,6 +146,38 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
     onHide();
   };
 
+  const handleUpload = (prop) => {
+    // Создаем скрытый input для выбора файла
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*"; // Принимаем только изображения
+    fileInput.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Проверяем размер файла (1000 КБ = 1000 * 1024 байт)
+        if (file.size > 1000 * 1024) {
+          alert(
+            "Размер файла превышает 1000 КБ. Пожалуйста, выберите файл меньшего размера.",
+          );
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onloadend = function () {
+          setFormData({ ...formData, [prop]: reader.result });
+        };
+
+        reader.readAsDataURL(file);
+      }
+    };
+    fileInput.click(); // Открываем диалог выбора файла
+  };
+
+  const handleClearUpload = (prop) => {
+    setFormData({ ...formData, [prop]: null });
+  };
+
   // Опции для выпадающих списков
   const commandOptions = [
     { label: "Без команды", value: "-" },
@@ -227,23 +260,47 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         <label htmlFor="sendMessage" className="block font-bold mb-2">
           Сообщение после нажатия
         </label>
+        <div className="flex flex-row gap-3">
+          <div className="flex-grow-1">
+            <Editor
+              id="message"
+              value={formData.sendMessage}
+              onTextChange={(e) =>
+                setFormData({ ...formData, sendMessage: e.htmlValue })
+              }
+              className="w-full"
+              theme="snow"
+              style={{ height: "320px" }}
+              headerTemplate={header}
+              modules={{
+                clipboard: {
+                  matchVisual: false,
+                },
+              }}
+            />
+          </div>
 
-        <Editor
-          id="message"
-          value={formData.sendMessage}
-          onTextChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.htmlValue })
-          }
-          className="w-full"
-          theme="snow"
-          style={{ height: "320px" }}
-          headerTemplate={header}
-          modules={{
-            clipboard: {
-              matchVisual: false,
-            },
-          }}
-        />
+          <div className="flex-none flex flex-column gap-3">
+            <div className="flex flex-row gap-2">
+              <Button
+                outlined
+                icon="pi pi-image"
+                onClick={() => handleUpload("sendImage")}
+              />
+              {formData.sendImage && (
+                <Button
+                  outlined
+                  icon="pi pi-trash"
+                  severity="danger"
+                  onClick={() => handleClearUpload("sendImage")}
+                />
+              )}
+            </div>
+            {formData.sendImage && (
+              <Image src={formData.sendImage} width="106px" />
+            )}
+          </div>
+        </div>
       </div>
 
       <Accordion
