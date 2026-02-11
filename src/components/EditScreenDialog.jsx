@@ -9,7 +9,7 @@ import { Editor } from "primereact/editor";
 import { Image } from "primereact/image";
 import ImageUpload from "./ImageUpload";
 
-const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
+const EditScreenDialog = ({ visible, onHide, onSave, data, toastRef }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
 
   const [formData, setFormData] = useState({
@@ -199,6 +199,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
               onUpload={handleUpload}
               onClear={handleClearUpload}
               uploadFieldName="sendImage"
+              toastRef={toastRef}
             />
           </div>
         </div>

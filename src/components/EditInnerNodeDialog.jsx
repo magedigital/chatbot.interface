@@ -13,7 +13,7 @@ import { Editor } from "primereact/editor";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import ImageUpload from "./ImageUpload";
 
-const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
+const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
   const dispatch = useDispatch();
   const allEdges = useSelector((state) => state.nodes.present.edges);
   const [label, setLabel] = useState(data?.data?.label || "");
@@ -265,6 +265,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
               onUpload={handleUpload}
               onClear={handleClearUpload}
               uploadFieldName="sendImage"
+              toastRef={toastRef}
             />
           </div>
         </div>

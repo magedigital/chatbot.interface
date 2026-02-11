@@ -7,7 +7,7 @@ import EditScreenDialog from "./EditScreenDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
 import { UI } from "../config/uiConfig";
 
-const DialogManager = () => {
+const DialogManager = ({ toastRef }) => {
   const dispatch = useDispatch();
 
   const handleSaveEditGroupDialog = (data) => {
@@ -38,6 +38,7 @@ const DialogManager = () => {
         onHide={handleHideEditGroupDialog}
         onSave={handleSaveEditGroupDialog}
         data={editScreenDialog}
+        toastRef={toastRef}
       />
 
       <EditInnerNodeDialog
@@ -45,6 +46,7 @@ const DialogManager = () => {
         onHide={handleHideEditInnerNodeDialog}
         onSave={handleSaveEditInnerNodeDialog}
         data={editInnerNodeDialog}
+        toastRef={toastRef}
       />
 
       <ConfirmDialog baseZIndex={UI.confirmDialogZIndex} />

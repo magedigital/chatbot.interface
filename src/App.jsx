@@ -108,7 +108,7 @@ function App() {
             cssLayer: true,
           }}
         >
-          <DialogManager />
+          <DialogManager toastRef={toastRef} />
           <Toast ref={toastRef} position="bottom-right" />
           <TopMenu reactFlowRef={reactFlowRef} toastRef={toastRef} />
           <div

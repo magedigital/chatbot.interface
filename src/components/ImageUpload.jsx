@@ -8,8 +8,8 @@ const ImageUpload = ({
   onUpload,
   onClear,
   uploadFieldName = "sendImage",
-  maxFileSize = 1000 * 1024, // 1000 KB default
   className = "",
+  toastRef = null,
 }) => {
   const handleClick = () => {
     // Создаем скрытый input для выбора файла
@@ -21,7 +21,16 @@ const ImageUpload = ({
       if (file) {
         // Проверяем размер файла
         if (file.size > UI.maxUploadSize) {
-          alert(UI.fileSizeExceededMessage);
+          if (toastRef && toastRef.current) {
+            toastRef.current.show({
+              severity: 'error',
+              summary: 'Ошибка',
+              detail: UI.fileSizeExceededMessage,
+              life: 3000,
+            });
+          } else {
+            alert(UI.fileSizeExceededMessage);
+          }
           return;
         }
 
