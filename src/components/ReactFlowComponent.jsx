@@ -59,7 +59,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
           {
             duration: 500,
             ease: "smooth",
-            padding: 3,
+            padding: 1,
           },
         );
       }
@@ -93,9 +93,9 @@ const ReactFlowComponent = forwardRef((props, ref) => {
         dispatch(setEdges(layoutedEdges));
         setTimeout(() => {
           reactFlowInstance.fitView({
-            duration: 2000,
+            duration: 500,
             ease: "smooth",
-            padding: 3,
+            padding: 0.1,
           });
         }, 100);
       }
