@@ -7,6 +7,7 @@ import { UI } from "../config/uiConfig";
 import { Fieldset } from "primereact/fieldset";
 import { Editor } from "primereact/editor";
 import { Image } from "primereact/image";
+import ImageUpload from "./ImageUpload";
 
 const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
@@ -90,34 +91,12 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
     onHide();
   };
 
-  const handleUpload = (prop) => {
-    // Создаем скрытый input для выбора файла
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*"; // Принимаем только изображения
-    fileInput.onchange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        // Проверяем размер файла (1000 КБ = 1000 * 1024 байт)
-        if (file.size > UI.maxUploadSize) {
-          alert(UI.fileSizeExceededMessage);
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onloadend = function () {
-          setFormData({ ...formData, [prop]: reader.result });
-        };
-
-        reader.readAsDataURL(file);
-      }
-    };
-    fileInput.click(); // Открываем диалог выбора файла
+  const handleUpload = (uploadFieldName, result) => {
+    setFormData({ ...formData, [uploadFieldName]: result });
   };
 
-  const handleClearUpload = (prop) => {
-    setFormData({ ...formData, [prop]: null });
+  const handleClearUpload = (uploadFieldName) => {
+    setFormData({ ...formData, [uploadFieldName]: null });
   };
 
   // Опции для выпадающих списков
@@ -214,25 +193,13 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
             />
           </div>
 
-          <div className="flex-none flex flex-column gap-3">
-            <div className="flex flex-row gap-2">
-              <Button
-                outlined
-                icon="pi pi-image"
-                onClick={() => handleUpload("sendImage")}
-              />
-              {formData.sendImage && (
-                <Button
-                  outlined
-                  icon="pi pi-trash"
-                  severity="danger"
-                  onClick={() => handleClearUpload("sendImage")}
-                />
-              )}
-            </div>
-            {formData.sendImage && (
-              <Image src={formData.sendImage} width="106px" />
-            )}
+          <div className="flex-none">
+            <ImageUpload
+              imageSrc={formData.sendImage}
+              onUpload={handleUpload}
+              onClear={handleClearUpload}
+              uploadFieldName="sendImage"
+            />
           </div>
         </div>
       </div>
@@ -262,25 +229,13 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
                   }}
                 />
               </div>
-              <div className="flex-none flex flex-column gap-3">
-                <div className="flex flex-row gap-2">
-                  <Button
-                    outlined
-                    icon="pi pi-image"
-                    onClick={() => handleUpload("defaultImage")}
-                  />
-                  {formData.defaultImage && (
-                    <Button
-                      outlined
-                      icon="pi pi-trash"
-                      severity="danger"
-                      onClick={() => handleClearUpload("defaultImage")}
-                    />
-                  )}
-                </div>
-                {formData.defaultImage && (
-                  <Image src={formData.defaultImage} width="106px" />
-                )}
+              <div className="flex-none">
+                <ImageUpload
+                  imageSrc={formData.defaultImage}
+                  onUpload={handleUpload}
+                  onClear={handleClearUpload}
+                  uploadFieldName="defaultImage"
+                />
               </div>
             </div>
           </div>

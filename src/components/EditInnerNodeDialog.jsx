@@ -9,7 +9,6 @@ import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
 import { removeEdge, addEdge } from "../store/nodesSlice";
 import { Editor } from "primereact/editor";
-import { Image } from "primereact/image";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
 import ImageUpload from "./ImageUpload";
@@ -36,6 +35,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
 
   const [formData, setFormData] = useState({
     sendMessage: "",
+    sendImage: null,
     goToScreen: "-",
     openMiniApp: "-",
     command: "-",
@@ -67,6 +67,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         unsetUserStatus: data.data.unsetUserStatus || "-",
         visibleForStatus: data.data.visibleForStatus || "-",
         hiddenForStatus: data.data.hiddenForStatus || "-",
+        sendImage: data.data.sendImage || null,
       });
       setParamsList(data.data.paramsList || []);
     } else {
@@ -82,6 +83,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
         unsetUserStatus: "-",
         visibleForStatus: "-",
         hiddenForStatus: "-",
+        sendImage: null,
       });
       setParamsList([]);
     }
@@ -147,33 +149,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
     onHide();
   };
 
-  const handleUpload = (prop) => {
-    // Создаем скрытый input для выбора файла
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*"; // Принимаем только изображения
-    fileInput.onchange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        if (file.size > UI.maxUploadSize) {
-          alert(UI.fileSizeExceededMessage);
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onloadend = function () {
-          setFormData({ ...formData, [prop]: reader.result });
-        };
-
-        reader.readAsDataURL(file);
-      }
-    };
-    fileInput.click(); // Открываем диалог выбора файла
+  const handleUpload = (uploadFieldName, result) => {
+    setFormData({ ...formData, [uploadFieldName]: result });
   };
 
-  const handleClearUpload = (prop) => {
-    setFormData({ ...formData, [prop]: null });
+  const handleClearUpload = (uploadFieldName) => {
+    setFormData({ ...formData, [uploadFieldName]: null });
   };
 
   // Опции для выпадающих списков
@@ -278,7 +259,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
             />
           </div>
 
-          <div className="flex-none flex flex-column gap-3">
+          <div className="flex-none">
             <ImageUpload
               imageSrc={formData.sendImage}
               onUpload={handleUpload}

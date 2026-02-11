@@ -1,32 +1,33 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
+import { UI } from "../config/uiConfig";
 
-const ImageUpload = ({ 
-  imageSrc, 
-  onUpload, 
-  onClear, 
+const ImageUpload = ({
+  imageSrc,
+  onUpload,
+  onClear,
   uploadFieldName = "sendImage",
   maxFileSize = 1000 * 1024, // 1000 KB default
-  className = ""
+  className = "",
 }) => {
   const handleClick = () => {
     // Создаем скрытый input для выбора файла
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*'; // Принимаем только изображения
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*"; // Принимаем только изображения
     fileInput.onchange = (event) => {
       const file = event.target.files[0];
       if (file) {
         // Проверяем размер файла
-        if (file.size > maxFileSize) {
-          alert(`Размер файла превышает ${(maxFileSize / 1024).toFixed(0)} КБ. Пожалуйста, выберите файл меньшего размера.`);
+        if (file.size > UI.maxUploadSize) {
+          alert(UI.fileSizeExceededMessage);
           return;
         }
 
         const reader = new FileReader();
 
-        reader.onloadend = function() {
+        reader.onloadend = function () {
           onUpload(uploadFieldName, reader.result);
         };
 
@@ -37,13 +38,9 @@ const ImageUpload = ({
   };
 
   return (
-    <div className={`flex flex-column ${className}`}>
+    <div className={`flex flex-column gap-3 ${className}`}>
       <div className="flex flex-row gap-2">
-        <Button
-          outlined
-          icon="pi pi-image"
-          onClick={handleClick}
-        />
+        <Button outlined icon="pi pi-image" onClick={handleClick} />
         {imageSrc && (
           <Button
             outlined
@@ -53,9 +50,7 @@ const ImageUpload = ({
           />
         )}
       </div>
-      {imageSrc && (
-        <Image src={imageSrc} width="106px" />
-      )}
+      {imageSrc && <Image src={imageSrc} width="106px" />}
     </div>
   );
 };
