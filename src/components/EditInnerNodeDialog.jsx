@@ -12,6 +12,7 @@ import { Editor } from "primereact/editor";
 import { Image } from "primereact/image";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
+import ImageUpload from "./ImageUpload";
 
 const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
   const dispatch = useDispatch();
@@ -278,24 +279,12 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
           </div>
 
           <div className="flex-none flex flex-column gap-3">
-            <div className="flex flex-row gap-2">
-              <Button
-                outlined
-                icon="pi pi-image"
-                onClick={() => handleUpload("sendImage")}
-              />
-              {formData.sendImage && (
-                <Button
-                  outlined
-                  icon="pi pi-trash"
-                  severity="danger"
-                  onClick={() => handleClearUpload("sendImage")}
-                />
-              )}
-            </div>
-            {formData.sendImage && (
-              <Image src={formData.sendImage} width="106px" />
-            )}
+            <ImageUpload
+              imageSrc={formData.sendImage}
+              onUpload={handleUpload}
+              onClear={handleClearUpload}
+              uploadFieldName="sendImage"
+            />
           </div>
         </div>
       </div>
