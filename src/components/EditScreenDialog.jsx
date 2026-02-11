@@ -5,12 +5,11 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { UI } from "../config/uiConfig";
 import { Fieldset } from "primereact/fieldset";
-
 import { Editor } from "primereact/editor";
+import { Image } from "primereact/image";
 
 const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
-  const [activeTab, setActiveTab] = useState(0);
 
   const [formData, setFormData] = useState({
     sendMessage: "",
@@ -18,6 +17,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
     command: "-",
     setUserStatus: "-",
     unsetUserStatus: "-",
+    sendImage: null,
   });
 
   const [paramsList, setParamsList] = useState([]);
@@ -34,6 +34,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         commandValue: data.data.commandValue || "-",
         setUserStatus: data.data.setUserStatus || "-",
         unsetUserStatus: data.data.unsetUserStatus || "-",
+        sendImage: data.data.sendImage || null,
       });
       setParamsList(data.data.paramsList || []);
     } else {
@@ -46,6 +47,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         commandValue: "-",
         setUserStatus: "-",
         unsetUserStatus: "-",
+        sendImage: null,
       });
       setParamsList([]);
     }
@@ -83,6 +85,20 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
 
   const handleCancel = () => {
     onHide();
+  };
+
+  const customBase64Uploader = async (event) => {
+    // convert file to base64 encoded
+    const file = event.files[0];
+    const reader = new FileReader();
+    let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
+
+    reader.readAsDataURL(blob);
+
+    reader.onloadend = function () {
+      const sendImage = reader.result;
+      setFormData({ ...formData, sendImage });
+    };
   };
 
   // Опции для выпадающих списков
@@ -159,22 +175,53 @@ const EditScreenDialog = ({ visible, onHide, onSave, data }) => {
         <label htmlFor="message" className="block font-bold mb-2">
           Сообщение при входе в экран
         </label>
-        <Editor
-          id="message"
-          value={formData.sendMessage}
-          onTextChange={(e) =>
-            setFormData({ ...formData, sendMessage: e.htmlValue })
-          }
-          className="w-full"
-          theme="snow"
-          style={{ height: "320px" }}
-          headerTemplate={header}
-          modules={{
-            clipboard: {
-              matchVisual: false,
-            },
-          }}
-        />
+        <div className="flex flex-row gap-3">
+          <div className="flex-grow-1">
+            <Editor
+              id="message"
+              value={formData.sendMessage}
+              onTextChange={(e) =>
+                setFormData({ ...formData, sendMessage: e.htmlValue })
+              }
+              className="w-full"
+              theme="snow"
+              style={{ height: "320px" }}
+              headerTemplate={header}
+              modules={{
+                clipboard: {
+                  matchVisual: false,
+                },
+              }}
+            />
+          </div>
+          <div className="flex-none flex flex-column gap-3">
+            <Button 
+              id="sendImageButton" 
+              outlined 
+              icon="pi pi-image" 
+              onClick={() => {
+                // Создаем скрытый input для выбора файла
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*'; // Принимаем только изображения
+                fileInput.onchange = (event) => {
+                  const file = event.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onloadend = function() {
+                      setFormData({ ...formData, sendImage: reader.result });
+                    };
+                    
+                    reader.readAsDataURL(file);
+                  }
+                };
+                fileInput.click(); // Открываем диалог выбора файла
+              }} 
+            />
+            <Image id="sendImage" src={formData.sendImage} />
+          </div>
+        </div>
       </div>
 
       <Fieldset legend="Реакция по умолчанию">
