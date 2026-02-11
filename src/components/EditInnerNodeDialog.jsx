@@ -259,7 +259,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
             />
           </div>
 
-          <div className="flex-none">
+          <div className="flex-none align-items-stretch">
             <ImageUpload
               imageSrc={formData.sendImage}
               onUpload={handleUpload}

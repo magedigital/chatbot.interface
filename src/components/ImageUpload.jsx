@@ -23,8 +23,8 @@ const ImageUpload = ({
         if (file.size > UI.maxUploadSize) {
           if (toastRef && toastRef.current) {
             toastRef.current.show({
-              severity: 'error',
-              summary: 'Ошибка',
+              severity: "error",
+              summary: "Ошибка",
               detail: UI.fileSizeExceededMessage,
               life: 3000,
             });
@@ -47,9 +47,14 @@ const ImageUpload = ({
   };
 
   return (
-    <div className={`flex flex-column gap-3 ${className}`}>
-      <div className="flex flex-row gap-2">
-        <Button outlined icon="pi pi-image" onClick={handleClick} />
+    <div className={`flex flex-column gap-3 h-full ${className}`}>
+      <div className="flex-grow-0 flex gap-2">
+        <Button
+          className="flex-grow-1"
+          outlined
+          icon="pi pi-image"
+          onClick={handleClick}
+        />
         {imageSrc && (
           <Button
             outlined
@@ -59,7 +64,16 @@ const ImageUpload = ({
           />
         )}
       </div>
-      {imageSrc && <Image src={imageSrc} width="106px" />}
+      <div
+        id="imageArea"
+        className="flex-grow-1 flex p-3"
+        style={{
+          border: "1px solid var(--surface-border)",
+          borderRadius: 6,
+        }}
+      >
+        {imageSrc && <Image src={imageSrc} width="106px" />}
+      </div>
     </div>
   );
 };
