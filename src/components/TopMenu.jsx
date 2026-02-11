@@ -13,7 +13,6 @@ import {
   sendDataToServer,
 } from "../utils/dataUtils";
 import { store } from "../store/store.js";
-import { Toast } from "primereact/toast";
 
 import { ActionCreators as UndoActionCreators } from "redux-undo";
 
