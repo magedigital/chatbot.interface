@@ -154,11 +154,8 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data }) => {
     fileInput.onchange = (event) => {
       const file = event.target.files[0];
       if (file) {
-        // Проверяем размер файла (1000 КБ = 1000 * 1024 байт)
-        if (file.size > 1000 * 1024) {
-          alert(
-            "Размер файла превышает 1000 КБ. Пожалуйста, выберите файл меньшего размера.",
-          );
+        if (file.size > UI.maxUploadSize) {
+          alert(UI.fileSizeExceededMessage);
           return;
         }
 
