@@ -4,6 +4,8 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useState,
+  useEffect,
 } from "react";
 import ReactFlow, {
   MiniMap,
@@ -29,9 +31,17 @@ import ScreenGroupNode from "./ScreenGroupNode";
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const reactFlowInstance = useReactFlow();
-  const {
-    present: { nodes, edges },
-  } = useSelector((state) => state.nodes);
+  const { present: { nodes: storeNodes, edges: storeEdges } } = useSelector((state) => state.nodes);
+  
+  // Локальное состояние для nodes и edges
+  const [nodes, setNodes] = useState(storeNodes);
+  const [edges, setEdges] = useState(storeEdges);
+
+  // Обновляем локальное состояние при изменении store
+  useEffect(() => {
+    setNodes(storeNodes);
+    setEdges(storeEdges);
+  }, [storeNodes, storeEdges]);
 
   // Регистрация пользовательских типов нод
   const nodeTypes = useMemo(
@@ -108,6 +118,9 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       if (timeoutID.current) clearTimeout(timeoutID.current);
       // Используем Redux действие для обновления позиций нод в группе
       dispatch(updateNodePositionsInGroup({ node }));
+      
+      // Обновляем локальное состояние
+      setNodes(prevNodes => prevNodes.map(n => n.id === node.id ? node : n));
     },
     [dispatch],
   );
@@ -178,26 +191,40 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Функция для обновления нод
   const onNodesChange = useCallback(
     (changes) => {
-      changes.forEach((change) => {
-        if (change.type === "position" && change.position) {
-          if (change.dragging) {
-            if (timeoutID.current) clearTimeout(timeoutID.current);
-            timeoutID.current = setTimeout(() => {
+      setNodes(prevNodes => {
+        return prevNodes.map(node => {
+          const change = changes.find(c => c.id === node.id);
+          if (change && change.type === "position" && change.position) {
+            if (change.dragging) {
+              // Обновляем позицию в локальном состоянии во время перетаскивания
+              return {
+                ...node,
+                position: change.position,
+                dragging: true
+              };
+            } else {
+              // Когда перетаскивание закончено, отправляем в store
               dispatch(updateNodePosition(change));
-            }, 3);
-          } else {
-            dispatch(updateNodePosition(change));
+              return {
+                ...node,
+                position: change.position,
+                dragging: false
+              };
+            }
           }
-        }
+          return node;
+        });
       });
     },
-    [nodes, dispatch],
+    [dispatch],
   );
 
   // Обработчик двойного клика по ребру - удаление ребра
   const onEdgeDoubleClick = useCallback(
     (event, edge) => {
       dispatch(removeEdge(edge.id));
+      // Обновляем локальное состояние
+      setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
     },
     [dispatch],
   );
@@ -232,6 +259,8 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       // Если ребро отпущено в пустом месте (без соединения с узлом), удаляем его
       if (!edge.target && !edge.sourceHandle) {
         dispatch(removeEdge(edge.id));
+        // Обновляем локальное состояние
+        setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
       }
     },
     [dispatch],
@@ -245,6 +274,8 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       if (existingEdge) {
         // Если есть, удаляем старое соединение
         dispatch(removeEdge(existingEdge.id));
+        // Обновляем локальное состояние
+        setEdges(prevEdges => prevEdges.filter(edge => edge.id !== existingEdge.id));
       }
 
       // Создаем новое соединение
@@ -261,6 +292,8 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       };
 
       dispatch(addEdgeAction(newEdge));
+      // Обновляем локальное состояние
+      setEdges(prevEdges => [...prevEdges, newEdge]);
     },
     [dispatch, edges],
   );
