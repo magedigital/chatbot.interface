@@ -115,7 +115,10 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   const onNodeDragStop = useCallback(
     (event, node) => {
       if (timeoutID.current) clearTimeout(timeoutID.current);
-      dispatch(updateNodes(nodes));
+      
+      // Отправляем в store только обновленную ноду, а не все локальные ноды
+      dispatch(updateNodePosition(node));
+      
       if (node.parentNode) {
         // Используем Redux действие для обновления позиций нод в группе
         dispatch(updateNodePositionsInGroup({ node }));
@@ -138,47 +141,53 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       let updatedNodes = [...nodes];
 
       // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
-      const childNodeIds = nodes.filter((n) => n.parentNode === node.id).map(n => n.id);
+      const childNodeIds = nodes
+        .filter((n) => n.parentNode === node.id)
+        .map((n) => n.id);
 
       if (childNodeIds.length > 0) {
         // Обновляем z-index для групповой ноды
-        updatedNodes = updatedNodes.map(n => 
-          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n
+        updatedNodes = updatedNodes.map((n) =>
+          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n,
         );
-        
+
         // Обновляем z-index для всех внутренних нод группы
-        updatedNodes = updatedNodes.map(n => 
-          childNodeIds.includes(n.id) ? { ...n, zIndex: maxZIndex + 1 } : n
+        updatedNodes = updatedNodes.map((n) =>
+          childNodeIds.includes(n.id) ? { ...n, zIndex: maxZIndex + 1 } : n,
         );
       } else if (node.parentNode) {
         // Если это внутренняя нода, поднимаем её и её родительскую группу на передний план
         const parentNode = nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
-          updatedNodes = updatedNodes.map(n => 
-            n.id === parentNode.id ? { ...n, zIndex: maxZIndex + 1 } : n
+          updatedNodes = updatedNodes.map((n) =>
+            n.id === parentNode.id ? { ...n, zIndex: maxZIndex + 1 } : n,
           );
         }
 
         // Обновляем z-index для всех внутренних нод в той же группе
-        const siblingNodeIds = nodes.filter(
-          (n) => n.parentNode === node.parentNode,
-        ).map(n => n.id);
-        
-        updatedNodes = updatedNodes.map(n => 
-          siblingNodeIds.includes(n.id) 
-            ? { ...n, zIndex: maxZIndex + (n.id === node.id ? 2 : 1) } 
-            : n
+        const siblingNodeIds = nodes
+          .filter((n) => n.parentNode === node.parentNode)
+          .map((n) => n.id);
+
+        updatedNodes = updatedNodes.map((n) =>
+          siblingNodeIds.includes(n.id)
+            ? { ...n, zIndex: maxZIndex + (n.id === node.id ? 2 : 1) }
+            : n,
         );
       } else {
         // Если это обычная нода (не групповая и не внутренняя), просто поднимаем её на передний план
-        updatedNodes = updatedNodes.map(n => 
-          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n
+        updatedNodes = updatedNodes.map((n) =>
+          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n,
         );
       }
 
+      console.log("|||", updatedNodes);
+
       setNodes(updatedNodes);
+
+      // dispatch(updateNodes(updatedNodes));
     },
-    [nodes],
+    [nodes, dispatch],
   );
 
   // Обработчик двойного клика по ребру - удаление ребра
