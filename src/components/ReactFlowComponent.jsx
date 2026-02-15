@@ -111,22 +111,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
     },
   }));
 
-  // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
-  const onNodeDragStop = useCallback(
-    (event, node) => {
-      if (timeoutID.current) clearTimeout(timeoutID.current);
-      
-      // Отправляем в store только обновленную ноду, а не все локальные ноды
-      dispatch(updateNodePosition(node));
-      
-      if (node.parentNode) {
-        // Используем Redux действие для обновления позиций нод в группе
-        dispatch(updateNodePositionsInGroup({ node }));
-      }
-    },
-    [dispatch],
-  );
-
   // Обработчик начала перетаскивания ноды - устанавливаем z-index для отображения поверх других нод
   const onNodeDragStart = useCallback(
     (event, node) => {
@@ -180,14 +164,25 @@ const ReactFlowComponent = forwardRef((props, ref) => {
           n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n,
         );
       }
-
-      console.log("|||", updatedNodes);
-
       setNodes(updatedNodes);
-
-      // dispatch(updateNodes(updatedNodes));
     },
-    [nodes, dispatch],
+    [nodes],
+  );
+
+  // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
+  const onNodeDragStop = useCallback(
+    (event, node) => {
+      if (timeoutID.current) clearTimeout(timeoutID.current);
+
+      // Отправляем в store только обновленную ноду, а не все локальные ноды
+      dispatch(updateNodePosition(node));
+
+      if (node.parentNode) {
+        // Используем Redux действие для обновления позиций нод в группе
+        dispatch(updateNodePositionsInGroup({ node }));
+      }
+    },
+    [dispatch],
   );
 
   // Обработчик двойного клика по ребру - удаление ребра
@@ -196,6 +191,56 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       dispatch(removeEdge(edge.id));
     },
     [dispatch],
+  );
+
+  // Функция для обновления нод
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes(prevNodes => {
+        let updatedNodes = [...prevNodes];
+        
+        changes.forEach((change) => {
+          if (change.type === "position" && change.position) {
+            // Находим ноду, которую перемещают
+            const nodeIndex = updatedNodes.findIndex(n => n.id === change.id);
+            
+            if (nodeIndex !== -1) {
+              const node = updatedNodes[nodeIndex];
+              
+              // Обновляем позицию основной ноды
+              updatedNodes[nodeIndex] = {
+                ...node,
+                position: change.position,
+                dragging: change.dragging
+              };
+              
+              // Если это групповая нода, перемещаем и все её дочерние ноды
+              if (node.type === "screenGroupNode") {
+                const deltaX = change.position.x - node.position.x;
+                const deltaY = change.position.y - node.position.y;
+                
+                updatedNodes = updatedNodes.map(n => {
+                  if (n.parentNode === node.id) {
+                    // Перемещаем дочернюю ноду на ту же величину, что и родительская
+                    return {
+                      ...n,
+                      position: {
+                        x: n.position.x + deltaX,
+                        y: n.position.y + deltaY
+                      }
+                    };
+                  }
+                  return n;
+                });
+              }
+            }
+          }
+        });
+        
+        return updatedNodes;
+      });
+    },
+    []
   );
 
   // Обработчик обновления ребра
@@ -266,6 +311,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onNodesChange={onNodesChange}
         onConnect={onConnect}
         onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
