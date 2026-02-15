@@ -165,7 +165,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
 
       setNodes([...nodes, []]);
     },
-    [nodes], //, dispatch
+    [nodes],
   );
 
   // Обработчик двойного клика по ребру - удаление ребра

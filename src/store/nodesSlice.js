@@ -22,10 +22,10 @@ const nodesSlice = createSlice({
   name: "nodes",
   initialState,
   reducers: {
-    setNodes: (state, action) => {
+    updateNodes: (state, action) => {
       state.nodes = action.payload;
     },
-    setEdges: (state, action) => {
+    updateEdges: (state, action) => {
       state.edges = action.payload;
     },
     addNode: (state, action) => {
@@ -213,8 +213,8 @@ const nodesSlice = createSlice({
 });
 
 export const {
-  setNodes,
-  setEdges,
+  updateNodes,
+  updateEdges,
   addNode,
   removeNode,
   updateNode,
@@ -246,8 +246,8 @@ const undoableNodesReducer = undoable(nodesSlice.reducer, {
     "nodes/removeInnerNode",
     "nodes/addScreenGroupNode",
     "nodes/clearAllScreenGroups",
-    "nodes/setNodes",
-    "nodes/setEdges",
+    "nodes/updateNodes",
+    "nodes/updateEdges",
   ]),
 });
 

@@ -5,7 +5,11 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { UI } from "../config/uiConfig.js";
 import { useSelector, useDispatch } from "react-redux";
-import { setNodes, setEdges, clearAllScreenGroups } from "../store/nodesSlice";
+import {
+  updateNodes,
+  updateEdges,
+  clearAllScreenGroups,
+} from "../store/nodesSlice";
 import {
   exportAppData,
   saveDataToFile,
@@ -61,10 +65,10 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
               (data) => {
                 // Загружаем данные в состояние Redux
                 if (data.nodes) {
-                  dispatch(setNodes(data.nodes));
+                  dispatch(updateNodes(data.nodes));
                 }
                 if (data.edges) {
-                  dispatch(setEdges(data.edges));
+                  dispatch(updateEdges(data.edges));
                 }
 
                 // Показываем уведомление об успешной загрузке

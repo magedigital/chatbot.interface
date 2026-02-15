@@ -5,7 +5,7 @@ import { ReactFlowProvider } from "reactflow";
 import ReactFlowComponent from "./components/ReactFlowComponent";
 
 import { Toast } from "primereact/toast";
-import { setNodes, setEdges } from "./store/nodesSlice";
+import { updateNodes, updateEdges } from "./store/nodesSlice";
 import { updateConfig } from "./store/configSlice";
 import { loadDataFromServer } from "./utils/dataUtils";
 import "reactflow/dist/style.css";
@@ -40,8 +40,8 @@ function App() {
 
   // Инициализация начальных данных
   useEffect(() => {
-    dispatch(setNodes(initialNodes));
-    dispatch(setEdges(initialEdges));
+    dispatch(updateNodes(initialNodes));
+    dispatch(updateEdges(initialEdges));
     addLocale("ru", locales["ru"]);
     // Загрузка конфигурации из глобального объекта
     if (window.config) {
@@ -52,10 +52,10 @@ function App() {
         loadDataFromServer(window.config.loadUrl)
           .then((data) => {
             if (data.nodes) {
-              dispatch(setNodes(data.nodes));
+              dispatch(updateNodes(data.nodes));
             }
             if (data.edges) {
-              dispatch(setEdges(data.edges));
+              dispatch(updateEdges(data.edges));
             }
             reactFlowRef.current.fit(0);
             setCanShow(true);
