@@ -218,23 +218,33 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Обработчик обновления ребра
   const onEdgeUpdate = useCallback(
     (oldEdge, newConnection) => {
-      // Удаляем старое ребро
+      // Обновляем локальное состояние
+      setEdges(prevEdges => {
+        // Удаляем старое ребро
+        const updatedEdges = prevEdges.filter(edge => edge.id !== oldEdge.id);
+
+        // Создаем новое ребро с обновленным соединением
+        const updatedEdge = {
+          ...newConnection,
+          id: `edge-${newConnection.source}-${newConnection.target}`,
+          style: {
+            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+          },
+          markerEnd: { type: "arrowclosed" },
+          deletable: true,
+          reconnectable: true,
+          updatable: true,
+        };
+
+        // Добавляем новое ребро
+        return [...updatedEdges, updatedEdge];
+      });
+
+      // Удаляем старое ребро из store
       dispatch(removeEdge(oldEdge.id));
 
-      // Создаем новое ребро с обновленным соединением
-      const updatedEdge = {
-        ...newConnection,
-        id: `edge-${newConnection.source}-${newConnection.target}`,
-        style: {
-          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-        },
-        markerEnd: { type: "arrowclosed" },
-        deletable: true,
-        reconnectable: true,
-        updatable: true,
-      };
-
-      dispatch(addEdgeAction(updatedEdge));
+      // Добавляем новое ребро в store
+      dispatch(addEdgeAction(newConnection));
     },
     [dispatch],
   );
@@ -244,6 +254,9 @@ const ReactFlowComponent = forwardRef((props, ref) => {
     (event, edge, handleType) => {
       // Если ребро отпущено в пустом месте (без соединения с узлом), удаляем его
       if (!edge.target && !edge.sourceHandle) {
+        // Обновляем локальное состояние
+        setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
+        
         dispatch(removeEdge(edge.id));
       }
     },
@@ -253,6 +266,35 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Обработчик соединения
   const onConnect = useCallback(
     (params) => {
+      // Обновляем локальное состояние
+      setEdges(prevEdges => {
+        // Проверяем, есть ли уже соединение от этого источника
+        const existingEdge = prevEdges.find((edge) => edge.source === params.source);
+        
+        // Формируем обновленный список ребер
+        let updatedEdges = prevEdges;
+        if (existingEdge) {
+          // Если есть, удаляем старое соединение
+          updatedEdges = prevEdges.filter(edge => edge.id !== existingEdge.id);
+        }
+
+        // Создаем новое соединение
+        const newEdge = {
+          ...params,
+          id: `edge-${params.source}-${params.target}`,
+          style: {
+            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+          },
+          markerEnd: { type: "arrowclosed" },
+          deletable: true,
+          reconnectable: true,
+          updatable: true,
+        };
+
+        // Добавляем новое ребро
+        return [...updatedEdges, newEdge];
+      });
+
       // Проверяем, есть ли уже соединение от этого источника
       const existingEdge = edges.find((edge) => edge.source === params.source);
       if (existingEdge) {
