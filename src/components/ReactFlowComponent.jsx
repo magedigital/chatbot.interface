@@ -292,32 +292,15 @@ const ReactFlowComponent = forwardRef((props, ref) => {
         };
 
         // Добавляем новое ребро
-        return [...updatedEdges, newEdge];
+        const finalEdges = [...updatedEdges, newEdge];
+        
+        // Отправляем обновленное состояние в store
+        dispatch(updateEdges(finalEdges));
+        
+        return finalEdges;
       });
-
-      // Проверяем, есть ли уже соединение от этого источника
-      const existingEdge = edges.find((edge) => edge.source === params.source);
-      if (existingEdge) {
-        // Если есть, удаляем старое соединение
-        dispatch(removeEdge(existingEdge.id));
-      }
-
-      // Создаем новое соединение
-      const newEdge = {
-        ...params,
-        id: `edge-${params.source}-${params.target}`,
-        style: {
-          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-        },
-        markerEnd: { type: "arrowclosed" },
-        deletable: true,
-        reconnectable: true,
-        updatable: true,
-      };
-
-      dispatch(addEdgeAction(newEdge));
     },
-    [dispatch, edges],
+    [dispatch],
   );
 
   return (
