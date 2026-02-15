@@ -134,36 +134,49 @@ const ReactFlowComponent = forwardRef((props, ref) => {
         return zIndex > max ? zIndex : max;
       }, 0);
 
-      // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
-      const childNodes = nodes.filter((n) => n.parentNode === node.id);
+      // Создаем копию массива нод
+      let updatedNodes = [...nodes];
 
-      if (childNodes.length > 0) {
+      // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
+      const childNodeIds = nodes.filter((n) => n.parentNode === node.id).map(n => n.id);
+
+      if (childNodeIds.length > 0) {
         // Обновляем z-index для групповой ноды
-        node.zIndex = maxZIndex + 1;
+        updatedNodes = updatedNodes.map(n => 
+          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n
+        );
+        
         // Обновляем z-index для всех внутренних нод группы
-        childNodes.forEach((childNode) => {
-          childNode.zIndex = maxZIndex + 1;
-        });
+        updatedNodes = updatedNodes.map(n => 
+          childNodeIds.includes(n.id) ? { ...n, zIndex: maxZIndex + 1 } : n
+        );
       } else if (node.parentNode) {
         // Если это внутренняя нода, поднимаем её и её родительскую группу на передний план
         const parentNode = nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
-          parentNode.zIndex = maxZIndex + 1;
+          updatedNodes = updatedNodes.map(n => 
+            n.id === parentNode.id ? { ...n, zIndex: maxZIndex + 1 } : n
+          );
         }
 
         // Обновляем z-index для всех внутренних нод в той же группе
-        const siblingNodes = nodes.filter(
+        const siblingNodeIds = nodes.filter(
           (n) => n.parentNode === node.parentNode,
+        ).map(n => n.id);
+        
+        updatedNodes = updatedNodes.map(n => 
+          siblingNodeIds.includes(n.id) 
+            ? { ...n, zIndex: maxZIndex + (n.id === node.id ? 2 : 1) } 
+            : n
         );
-        siblingNodes.forEach((siblingNode) => {
-          siblingNode.zIndex = maxZIndex + (siblingNode.id === node.id ? 2 : 1);
-        });
       } else {
         // Если это обычная нода (не групповая и не внутренняя), просто поднимаем её на передний план
-        node.zIndex = maxZIndex + 1;
+        updatedNodes = updatedNodes.map(n => 
+          n.id === node.id ? { ...n, zIndex: maxZIndex + 1 } : n
+        );
       }
 
-      setNodes([...nodes, []]);
+      setNodes(updatedNodes);
     },
     [nodes],
   );
