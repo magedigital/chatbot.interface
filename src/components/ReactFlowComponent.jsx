@@ -26,13 +26,17 @@ import {
 import InnerNode from "./InnerNode";
 import ScreenGroupNode from "./ScreenGroupNode";
 
-// var timeoutID;
+import { getLayoutedElements } from "../utils/layoutUtils";
+import { elkOptions } from "../config/layoutConfig";
+import { updateNodes, updateEdges } from "../store/nodesSlice";
 
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const reactFlowInstance = useReactFlow();
-  const { present: { nodes: storeNodes, edges: storeEdges } } = useSelector((state) => state.nodes);
-  
+  const {
+    present: { nodes: storeNodes, edges: storeEdges },
+  } = useSelector((state) => state.nodes);
+
   // Локальное состояние для nodes и edges
   const [nodes, setNodes] = useState(storeNodes);
   const [edges, setEdges] = useState(storeEdges);
@@ -85,11 +89,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       }, 100);
     },
     layout: async (currentNodes, currentEdges, layoutOptions) => {
-      // Имитируем импорт getLayoutedElements внутри функции
-      const { getLayoutedElements } = await import("../utils/layoutUtils");
-      const { elkOptions } = await import("../config/layoutConfig");
-      const { setNodes, setEdges } = await import("../store/nodesSlice");
-
       const options = {
         ...elkOptions,
         ...layoutOptions,
@@ -99,8 +98,8 @@ const ReactFlowComponent = forwardRef((props, ref) => {
         await getLayoutedElements(currentNodes, currentEdges, options);
 
       if (layoutedNodes && layoutedEdges) {
-        dispatch(setNodes(layoutedNodes));
-        dispatch(setEdges(layoutedEdges));
+        dispatch(updateNodes(layoutedNodes));
+        dispatch(updateEdges(layoutedEdges));
         setTimeout(() => {
           reactFlowInstance.fitView({
             duration: 500,
@@ -116,11 +115,11 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   const onNodeDragStop = useCallback(
     (event, node) => {
       if (timeoutID.current) clearTimeout(timeoutID.current);
-      // Используем Redux действие для обновления позиций нод в группе
-      dispatch(updateNodePositionsInGroup({ node }));
-      
-      // Обновляем локальное состояние
-      setNodes(prevNodes => prevNodes.map(n => n.id === node.id ? node : n));
+      dispatch(updateNodes(nodes));
+      if (node.parentNode) {
+        // Используем Redux действие для обновления позиций нод в группе
+        dispatch(updateNodePositionsInGroup({ node }));
+      }
     },
     [dispatch],
   );
@@ -137,94 +136,42 @@ const ReactFlowComponent = forwardRef((props, ref) => {
 
       // Если это групповая нода (имеет дочерние ноды), поднимаем её и все её внутренние ноды на передний план
       const childNodes = nodes.filter((n) => n.parentNode === node.id);
+
       if (childNodes.length > 0) {
         // Обновляем z-index для групповой ноды
-        const updatedGroupNode = {
-          ...node,
-          zIndex: maxZIndex + 1,
-        };
-        dispatch(updateNode(updatedGroupNode));
-
+        node.zIndex = maxZIndex + 1;
         // Обновляем z-index для всех внутренних нод группы
         childNodes.forEach((childNode) => {
-          const updatedChildNode = {
-            ...childNode,
-            zIndex: maxZIndex + 1,
-          };
-          dispatch(updateNode(updatedChildNode));
+          childNode.zIndex = maxZIndex + 1;
         });
       } else if (node.parentNode) {
         // Если это внутренняя нода, поднимаем её и её родительскую группу на передний план
         const parentNode = nodes.find((n) => n.id === node.parentNode);
         if (parentNode) {
-          // Обновляем z-index для родительской группы
-          const updatedParentNode = {
-            ...parentNode,
-            zIndex: maxZIndex + 1,
-          };
-          dispatch(updateNode(updatedParentNode));
-
-          // Обновляем z-index для всех внутренних нод в той же группе
-          const siblingNodes = nodes.filter(
-            (n) => n.parentNode === node.parentNode,
-          );
-          siblingNodes.forEach((siblingNode) => {
-            const updatedSiblingNode = {
-              ...siblingNode,
-              zIndex: maxZIndex + (siblingNode.id === node.id ? 2 : 1),
-            };
-            dispatch(updateNode(updatedSiblingNode));
-          });
+          parentNode.zIndex = maxZIndex + 1;
         }
+
+        // Обновляем z-index для всех внутренних нод в той же группе
+        const siblingNodes = nodes.filter(
+          (n) => n.parentNode === node.parentNode,
+        );
+        siblingNodes.forEach((siblingNode) => {
+          siblingNode.zIndex = maxZIndex + (siblingNode.id === node.id ? 2 : 1);
+        });
       } else {
         // Если это обычная нода (не групповая и не внутренняя), просто поднимаем её на передний план
-        const updatedNode = {
-          ...node,
-          zIndex: maxZIndex + 1,
-        };
-        dispatch(updateNode(updatedNode));
+        node.zIndex = maxZIndex + 1;
       }
-    },
-    [nodes, dispatch],
-  );
 
-  // Функция для обновления нод
-  const onNodesChange = useCallback(
-    (changes) => {
-      setNodes(prevNodes => {
-        return prevNodes.map(node => {
-          const change = changes.find(c => c.id === node.id);
-          if (change && change.type === "position" && change.position) {
-            if (change.dragging) {
-              // Обновляем позицию в локальном состоянии во время перетаскивания
-              return {
-                ...node,
-                position: change.position,
-                dragging: true
-              };
-            } else {
-              // Когда перетаскивание закончено, отправляем в store
-              dispatch(updateNodePosition(change));
-              return {
-                ...node,
-                position: change.position,
-                dragging: false
-              };
-            }
-          }
-          return node;
-        });
-      });
+      setNodes([...nodes, []]);
     },
-    [dispatch],
+    [nodes], //, dispatch
   );
 
   // Обработчик двойного клика по ребру - удаление ребра
   const onEdgeDoubleClick = useCallback(
     (event, edge) => {
       dispatch(removeEdge(edge.id));
-      // Обновляем локальное состояние
-      setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
     },
     [dispatch],
   );
@@ -259,8 +206,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       // Если ребро отпущено в пустом месте (без соединения с узлом), удаляем его
       if (!edge.target && !edge.sourceHandle) {
         dispatch(removeEdge(edge.id));
-        // Обновляем локальное состояние
-        setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
       }
     },
     [dispatch],
@@ -274,8 +219,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       if (existingEdge) {
         // Если есть, удаляем старое соединение
         dispatch(removeEdge(existingEdge.id));
-        // Обновляем локальное состояние
-        setEdges(prevEdges => prevEdges.filter(edge => edge.id !== existingEdge.id));
       }
 
       // Создаем новое соединение
@@ -292,8 +235,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       };
 
       dispatch(addEdgeAction(newEdge));
-      // Обновляем локальное состояние
-      setEdges(prevEdges => [...prevEdges, newEdge]);
     },
     [dispatch, edges],
   );
@@ -303,14 +244,11 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
-        // onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
         onEdgeDoubleClick={onEdgeDoubleClick}
         onEdgeUpdate={onEdgeUpdate}
-        // onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
         nodeTypes={nodeTypes}
         zoomOnDoubleClick={false}
