@@ -56,4 +56,13 @@ export const NODE = {
   defaultName: "Кнопка",
   mainName: "Старт",
   uidSuffix: "-button-",
+  edgeConfig: {
+    style: {
+      strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+    },
+    markerEnd: { type: "arrowclosed" },
+    deletable: true,
+    reconnectable: true,
+    updatable: true,
+  },
 };

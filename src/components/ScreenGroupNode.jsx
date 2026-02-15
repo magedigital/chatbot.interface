@@ -127,6 +127,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           </div>
         </div>
         <Button
+          id="menuButton_nodrag"
           icon="pi pi-ellipsis-v"
           className="p-button-text p-button-plain"
           size="small"
@@ -150,6 +151,7 @@ const ScreenGroupNode = ({ data, id, children, onDeleteGroup }) => {
           }}
         >
           <Button
+            id="addButton_nodrag"
             icon="pi pi-plus"
             onClick={handleClick}
             size="small"

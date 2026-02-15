@@ -18,8 +18,6 @@ import {
   addScreenGroupNode,
   updateNodePositionsInGroup,
   removeEdge,
-  addEdge as addEdgeAction,
-  updateNode,
   updateNodePosition,
 } from "../store/nodesSlice";
 
@@ -29,6 +27,7 @@ import ScreenGroupNode from "./ScreenGroupNode";
 import { getLayoutedElements } from "../utils/layoutUtils";
 import { elkOptions } from "../config/layoutConfig";
 import { updateNodes, updateEdges } from "../store/nodesSlice";
+import { NODE } from "../config/nodeConfig";
 
 const ReactFlowComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
@@ -43,6 +42,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
 
   // Обновляем локальное состояние при изменении store
   useEffect(() => {
+    console.log("_____", storeEdges);
     setNodes(storeNodes);
     setEdges(storeEdges);
   }, [storeNodes, storeEdges]);
@@ -113,6 +113,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   const onNodeDragStart = useCallback(
     (event, node) => {
       // Находим максимальный z-index среди всех нод
+
       const maxZIndex = nodes.reduce((max, n) => {
         const zIndex = n.zIndex || 0;
         return zIndex > max ? zIndex : max;
@@ -196,6 +197,9 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   // Ограничение перемещения нод внутри их групп и автоматическое вертикальное упорядочивание
   const onNodeDragStop = useCallback(
     (event, node) => {
+      if (event.target?.id?.indexOf("nodrag") >= 0) {
+        return;
+      }
       // Отправляем в store только обновленную ноду, а не все локальные ноды
       dispatch(updateNodePosition(node));
 
@@ -219,88 +223,48 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   const onEdgeUpdate = useCallback(
     (oldEdge, newConnection) => {
       // Обновляем локальное состояние
-      setEdges(prevEdges => {
-        // Удаляем старое ребро
-        const updatedEdges = prevEdges.filter(edge => edge.id !== oldEdge.id);
+      // Удаляем старое ребро
+      const updatedEdges = edges.filter((edge) => edge.id !== oldEdge.id);
 
-        // Создаем новое ребро с обновленным соединением
-        const updatedEdge = {
-          ...newConnection,
-          id: `edge-${newConnection.source}-${newConnection.target}`,
-          style: {
-            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-          },
-          markerEnd: { type: "arrowclosed" },
-          deletable: true,
-          reconnectable: true,
-          updatable: true,
-        };
+      // Создаем новое ребро с обновленным соединением
+      const updatedEdge = {
+        ...newConnection,
+        id: `edge-${newConnection.source}-${newConnection.target}`,
+        ...NODE.edgeConfig,
+      };
 
-        // Добавляем новое ребро
-        return [...updatedEdges, updatedEdge];
-      });
+      const finalEdges = [...updatedEdges, updatedEdge];
 
-      // Удаляем старое ребро из store
-      dispatch(removeEdge(oldEdge.id));
-
-      // Добавляем новое ребро в store
-      dispatch(addEdgeAction(newConnection));
+      setEdges(finalEdges);
+      dispatch(updateEdges(finalEdges));
     },
-    [dispatch],
-  );
-
-  // Обработчик окончания обновления ребра
-  const onEdgeUpdateEnd = useCallback(
-    (event, edge, handleType) => {
-      // Если ребро отпущено в пустом месте (без соединения с узлом), удаляем его
-      if (!edge.target && !edge.sourceHandle) {
-        // Обновляем локальное состояние
-        setEdges(prevEdges => prevEdges.filter(e => e.id !== edge.id));
-        
-        dispatch(removeEdge(edge.id));
-      }
-    },
-    [dispatch],
+    [edges, dispatch],
   );
 
   // Обработчик соединения
   const onConnect = useCallback(
     (params) => {
       // Обновляем локальное состояние
-      setEdges(prevEdges => {
-        // Проверяем, есть ли уже соединение от этого источника
-        const existingEdge = prevEdges.find((edge) => edge.source === params.source);
-        
-        // Формируем обновленный список ребер
-        let updatedEdges = prevEdges;
-        if (existingEdge) {
-          // Если есть, удаляем старое соединение
-          updatedEdges = prevEdges.filter(edge => edge.id !== existingEdge.id);
-        }
-
-        // Создаем новое соединение
-        const newEdge = {
-          ...params,
-          id: `edge-${params.source}-${params.target}`,
-          style: {
-            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-          },
-          markerEnd: { type: "arrowclosed" },
-          deletable: true,
-          reconnectable: true,
-          updatable: true,
-        };
-
-        // Добавляем новое ребро
-        const finalEdges = [...updatedEdges, newEdge];
-        
-        // Отправляем обновленное состояние в store
-        dispatch(updateEdges(finalEdges));
-        
-        return finalEdges;
-      });
+      // Проверяем, есть ли уже соединение от этого источника
+      const existingEdge = edges.find((edge) => edge.source === params.source);
+      // Формируем обновленный список ребер
+      let updatedEdges = edges;
+      if (existingEdge) {
+        // Если есть, удаляем старое соединение
+        updatedEdges = edges.filter((edge) => edge.id !== existingEdge.id);
+      }
+      // Создаем новое соединение
+      const newEdge = {
+        ...params,
+        id: `edge-${params.source}-${params.target}`,
+        ...NODE.edgeConfig,
+      };
+      // Добавляем новое ребро
+      const finalEdges = [...updatedEdges, newEdge];
+      setEdges(finalEdges);
+      dispatch(updateEdges(finalEdges));
     },
-    [dispatch],
+    [edges, dispatch],
   );
 
   return (
@@ -314,7 +278,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
         onNodeDragStop={onNodeDragStop}
         onEdgeDoubleClick={onEdgeDoubleClick}
         onEdgeUpdate={onEdgeUpdate}
-        onEdgeUpdateEnd={onEdgeUpdateEnd}
         nodeTypes={nodeTypes}
         zoomOnDoubleClick={false}
       >
