@@ -119,7 +119,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       }, 0);
 
       // Проверяем, нужно ли обновлять z-index
-      const needsUpdate = node.zIndex !== maxZIndex + 1;
+      const needsUpdate = node.zIndex !== maxZIndex;
 
       if (needsUpdate) {
         // Создаем копию массива нод
