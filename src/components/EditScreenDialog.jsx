@@ -6,10 +6,17 @@ import { Button } from "primereact/button";
 import { UI } from "../config/uiConfig";
 import { Fieldset } from "primereact/fieldset";
 import { Editor } from "primereact/editor";
-import { Image } from "primereact/image";
 import ImageUpload from "./ImageUpload";
 
-const EditScreenDialog = ({ visible, onHide, onSave, data, toastRef }) => {
+const EditScreenDialog = ({ 
+  visible, 
+  onHide, 
+  onSave, 
+  data, 
+  toastRef,
+  commandOptions: propCommandOptions,
+  userStatusOptions: propUserStatusOptions
+}) => {
   const [label, setLabel] = useState(data?.data?.label || "");
 
   const [formData, setFormData] = useState({
@@ -100,7 +107,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data, toastRef }) => {
   };
 
   // Опции для выпадающих списков
-  const commandOptions = [
+  const commandOptions = propCommandOptions || [
     { label: "Без команды", value: "-" },
     { label: "Команда 1", value: "Команда 1" },
     { label: "Команда 2", value: "Команда 2" },
@@ -110,7 +117,7 @@ const EditScreenDialog = ({ visible, onHide, onSave, data, toastRef }) => {
   ];
 
   // Опции для выпадающих списков
-  const userStatusOptions = [
+  const userStatusOptions = propUserStatusOptions || [
     { label: "Без изменений", value: "-" },
     { label: "Заполнил данные", value: "Заполнил данные" },
     { label: "Загрузил чек", value: "Загрузил чек" },

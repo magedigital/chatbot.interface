@@ -22,6 +22,9 @@ const EditInnerNodeDialog = ({
   allScreens,
   onRemoveEdge,
   onAddEdge,
+  commandOptions: propCommandOptions,
+  miniAppOptions: propMiniAppOptions,
+  userStatusOptions: propUserStatusOptions
 }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
@@ -199,7 +202,7 @@ const EditInnerNodeDialog = ({
   };
 
   // Опции для выпадающих списков
-  const commandOptions = [
+  const commandOptions = propCommandOptions || [
     { label: "Без команды", value: "-" },
     { label: "Команда 1", value: "Команда 1" },
     { label: "Команда 2", value: "Команда 2" },
@@ -208,7 +211,7 @@ const EditInnerNodeDialog = ({
     { label: "Команда 5", value: "Команда 5" },
   ];
 
-  const miniAppOptions = [
+  const miniAppOptions = propMiniAppOptions || [
     { label: "Не открывать", value: "-" },
     { label: "MiniApp 1", value: "MiniApp 1" },
     { label: "MiniApp 2", value: "MiniApp 2" },
@@ -217,7 +220,7 @@ const EditInnerNodeDialog = ({
     { label: "MiniApp 5", value: "MiniApp 5" },
   ];
 
-  const userStatusOptions = [
+  const userStatusOptions = propUserStatusOptions || [
     { label: "Без изменений", value: "-" },
     { label: "Заполнил данные", value: "Заполнил данные" },
     { label: "Загрузил чек", value: "Загрузил чек" },

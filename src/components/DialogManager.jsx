@@ -36,6 +36,11 @@ const DialogManager = ({ toastRef }) => {
   const allScreens = useSelector((state) =>
     state.nodes.present.nodes.filter((node) => node.type === "screenGroupNode"),
   );
+  
+  // Получаем опции из конфигурации
+  const { commandOptions, miniAppOptions, userStatusOptions } = useSelector(
+    (state) => state.config
+  );
 
   // Функции для работы с ребрами
   const handleRemoveEdge = (edgeId) => {
@@ -59,6 +64,8 @@ const DialogManager = ({ toastRef }) => {
         onSave={handleSaveEditGroupDialog}
         data={editScreenDialog}
         toastRef={toastRef}
+        commandOptions={commandOptions}
+        userStatusOptions={userStatusOptions}
       />
 
       <EditInnerNodeDialog
@@ -72,6 +79,9 @@ const DialogManager = ({ toastRef }) => {
         onRemoveEdge={handleRemoveEdge}
         onAddEdge={handleAddEdge}
         onUpdateNodeData={handleUpdateNodeData}
+        commandOptions={commandOptions}
+        miniAppOptions={miniAppOptions}
+        userStatusOptions={userStatusOptions}
       />
 
       <ConfirmDialog baseZIndex={UI.confirmDialogZIndex} />
