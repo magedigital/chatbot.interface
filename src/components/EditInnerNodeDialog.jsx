@@ -119,27 +119,45 @@ const EditInnerNodeDialog = ({
 
     // Если была выбрана нода для перехода, управляем связями
     if (formData.goToScreen && formData.goToScreen !== "-") {
-      // Удаляем все существующие связи от этой ноды
+      // Проверяем, изменилась ли связь
+      const existingEdge = allEdges.find((edge) => edge.source === data.id);
+      const hasExistingEdge = !!existingEdge;
+      const isSameTarget = hasExistingEdge && existingEdge.target === formData.goToScreen;
+
+      // Удаляем существующие связи только если цель изменилась
+      if (hasExistingEdge && !isSameTarget) {
+        const edgesToRemove = allEdges.filter((edge) => edge.source === data.id);
+        edgesToRemove.forEach((edge) => {
+          onRemoveEdge(edge.id);
+        });
+      }
+
+      // Добавляем новую связь только если цель изменилась
+      if (!isSameTarget) {
+        // Создаем новую связь к выбранному экрану
+        const newEdge = {
+          id: `edge-${data.id}-${formData.goToScreen}`,
+          source: data.id,
+          target: formData.goToScreen,
+          style: {
+            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
+          },
+          markerEnd: { type: "arrowclosed" },
+          deletable: true,
+          reconnectable: true,
+          updatable: true,
+        };
+
+        onAddEdge(newEdge);
+      }
+    } else {
+      // Если goToScreen пустой или "-", удаляем существующие связи
       const edgesToRemove = allEdges.filter((edge) => edge.source === data.id);
-      edgesToRemove.forEach((edge) => {
-        onRemoveEdge(edge.id);
-      });
-
-      // Создаем новую связь к выбранному экрану
-      const newEdge = {
-        id: `edge-${data.id}-${formData.goToScreen}`,
-        source: data.id,
-        target: formData.goToScreen,
-        style: {
-          strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-        },
-        markerEnd: { type: "arrowclosed" },
-        deletable: true,
-        reconnectable: true,
-        updatable: true,
-      };
-
-      onAddEdge(newEdge);
+      if (edgesToRemove.length > 0) {
+        edgesToRemove.forEach((edge) => {
+          onRemoveEdge(edge.id);
+        });
+      }
     }
 
     onSave(updatedData);
