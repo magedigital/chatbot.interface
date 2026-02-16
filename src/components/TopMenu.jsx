@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useEffect } from "react";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
@@ -224,6 +224,32 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
   const handleRedo = useCallback(() => {
     dispatch(UndoActionCreators.redo());
   }, [dispatch]);
+
+  // Обработчик клавиатурных сокращений
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Проверяем, не находится ли пользователь в текстовом поле
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Обработка Ctrl+Z (и Cmd+Z на Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        event.preventDefault();
+        handleUndo();
+      }
+      // Обработка Ctrl+Y (и Cmd+Y на Mac) или Ctrl+Shift+Z
+      else if ((event.ctrlKey || event.metaKey) && (event.key === 'y' || (event.shiftKey && event.key === 'Z'))) {
+        event.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleUndo, handleRedo]);
 
   return (
     <Menubar
