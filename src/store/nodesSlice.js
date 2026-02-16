@@ -12,10 +12,6 @@ import { NODE } from "../config/nodeConfig";
 const initialState = {
   nodes: [],
   edges: [],
-  // dialogs: {
-  //   editScreenDialog: null,
-  //   editInnerNodeDialog: null,
-  // },
 };
 
 const nodesSlice = createSlice({
@@ -28,12 +24,6 @@ const nodesSlice = createSlice({
     updateEdges: (state, action) => {
       state.edges = action.payload;
     },
-    /* addNode: (state, action) => {
-      state.nodes.push(action.payload);
-    },
-    removeNode: (state, action) => {
-      state.nodes = state.nodes.filter((node) => node.id !== action.payload);
-    }, */
 
     removeGroupNode: (state, action) => {
       const groupId = action.payload;
@@ -82,14 +72,6 @@ const nodesSlice = createSlice({
 
         // Вызываем внешнюю функцию для выстраивания позиций нод в группе
         state.nodes = arrangeNodePositions(state.nodes, groupId);
-      }
-    },
-    updateNode: (state, action) => {
-      const index = state.nodes.findIndex(
-        (node) => node.id === action.payload.id,
-      );
-      if (index !== -1) {
-        state.nodes[index] = action.payload;
       }
     },
     updateNodeData: (state, action) => {
@@ -215,9 +197,6 @@ const nodesSlice = createSlice({
 export const {
   updateNodes,
   updateEdges,
-  /* addNode,
-  removeNode, */
-  updateNode,
   updateNodeData,
   updateNodePosition,
   addEdge,
@@ -234,9 +213,6 @@ export const {
 const undoableNodesReducer = undoable(nodesSlice.reducer, {
   limit: 100, // максимальное количество шагов отмены
   filter: includeAction([
-    /* "nodes/addNode",
-    "nodes/removeNode", */
-    "nodes/updateNode",
     "nodes/updateNodeData",
     "nodes/updateNodePosition",
     "nodes/addEdge",

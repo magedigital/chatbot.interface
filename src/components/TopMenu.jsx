@@ -229,25 +229,31 @@ const TopMenu = ({ reactFlowRef, toastRef }) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Проверяем, не находится ли пользователь в текстовом поле
-      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+      if (
+        event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA"
+      ) {
         return;
       }
 
       // Обработка Ctrl+Z (и Cmd+Z на Mac)
-      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      if ((event.ctrlKey || event.metaKey) && event.key === "z") {
         event.preventDefault();
         handleUndo();
       }
       // Обработка Ctrl+Y (и Cmd+Y на Mac) или Ctrl+Shift+Z
-      else if ((event.ctrlKey || event.metaKey) && (event.key === 'y' || (event.shiftKey && event.key === 'Z'))) {
+      else if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key === "y" || (event.shiftKey && event.key === "Z"))
+      ) {
         event.preventDefault();
         handleRedo();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleUndo, handleRedo]);
 
