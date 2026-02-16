@@ -10,17 +10,18 @@ import { Editor } from "primereact/editor";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
 import ImageUpload from "./ImageUpload";
+import { NODE } from "../config/nodeConfig";
 
-const EditInnerNodeDialog = ({ 
-  visible, 
-  onHide, 
-  onSave, 
-  data, 
+const EditInnerNodeDialog = ({
+  visible,
+  onHide,
+  onSave,
+  data,
   toastRef,
   allEdges,
   allScreens,
   onRemoveEdge,
-  onAddEdge
+  onAddEdge,
 }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
@@ -122,11 +123,14 @@ const EditInnerNodeDialog = ({
       // Проверяем, изменилась ли связь
       const existingEdge = allEdges.find((edge) => edge.source === data.id);
       const hasExistingEdge = !!existingEdge;
-      const isSameTarget = hasExistingEdge && existingEdge.target === formData.goToScreen;
+      const isSameTarget =
+        hasExistingEdge && existingEdge.target === formData.goToScreen;
 
       // Удаляем существующие связи только если цель изменилась
       if (hasExistingEdge && !isSameTarget) {
-        const edgesToRemove = allEdges.filter((edge) => edge.source === data.id);
+        const edgesToRemove = allEdges.filter(
+          (edge) => edge.source === data.id,
+        );
         edgesToRemove.forEach((edge) => {
           onRemoveEdge(edge.id);
         });
@@ -139,13 +143,7 @@ const EditInnerNodeDialog = ({
           id: `edge-${data.id}-${formData.goToScreen}`,
           source: data.id,
           target: formData.goToScreen,
-          style: {
-            strokeWidth: 3, // Устанавливаем толщину линии 3 пикселя
-          },
-          markerEnd: { type: "arrowclosed" },
-          deletable: true,
-          reconnectable: true,
-          updatable: true,
+          ...NODE.edgeConfig,
         };
 
         onAddEdge(newEdge);

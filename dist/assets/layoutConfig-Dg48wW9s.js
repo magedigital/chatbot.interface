@@ -1,1 +1,0 @@
-const e={"elk.algorithm":"mrtree","elk.layered.spacing.nodeNodeBetweenLayers":"200","elk.spacing.nodeNode":"100","elk.spacing.componentComponent":"100","elk.spacing.nodeNode.selfLoop":"100"};export{e as elkOptions};
