@@ -28,12 +28,12 @@ const nodesSlice = createSlice({
     updateEdges: (state, action) => {
       state.edges = action.payload;
     },
-    addNode: (state, action) => {
+    /* addNode: (state, action) => {
       state.nodes.push(action.payload);
     },
     removeNode: (state, action) => {
       state.nodes = state.nodes.filter((node) => node.id !== action.payload);
-    },
+    }, */
 
     removeGroupNode: (state, action) => {
       const groupId = action.payload;
@@ -215,8 +215,8 @@ const nodesSlice = createSlice({
 export const {
   updateNodes,
   updateEdges,
-  addNode,
-  removeNode,
+  /* addNode,
+  removeNode, */
   updateNode,
   updateNodeData,
   updateNodePosition,
@@ -234,8 +234,8 @@ export const {
 const undoableNodesReducer = undoable(nodesSlice.reducer, {
   limit: 100, // максимальное количество шагов отмены
   filter: includeAction([
-    "nodes/addNode",
-    "nodes/removeNode",
+    /* "nodes/addNode",
+    "nodes/removeNode", */
     "nodes/updateNode",
     "nodes/updateNodeData",
     "nodes/updateNodePosition",
