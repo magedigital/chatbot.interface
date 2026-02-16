@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
@@ -7,22 +6,24 @@ import { TabView, TabPanel } from "primereact/tabview";
 import { Button } from "primereact/button";
 import { Badge } from "primereact/badge";
 import { UI } from "../config/uiConfig";
-import { removeEdge, addEdge } from "../store/nodesSlice";
 import { Editor } from "primereact/editor";
 
 import { Accordion, AccordionTab } from "primereact/accordion";
 import ImageUpload from "./ImageUpload";
 
-const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
-  const dispatch = useDispatch();
-  const allEdges = useSelector((state) => state.nodes.present.edges);
+const EditInnerNodeDialog = ({ 
+  visible, 
+  onHide, 
+  onSave, 
+  data, 
+  toastRef,
+  allEdges,
+  allScreens,
+  onRemoveEdge,
+  onAddEdge
+}) => {
   const [label, setLabel] = useState(data?.data?.label || "");
   const [activeTab, setActiveTab] = useState(0);
-
-  // Получаем все экраны из store (кроме стартового)
-  const allScreens = useSelector((state) =>
-    state.nodes.present.nodes.filter((node) => node.type === "screenGroupNode"),
-  );
 
   // Создаем опции для выпадающих списков экранов
   const screenOptions = [
@@ -121,7 +122,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
       // Удаляем все существующие связи от этой ноды
       const edgesToRemove = allEdges.filter((edge) => edge.source === data.id);
       edgesToRemove.forEach((edge) => {
-        dispatch(removeEdge(edge.id));
+        onRemoveEdge(edge.id);
       });
 
       // Создаем новую связь к выбранному экрану
@@ -138,7 +139,7 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
         updatable: true,
       };
 
-      dispatch(addEdge(newEdge));
+      onAddEdge(newEdge);
     }
 
     onSave(updatedData);
@@ -151,10 +152,34 @@ const EditInnerNodeDialog = ({ visible, onHide, onSave, data, toastRef }) => {
 
   const handleUpload = (uploadFieldName, result) => {
     setFormData({ ...formData, [uploadFieldName]: result });
+
+    // Обновляем данные ноды
+    const updatedData = {
+      ...data,
+      data: {
+        ...data.data,
+        [uploadFieldName]: result,
+      },
+    };
+
+    // Обновляем данные в store через пропс
+    onUpdateNodeData(updatedData);
   };
 
   const handleClearUpload = (uploadFieldName) => {
     setFormData({ ...formData, [uploadFieldName]: null });
+
+    // Обновляем данные ноды
+    const updatedData = {
+      ...data,
+      data: {
+        ...data.data,
+        [uploadFieldName]: null,
+      },
+    };
+
+    // Обновляем данные в store через пропс
+    onUpdateNodeData(updatedData);
   };
 
   // Опции для выпадающих списков

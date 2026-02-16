@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { updateNodeData } from "../store/nodesSlice";
+import { updateNodeData, removeEdge, addEdge } from "../store/nodesSlice";
 import { editInnerNode, editScreenGroupNode } from "../store/editorSlice";
 import EditScreenDialog from "./EditScreenDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
@@ -31,6 +31,26 @@ const DialogManager = ({ toastRef }) => {
     editInnerNodeDialog: state.editor?.editInnerNodeDialog || null,
   }));
 
+  // Получаем данные из store для передачи в EditInnerNodeDialog
+  const allEdges = useSelector((state) => state.nodes.present.edges);
+  const allScreens = useSelector((state) =>
+    state.nodes.present.nodes.filter((node) => node.type === "screenGroupNode"),
+  );
+
+  // Функции для работы с ребрами
+  const handleRemoveEdge = (edgeId) => {
+    dispatch(removeEdge(edgeId));
+  };
+
+  const handleAddEdge = (newEdge) => {
+    dispatch(addEdge(newEdge));
+  };
+
+  // Функции для работы с загрузкой изображений
+  const handleUpdateNodeData = (nodeData) => {
+    dispatch(updateNodeData(nodeData));
+  };
+
   return (
     <>
       <EditScreenDialog
@@ -47,6 +67,11 @@ const DialogManager = ({ toastRef }) => {
         onSave={handleSaveEditInnerNodeDialog}
         data={editInnerNodeDialog}
         toastRef={toastRef}
+        allEdges={allEdges}
+        allScreens={allScreens}
+        onRemoveEdge={handleRemoveEdge}
+        onAddEdge={handleAddEdge}
+        onUpdateNodeData={handleUpdateNodeData}
       />
 
       <ConfirmDialog baseZIndex={UI.confirmDialogZIndex} />
