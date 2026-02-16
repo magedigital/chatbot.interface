@@ -113,7 +113,6 @@ const ReactFlowComponent = forwardRef((props, ref) => {
   const onNodeDragStart = useCallback(
     (event, node) => {
       // Находим максимальный z-index среди всех нод
-
       const maxZIndex = nodes.reduce((max, n) => {
         const zIndex = n.zIndex || 0;
         return zIndex > max ? zIndex : max;
@@ -185,6 +184,7 @@ const ReactFlowComponent = forwardRef((props, ref) => {
             updatedNodes[nodeIndex] = {
               ...node,
               position: change.position,
+              changed: true,
             };
           }
         }
@@ -200,6 +200,9 @@ const ReactFlowComponent = forwardRef((props, ref) => {
       if (event.target?.id?.indexOf("nodrag") >= 0) {
         return;
       }
+
+      if (!node.changed) return;
+
       // Отправляем в store только обновленную ноду, а не все локальные ноды
       dispatch(updateNodePosition(node));
 
