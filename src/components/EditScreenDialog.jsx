@@ -8,14 +8,14 @@ import { Fieldset } from "primereact/fieldset";
 import { Editor } from "primereact/editor";
 import ImageUpload from "./ImageUpload";
 
-const EditScreenDialog = ({ 
-  visible, 
-  onHide, 
-  onSave, 
-  data, 
+const EditScreenDialog = ({
+  visible,
+  onHide,
+  onSave,
+  data,
   toastRef,
   commandOptions: propCommandOptions,
-  userStatusOptions: propUserStatusOptions
+  userStatusOptions: propUserStatusOptions,
 }) => {
   const [label, setLabel] = useState(data?.data?.label || "");
 
@@ -107,22 +107,8 @@ const EditScreenDialog = ({
   };
 
   // Опции для выпадающих списков
-  const commandOptions = propCommandOptions || [
-    { label: "Без команды", value: "-" },
-    { label: "Команда 1", value: "Команда 1" },
-    { label: "Команда 2", value: "Команда 2" },
-    { label: "Команда 3", value: "Команда 3" },
-    { label: "Команда 4", value: "Команда 4" },
-    { label: "Команда 5", value: "Команда 5" },
-  ];
-
-  // Опции для выпадающих списков
-  const userStatusOptions = propUserStatusOptions || [
-    { label: "Без изменений", value: "-" },
-    { label: "Заполнил данные", value: "Заполнил данные" },
-    { label: "Загрузил чек", value: "Загрузил чек" },
-    { label: "Зарегистрировал код", value: "Зарегистрировал код" },
-  ];
+  const commandOptions = propCommandOptions || [];
+  const userStatusOptions = propUserStatusOptions || [];
 
   const footer = (
     <div className="flex justify-content-end gap-2 flex-column sm:flex-row mt-4">
