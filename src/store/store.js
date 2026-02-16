@@ -5,11 +5,22 @@ import editorReducer from "./editorSlice";
 
 // Middleware для логирования экшнов
 const logger = (store) => (next) => (action) => {
-  console.group(`%cRedux Action: ${action.type}`, 'color: #03A9F4; font-weight: bold;');
-  console.log('%cPrevious State:', 'color: #9E9E9E; font-weight: bold;', store.getState());
-  console.log('%cAction:', 'color: #00C853; font-weight: bold;', action);
+  console.groupCollapsed(
+    `%cRedux Action: ${action.type}`,
+    "color: #03A9F4; font-weight: bold;",
+  );
+  console.log(
+    "%cPrevious State:",
+    "color: #9E9E9E; font-weight: bold;",
+    store.getState(),
+  );
+  console.log("%cAction:", "color: #00C853; font-weight: bold;", action);
   const result = next(action);
-  console.log('%cNext State:', 'color: #FF9800; font-weight: bold;', store.getState());
+  console.log(
+    "%cNext State:",
+    "color: #FF9800; font-weight: bold;",
+    store.getState(),
+  );
   console.groupEnd();
   return result;
 };
