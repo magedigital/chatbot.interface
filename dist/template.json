@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "ROOT",
+      "id": "START",
       "type": "screenGroupNode",
       "position": {
         "x": 20,
@@ -38,7 +38,7 @@
         "color": "#fdc576",
         "isStartScreenNode": true
       },
-      "parentNode": "ROOT",
+      "parentNode": "START",
       "selectable": true,
       "extent": "parent",
       "draggable": false

@@ -30,7 +30,7 @@ export const GROUP = {
   defaultName: "Экран",
   mainName: "Стартовый экран",
   uidPrefix: "uid-",
-  mainUid: "ROOT",
+  mainUid: "START",
 };
 
 // Параметры для внутренних нод
