@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { updateNodeData, removeEdge, addEdge } from "../store/nodesSlice";
+import {
+  updateNodeData,
+  removeEdge,
+  addEdge,
+  updateEdges,
+  updateNodeId,
+} from "../store/nodesSlice";
 import { editInnerNode, editScreenGroupNode } from "../store/editorSlice";
 import EditScreenDialog from "./EditScreenDialog";
 import EditInnerNodeDialog from "./EditInnerNodeDialog";
@@ -10,8 +16,14 @@ import { UI } from "../config/uiConfig";
 const DialogManager = ({ toastRef }) => {
   const dispatch = useDispatch();
 
-  const handleSaveEditGroupDialog = (data) => {
-    dispatch(updateNodeData(data));
+  const handleSaveEditGroupDialog = (data, oldId) => {
+    if (oldId && data.id !== oldId) {
+      // ID изменился - используем updateNodeId
+      dispatch(updateNodeId({ oldId, newId: data.id, newData: data.data }));
+    } else {
+      // ID не изменился - обновляем только данные
+      dispatch(updateNodeData(data));
+    }
   };
 
   const handleHideEditGroupDialog = () => {
@@ -26,6 +38,10 @@ const DialogManager = ({ toastRef }) => {
     dispatch(editInnerNode(false));
   };
 
+  const handleEdgesUpdate = (updatedEdges) => {
+    dispatch(updateEdges(updatedEdges));
+  };
+
   const { editScreenDialog, editInnerNodeDialog } = useSelector((state) => ({
     editScreenDialog: state.editor?.editScreenDialog || null,
     editInnerNodeDialog: state.editor?.editInnerNodeDialog || null,
@@ -36,10 +52,10 @@ const DialogManager = ({ toastRef }) => {
   const allScreens = useSelector((state) =>
     state.nodes.present.nodes.filter((node) => node.type === "screenGroupNode"),
   );
-  
+
   // Получаем опции из конфигурации
   const { commandOptions, miniAppOptions, userStatusOptions } = useSelector(
-    (state) => state.config
+    (state) => state.config,
   );
 
   // Функции для работы с ребрами
@@ -66,6 +82,9 @@ const DialogManager = ({ toastRef }) => {
         toastRef={toastRef}
         commandOptions={commandOptions}
         userStatusOptions={userStatusOptions}
+        allEdges={allEdges}
+        allScreens={allScreens}
+        onEdgesUpdate={handleEdgesUpdate}
       />
 
       <EditInnerNodeDialog

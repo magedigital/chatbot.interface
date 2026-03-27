@@ -16,7 +16,11 @@ const EditScreenDialog = ({
   toastRef,
   commandOptions: propCommandOptions,
   userStatusOptions: propUserStatusOptions,
+  allEdges,
+  allScreens,
+  onEdgesUpdate,
 }) => {
+  const [nodeId, setNodeId] = useState(data?.id || "");
   const [label, setLabel] = useState(data?.data?.label || "");
 
   const [formData, setFormData] = useState({
@@ -34,6 +38,7 @@ const EditScreenDialog = ({
   // Обновляем состояние при изменении пропса data
   useEffect(() => {
     if (data && data.data) {
+      setNodeId(data.id || "");
       setLabel(data.data.label || "");
       setFormData({
         sendMessage: data.data.sendMessage || "",
@@ -83,6 +88,7 @@ const EditScreenDialog = ({
   const handleSave = () => {
     const updatedData = {
       ...data,
+      id: nodeId,
       data: {
         ...data.data,
         ...formData,
@@ -90,7 +96,24 @@ const EditScreenDialog = ({
         label,
       },
     };
-    onSave(updatedData);
+
+    // Обновляем связи, если ID изменился
+    if (allEdges && nodeId && nodeId !== data.id) {
+      const updatedEdges = allEdges.map((edge) => {
+        let newEdge = { ...edge };
+
+        if (edge.target === data.id) {
+          newEdge.target = nodeId;
+          newEdge.id = `edge-${newEdge.source}-${newEdge.target}`;
+        }
+
+        return newEdge;
+      });
+
+      onEdgesUpdate(updatedEdges);
+    }
+
+    onSave(updatedData, data.id);
     onHide();
   };
 
@@ -150,6 +173,18 @@ const EditScreenDialog = ({
       closable={true}
       baseZIndex={UI.editDialogZIndex}
     >
+      <div className="field mb-3">
+        <label htmlFor="screenId" className="block font-bold mb-2">
+          ID экрана
+        </label>
+        <InputText
+          id="screenId"
+          value={nodeId}
+          onChange={(e) => setNodeId(e.target.value)}
+          className="w-full"
+        />
+      </div>
+
       <div className="field mb-3">
         <label htmlFor="buttonLabel" className="block font-bold mb-2">
           Название экрана

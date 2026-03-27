@@ -85,6 +85,25 @@ const nodesSlice = createSlice({
         };
       }
     },
+    updateNodeId: (state, action) => {
+      const { oldId, newId, newData } = action.payload;
+      const index = state.nodes.findIndex((node) => node.id === oldId);
+      if (index !== -1) {
+        // Обновляем ID и данные самой ноды
+        state.nodes[index] = {
+          ...state.nodes[index],
+          id: newId,
+          data: newData,
+        };
+
+        // Обновляем parentNode у всех дочерних нод
+        state.nodes.forEach((node) => {
+          if (node.parentNode === oldId) {
+            node.parentNode = newId;
+          }
+        });
+      }
+    },
     updateNodePosition: (state, action) => {
       const index = state.nodes.findIndex(
         (node) => node.id === action.payload.id,
@@ -207,6 +226,7 @@ export const {
   removeGroupNode,
   removeInnerNode,
   addScreenGroupNode,
+  updateNodeId,
 } = nodesSlice.actions;
 
 // Create undoable reducer
@@ -224,6 +244,7 @@ const undoableNodesReducer = undoable(nodesSlice.reducer, {
     "nodes/clearAllScreenGroups",
     "nodes/updateNodes",
     "nodes/updateEdges",
+    "nodes/updateNodeId",
   ]),
 });
 
